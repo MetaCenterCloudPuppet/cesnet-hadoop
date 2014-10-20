@@ -4,17 +4,18 @@
 # It sets variables according to platform
 #
 class hadoop::params {
-  case $::osfamily {
-    'Debian': {
-      $package_name = 'hadoop'
-      $service_name = 'hadoop'
-    }
-    'RedHat', 'Amazon': {
-      $package_name = 'hadoop'
-      $service_name = 'hadoop'
-    }
-    default: {
-      fail("${::operatingsystem} not supported")
-    }
-  }
+	case $::osfamily {
+		'RedHat': {
+		}
+		default: {
+			fail("${::osfamily} (${::operatingsystem}) not supported")
+		}
+	}
+
+	$hdfs_hostname = "localhost"
+	$yarn_hostname = "localhost"
+	$slaves = [ "localhost" ]
+
+	$cluster_name = ""
+	$replication = 1
 }

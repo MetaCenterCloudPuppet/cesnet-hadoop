@@ -1,0 +1,25 @@
+#! /bin/sh
+
+#
+# Helper script for checking and changing status of all Hadoop daemons
+# relevant for this node.
+#
+
+if [ -z "$1" ]; then
+	echo "Usage: $0 start|stop|status|..."
+	echo "       $0 clean"
+	exit 1
+fi
+
+if [ "$1" == "clean" ]; then
+	$0 stop
+	rm -fv /var/log/hadoop-*/* 2>/dev/null || :
+	$0 start
+	exit $?
+fi
+
+<%if @daemon_namenode -%>systemctl $1 hadoop-namenode<%end%>
+<%if @daemon_resourcemanager -%>systemctl $1 hadoop-resourcemanager<%end%>
+<%if @daemon_historyserver -%>systemctl $1 hadoop-historyserver<%end%>
+<%if @daemon_nodemanager -%>systemctl $1 hadoop-nodemanager<%end%>
+<%if @daemon_datanode -%>systemctl $1 hadoop-datanode<%end%>
