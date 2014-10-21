@@ -10,8 +10,9 @@ class hadoop::create_dirs {
 	$realm = $hadoop::realm
 
 	exec { "hdfs-kinit":
-		command => "if test -n \"$realm\"; then runuser hdfs -s /bin/bash /bin/bash -c \"kinit -k nn/$fqdn@$realm -t /etc/security/keytab/nn.service.keytab\"; fi",
+		command => "runuser hdfs -s /bin/bash /bin/bash -c \"kinit -k nn/$fqdn@$realm -t /etc/security/keytab/nn.service.keytab\"",
 		path => "/sbin:/usr/sbin:/bin:/usr/bin",
+		onlyif => "test -n \"$realm\"",
 		creates => "/var/lib/hadoop-hdfs/.puppet-hdfs-root-created",
 	}
 	exec { "hdfs-dirs":
@@ -21,8 +22,9 @@ class hadoop::create_dirs {
 		require => Exec["hdfs-kinit"],
 	}
 	exec { "hdfs-kdestroy":
-		command => "if test -n \"$realm\"; then runuser hdfs -s /bin/bash /bin/bash -c \"kdestroy\"; fi",
+		command => "runuser hdfs -s /bin/bash /bin/bash -c \"kdestroy\"",
 		path => "/sbin:/usr/sbin:/bin:/usr/bin",
+		onlyif => "test -n \"$realm\"",
 		creates => "/var/lib/hadoop-hdfs/.puppet-hdfs-root-created",
 		require => Exec["hdfs-dirs"],
 	}
