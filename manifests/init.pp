@@ -30,35 +30,31 @@ class hadoop (
 	include 'stdlib'
 
 	if $fqdn == $hdfs_hostname {
-		$package_hdfs = 1
-		$package_native = 1
 		$daemon_namenode = 1
 		$mapred_user = 1
 
 	}
 
 	if $fqdn == $yarn_hostname {
-		if (!$package_mapreduce) { $package_mapreduce = 1 }
-		if (!$package_native) { $package_native = 1 }
-		if (!$package_yarn) { $package_yarn = 1 }
 		$daemon_resourcemanager = 1
 		$daemon_historyserver = 1
 	}
 
 	if member($slaves, $fqdn) {
-		if (!$package_hdfs) { $package_hdfs = 1 }
-		if (!$package_native) { $package_native = 1 }
-		if (!$package_yarn) { $package_yarn = 1 }
 		$daemon_nodemanager = 1
 		$daemon_datanode = 1
 	}
-
-	# configure files in dependent packages too
-	if ($package_mapreduce or $package_yarn) and !$package_hdfs { $package_hdfs = 1 }
-	if $package_yarn and !$package_mapreduce { $package_mapreduce = 1 }
 
 	class { 'hadoop::install': } ->
 	class { 'hadoop::config': } ~>
 	class { 'hadoop::service': } ->
 	Class['hadoop']
+
+	# XXX: helper administrator script, move somewere else
+	file { "/usr/local/bin/yellowelephant":
+		mode => "0755",
+		alias => "yellowelephant",
+		content => template("hadoop/yellowelephant.erb"),
+		require => Class['hadoop::config'],
+	}
 }

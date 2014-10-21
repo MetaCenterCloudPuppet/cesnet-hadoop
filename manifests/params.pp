@@ -4,8 +4,14 @@
 # It sets variables according to platform
 #
 class hadoop::params {
-	case $::osfamily {
-		'RedHat': {
+	case "$::osfamily/${::operatingsystem}" {
+		'RedHat/Fedora': {
+			$packages_common = [ "hadoop-common", "hadoop-common-native" ]
+			$packages_nn = [ "hadoop-hdfs" ]
+			$packages_rm = [ "hadoop-yarn" ]
+			$packages_mr = [ "hadoop-mapreduce" ]
+			$packages_nm = [ "hadoop-yarn" ]
+			$packages_dn = [ "hadoop-hdfs" ]
 		}
 		default: {
 			fail("${::osfamily} (${::operatingsystem}) not supported")

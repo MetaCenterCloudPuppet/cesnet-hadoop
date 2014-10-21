@@ -18,8 +18,8 @@ if [ "$1" == "clean" ]; then
 	exit $?
 fi
 
-<%if @daemon_namenode -%>systemctl $1 hadoop-namenode<%end%>
-<%if @daemon_resourcemanager -%>systemctl $1 hadoop-resourcemanager<%end%>
-<%if @daemon_historyserver -%>systemctl $1 hadoop-historyserver<%end%>
-<%if @daemon_nodemanager -%>systemctl $1 hadoop-nodemanager<%end%>
-<%if @daemon_datanode -%>systemctl $1 hadoop-datanode<%end%>
+<%if scope.lookupvar('hadoop::daemon_namenode') -%>systemctl $1 hadoop-namenode<%end%>
+<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>systemctl $1 hadoop-resourcemanager<%end%>
+<%if scope.lookupvar('hadoop::daemon_historyserver') -%>systemctl $1 hadoop-historyserver<%end%>
+<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>systemctl $1 hadoop-nodemanager<%end%>
+<%if scope.lookupvar('hadoop::daemon_datanode') -%>systemctl $1 hadoop-datanode<%end%>
