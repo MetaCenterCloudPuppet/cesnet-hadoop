@@ -1,4 +1,4 @@
 class hadoop::namenode::install {
-	include hadoop::common::install 
+	contain hadoop::common::install
 	package { $hadoop::packages_nn: }
 }

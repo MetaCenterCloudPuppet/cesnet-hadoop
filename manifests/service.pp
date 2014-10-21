@@ -5,15 +5,15 @@
 #
 class hadoop::service {
 	if $hadoop::daemon_namenode {
-		include hadoop::namenode::service
+		contain hadoop::namenode::service
 	}
 
 	if $hadoop::daemon_resourcemanager {
-		include hadoop::resourcemanager::service
+		contain hadoop::resourcemanager::service
 	}
 
 	if $hadoop::daemon_historyserver {
-		include hadoop::historyserver::service
+		contain hadoop::historyserver::service
 
 		# namenode should be launched first if it is colocated with historyserver
 		# (just cosmetics, some initial exceptions in logs) (tested on hadoop 2.4.1)
@@ -23,7 +23,7 @@ class hadoop::service {
 	}
 
 	if $hadoop::daemon_nodemanager {
-		include hadoop::nodemanager::service
+		contain hadoop::nodemanager::service
 
 		# namenode must be launched first if it is colocated with nodemanager
 		# (conflicting ports) (tested on hadoop 2.4.1)
@@ -33,6 +33,6 @@ class hadoop::service {
 	}
 
 	if $hadoop::daemon_datanode {
-		include hadoop::datanode::service
+		contain hadoop::datanode::service
 	}
 }

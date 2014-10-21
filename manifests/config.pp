@@ -3,26 +3,26 @@
 # This class is called from hadoop.
 #
 class hadoop::config {
-	include hadoop::common::config
+	contain hadoop::common::config
 
 	if $hadoop::daemon_namenode {
-		include hadoop::namenode::config
+		contain hadoop::namenode::config
 	}
 
 	if $hadoop::daemon_resourcemanager {
-		include hadoop::resourcemanager::config
+		contain hadoop::resourcemanager::config
 	}
 
 	if $hadoop::daemon_historyserver {
-		include hadoop::historyserver::config
+		contain hadoop::historyserver::config
 	}
 
 	if $hadoop::daemon_nodemanager {
-		include hadoop::nodemanager::config
+		contain hadoop::nodemanager::config
 	}
 
 	if $hadoop::daemon_datanode {
-		include hadoop::datanode::config
+		contain hadoop::datanode::config
 	}
 
 }

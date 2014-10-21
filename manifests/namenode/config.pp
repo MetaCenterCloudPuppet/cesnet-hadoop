@@ -3,8 +3,8 @@
 # This class is called from hadoop::namenode.
 #
 class hadoop::namenode::config {
-	include hadoop::common::config
-	include hadoop::common::hdfs::config
+	contain hadoop::common::config
+	contain hadoop::common::hdfs::config
 
 	if $hadoop::realm {
 		file { "/etc/security/keytab/nn.service.keytab":

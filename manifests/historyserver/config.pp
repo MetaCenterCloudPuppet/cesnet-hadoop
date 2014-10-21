@@ -1,10 +1,10 @@
 # == Class hadoop::historyserver::config
 #
 class hadoop::historyserver::config {
-	include hadoop::common::config
-	include hadoop::common::hdfs::config
-	include hadoop::common::mapred::config
-	include hadoop::common::yarn::config
+	contain hadoop::common::config
+	contain hadoop::common::hdfs::config
+	contain hadoop::common::mapred::config
+	contain hadoop::common::yarn::config
 
 	if $hadoop::realm {
 		if $hadoop::daemon_historyserver {

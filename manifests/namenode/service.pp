@@ -4,13 +4,13 @@
 # It ensure the service is running.
 #
 class hadoop::namenode::service {
-	class { "format":
-		before => Service["hadoop-namenode"],
-	}
+	contain hadoop::format
+
 	service { "hadoop-namenode":
 		ensure  => "running",
 		enable => true,
 		subscribe => [File["core-site.xml"], File["hdfs-site.xml"]],
+		require => Class["format"],
 	}
 	class { "create_dirs":
 		require => [Service["hadoop-namenode"], Class["format"]],

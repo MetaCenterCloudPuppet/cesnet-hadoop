@@ -1,8 +1,8 @@
 # == Class hadoop::datanode::config
 #
 class hadoop::datanode::config {
-	include hadoop::common::config
-	include hadoop::common::hdfs::config
+	contain hadoop::common::config
+	contain hadoop::common::hdfs::config
 
 	if $hadoop::realm {
 		file { "/etc/security/keytab/dn.service.keytab":
