@@ -1,6 +1,6 @@
 # == Class hadoop::resourcemanager::config
 #
-class hadoop::resoucemanager::config {
+class hadoop::resourcemanager::config {
 	include hadoop::common::config
 	include hadoop::common::mapred::config
 	include hadoop::common::yarn::config
