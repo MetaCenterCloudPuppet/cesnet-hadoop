@@ -4,9 +4,6 @@
 # It ensure the services are running.
 #
 class hadoop::resourcemanager::service {
-	contain hadoop::common::config
-	contain hadoop::common::yarn::config
-
 	service { "hadoop-resourcemanager":
 		ensure  => "running",
 		enable => true,
