@@ -75,7 +75,7 @@
 
   <property>
     <name>yarn.resourcemanager.hostname</name>
-    <value><%= @rm_hostname %></value>
+    <value><%= scope.lookupvar('hadoop::rm_hostname') %></value>
   </property>
 
   <!-- permitted rack nodes -->

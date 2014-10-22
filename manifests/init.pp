@@ -29,6 +29,8 @@ class hadoop (
 ) inherits hadoop::params {
 	include 'stdlib'
 
+	if $yarn_hostname and !$rm_hostname { $rm_hostname = $yarn_hostname }
+
 	if $fqdn == $hdfs_hostname {
 		$daemon_namenode = 1
 		$mapred_user = 1
