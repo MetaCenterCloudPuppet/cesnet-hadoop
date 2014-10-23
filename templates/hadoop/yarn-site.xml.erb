@@ -107,4 +107,12 @@
     <name>yarn.nodemanager.principal</name>
     <value>nm/_HOST@<%= @realm -%></value>
   </property>
+  <property>
+    <name>yarn.nodemanager.container-executor.class</name>
+    <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.group</name>
+    <value>hadoop</value>
+  </property>
 </configuration>

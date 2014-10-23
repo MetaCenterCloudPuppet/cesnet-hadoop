@@ -1,6 +1,6 @@
 # == Class: hadoop
 #
-# Setup Hadoop Cluster. Security and Kerberos are suported (TODO: still some problems to resolve...).
+# Setup Hadoop Cluster. Security and Kerberos are suported.
 #
 # === Parameters
 #

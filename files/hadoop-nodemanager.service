@@ -1,0 +1,23 @@
+#
+# Copied from Fedora and changed group to yarn.
+#
+
+[Unit]
+Description=The Hadoop nodemanager daemon
+After=network.target
+After=NetworkManager.target
+
+[Service]
+Type=forking
+EnvironmentFile=-/etc/sysconfig/hadoop-yarn
+EnvironmentFile=-/etc/sysconfig/hadoop-nodemanager
+ExecStart=/usr/sbin/yarn-daemon.sh start nodemanager
+ExecStop=/usr/sbin/yarn-daemon.sh stop nodemanager
+User=yarn
+Group=yarn
+PIDFile=/var/run/hadoop-yarn/yarn-yarn-nodemanager.pid
+LimitNOFILE=32768
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target
