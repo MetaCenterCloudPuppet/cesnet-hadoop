@@ -11,9 +11,9 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
-if [ "$1" == "clean" ]; then
+if [ "$1" == "clean" -o "$1" == "restart" ]; then
 	$0 stop
-	rm -fv /var/log/hadoop-*/* 2>/dev/null || :
+	rm -rfv /var/log/hadoop-*/* 2>/dev/null || :
 	$0 start
 	exit $?
 fi
