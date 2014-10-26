@@ -18,6 +18,7 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
 <configuration>
+
   <property>
     <name>yarn.nodemanager.aux-services</name>
     <value>mapreduce_shuffle</value>
@@ -90,6 +91,7 @@
     <value>/etc/hadoop/excludes</value>
   </property>
 
+<% if @realm and not @realm.empty? -%>
   <!-- security -->
   <property>
     <name>yarn.resourcemanager.keytab</name>
@@ -115,4 +117,6 @@
     <name>yarn.nodemanager.linux-container-executor.group</name>
     <value>hadoop</value>
   </property>
+
+<% end -%>
 </configuration>

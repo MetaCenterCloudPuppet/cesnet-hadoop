@@ -17,7 +17,7 @@
 #   Number of replicas.
 #
 # [*realm*]
-#   Kerberos realm. Required parameter. TODO: empty value for disabling
+#   Kerberos realm. Empty string disables Kerberos authentication. Required parameter.
 #
 class hadoop (
 	$hdfs_hostname = $params::hdfs_hostname,

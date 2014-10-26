@@ -18,6 +18,7 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
 <configuration>
+
   <property>
     <name>fs.default.name</name>
     <value>hdfs://<%= @hdfs_hostname %>:8020</value>
@@ -33,6 +34,7 @@
     <value>*</value>
   </property>
 
+<% if @realm and not @realm.empty? -%>
   <!-- secure mode -->
   <property>
     <name>hadoop.security.authentication</name>
@@ -65,4 +67,5 @@ DEFAULT
     </value>
   </property>
 
+<% end -%>
 </configuration>

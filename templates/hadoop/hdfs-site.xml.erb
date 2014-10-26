@@ -18,6 +18,7 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
 <configuration>
+
   <property>
     <name>dfs.replication</name>
     <value><%= @replication %></value>
@@ -38,6 +39,18 @@
      <name>dfs.datanode.data.dir</name>
      <value>file:///var/lib/hadoop-hdfs/${user.name}/dfs/datanode</value>
   </property>
+  <!-- permitted data nodes -->
+  <property>
+     <name>dfs.hosts</name>
+     <value>/etc/hadoop/slaves</value>
+  </property>
+  <!-- decommissioning of data nodes -->
+  <property>
+     <name>dfs.hosts.exclude</name>
+     <value>/etc/hadoop/excludes</value>
+  </property>
+
+<% if @realm and not @realm.empty? -%>
   <!-- different port with security enabled (original port 50010) -->
   <property>
       <name>dfs.datanode.address</name>
@@ -58,17 +71,6 @@
       <value>0.0.0.0:50020</value>
   </property>
 -->
-  <!-- permitted data nodes -->
-  <property>
-     <name>dfs.hosts</name>
-     <value>/etc/hadoop/slaves</value>
-  </property>
-  <!-- decommissioning of data nodes -->
-  <property>
-     <name>dfs.hosts.exclude</name>
-     <value>/etc/hadoop/excludes</value>
-  </property>
-
   <!-- secure mode -->
   <property>
     <name>dfs.block.access.token.enable</name>
@@ -114,4 +116,6 @@
     <name>dfs.web.authentication.kerberos.principal</name>
     <value>http/_HOST@<%= @realm -%></value>
   </property>
+
+<% end -%>
 </configuration>
