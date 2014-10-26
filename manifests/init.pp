@@ -64,7 +64,7 @@ class hadoop (
 	if $datanode_hostnames { $dn_hostnames = $datanode_hostnames }
 	else { $dn_hostnames = $slaves }
 
-	if $fqdn == $nm_hostname {
+	if $fqdn == $nn_hostname {
 		$daemon_namenode = 1
 		$mapred_user = 1
 
