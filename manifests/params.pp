@@ -10,7 +10,7 @@ class hadoop::params {
 			$packages_nn = [ "hadoop-hdfs" ]
 			$packages_rm = [ "hadoop-yarn" ]
 			$packages_mr = [ "hadoop-mapreduce" ]
-			$packages_nm = [ "hadoop-yarn-security" ]
+			$packages_nm = [ "hadoop-yarn", "hadoop-yarn-security" ]
 			$packages_dn = [ "hadoop-hdfs" ]
 		}
 		default: {

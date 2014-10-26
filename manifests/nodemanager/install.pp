@@ -1,6 +1,8 @@
 # == Class hadoop::nodemanager::install
 #
 class hadoop::nodemanager::install {
+	include stdlib
 	contain hadoop::common::install
-	package { $hadoop::packages_nm: }
+
+	ensure_packages($hadoop::packages_nm)
 }

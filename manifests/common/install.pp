@@ -1,3 +1,5 @@
 class hadoop::common::install {
-	package { $hadoop::packages_common: }
+	include stdlib
+
+	ensure_packages($hadoop::packages_common)
 }

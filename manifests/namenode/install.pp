@@ -1,4 +1,6 @@
 class hadoop::namenode::install {
+	include stdlib
 	contain hadoop::common::install
-	package { $hadoop::packages_nn: }
+
+	ensure_packages($hadoop::packages_nn)
 }

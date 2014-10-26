@@ -1,6 +1,8 @@
 # == Class hadoop::historyserver::install
 #
 class hadoop::historyserver::install {
+	include stdlib
 	contain hadoop::common::install
-	package { $hadoop::packages_mr: }
+
+	ensure_packages($hadoop::packages_mr)
 }
