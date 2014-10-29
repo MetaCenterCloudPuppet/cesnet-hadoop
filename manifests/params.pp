@@ -12,6 +12,7 @@ class hadoop::params {
 			$packages_mr = [ "hadoop-mapreduce" ]
 			$packages_nm = [ "hadoop-yarn", "hadoop-yarn-security" ]
 			$packages_dn = [ "hadoop-hdfs" ]
+			$packages_client = [ "hadoop-client", "hadoop-mapreduce-examples" ]
 		}
 		default: {
 			fail("${::osfamily} (${::operatingsystem}) not supported")

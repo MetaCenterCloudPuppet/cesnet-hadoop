@@ -13,6 +13,9 @@
 # [*slaves*] (localhost)
 #   Array of slave node hostnames.
 #
+# [*frontends*]
+#   Array of frontend hostnames. Used *slaves* by default.
+#
 # [*replication*] (1)
 #   Number of replicas.
 #
@@ -41,6 +44,7 @@ class hadoop (
 	$hdfs_hostname = $params::hdfs_hostname,
 	$yarn_hostname = $params::yarn_hostname,
 	$slaves = $params::slaves,
+	$frontends = [],
 	$cluster_name = $params::cluster_name,
 	$replication = $params::replication,
 	$realm,
@@ -53,6 +57,7 @@ class hadoop (
 ) inherits hadoop::params {
 	include 'stdlib'
 
+	# detailed deployment bases on convenient parameters
 	if $namenode_hostname { $nn_hostname = $namenode_hostname }
 	else { $nn_hostname = $hdfs_hostname }
 	if $resourcemanager_hostname { $rm_hostname = $resourcemanager_hostname }
@@ -63,6 +68,8 @@ class hadoop (
 	else { $nm_hostnames = $slaves }
 	if $datanode_hostnames { $dn_hostnames = $datanode_hostnames }
 	else { $dn_hostnames = $slaves }
+	if $frontends { $frontend_hostnames = $frontends }
+	else { $frontend_hostnames = $slaves }
 
 	if $fqdn == $nn_hostname {
 		$daemon_namenode = 1
@@ -84,6 +91,10 @@ class hadoop (
 
 	if member($dn_hostnames, $fqdn) {
 		$daemon_datanode = 1
+	}
+
+	if member($frontend_hostnames, $fqdn) {
+		$frontend = 1
 	}
 
 	class { 'hadoop::install': } ->

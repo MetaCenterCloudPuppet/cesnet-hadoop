@@ -25,4 +25,5 @@ class hadoop::config {
 		contain hadoop::datanode::config
 	}
 
+	if $hadoop::frontend { contain hadoop::frontend::config }
 }

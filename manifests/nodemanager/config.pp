@@ -6,7 +6,7 @@ class hadoop::nodemanager::config {
 	contain hadoop::common::mapred::config
 	contain hadoop::common::yarn::config
 
-	if $hadoop::realm {
+	if $daemon_nodemanager and $hadoop::realm {
 		file { "/etc/security/keytab/nm.service.keytab":
 			owner => "yarn",
 			group => "yarn",
