@@ -14,5 +14,13 @@ class hadoop::namenode::config {
 			alias => "nn.service.keytab",
 			before => File["hdfs-site.xml"],
 		}
+
+		file { "/etc/security/keytab/http.service.keytab":
+			owner => "hdfs",
+			group => "hdfs",
+			mode => "0400",
+			alias => "http.service.keytab",
+			before => File["hdfs-site.xml"],
+		}
 	}
 }
