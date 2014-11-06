@@ -40,6 +40,19 @@
 # [*datanodes_hostnames*] (undef)
 #   Array of Data Node machines. Used *slaves* by default.
 #
+# [*hdfs_dirs*] (["file:///var/lib/hadoop-hdfs"])
+#  Directory prefixes to store the data.
+#    - namenode:
+#	- name table (fsimage) and DFS data blocks
+#	- /${user.name}/dfs/namenode suffix is always added
+#       - If there is multiple directories, then the name table is replicated in all of the directories, for redundancy.
+#    - datanode:
+#	- DFS data blocks
+#	- /${user.name}/dfs/datanode suffix is always added
+#	- If there is multiple directories, then data will be stored in all directories, typically on different devices.
+#  When adding a new directory, you need to replicate the contents from some of the other ones. Or set dfs.namenode.name.dir.restore to true and create NEW_DIR/hdfs/dfs/namenode with proper owners.
+#
+#
 class hadoop (
 	$hdfs_hostname = $params::hdfs_hostname,
 	$yarn_hostname = $params::yarn_hostname,
@@ -54,6 +67,8 @@ class hadoop (
 	$historyserver_hostname = undef,
 	$nodemanager_hostnames = undef,
 	$datanode_hostnames = undef,
+
+	$hdfs_dirs = $params::hdfs_dirs,
 ) inherits hadoop::params {
 	include 'stdlib'
 

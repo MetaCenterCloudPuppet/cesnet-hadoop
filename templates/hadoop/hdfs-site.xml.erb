@@ -29,15 +29,15 @@
   </property>
   <property>
      <name>dfs.namenode.name.dir</name>
-     <value>file:///var/lib/hadoop-hdfs/${user.name}/dfs/namenode</value>
+     <value><%= scope.lookupvar('hadoop::hdfs_dirs').map{ |dir| "#{dir}/${user.name}/dfs/namenode" }.join(',') -%></value>
   </property>
   <property>
      <name>dfs.namenode.checkpoint.dir</name>
-     <value>file:///var/lib/hadoop-hdfs/${user.name}/dfs/secondarynamenode</value>
+     <value><%= scope.lookupvar('hadoop::hdfs_dirs').map{ |dir| "#{dir}/${user.name}/dfs/secondarynamenode" }.join(',') -%></value>
   </property>
   <property>
      <name>dfs.datanode.data.dir</name>
-     <value>file:///var/lib/hadoop-hdfs/${user.name}/dfs/datanode</value>
+     <value><%= scope.lookupvar('hadoop::hdfs_dirs').map{ |dir| "#{dir}/${user.name}/dfs/datanode" }.join(',') -%></value>
   </property>
   <!-- permitted data nodes -->
   <property>
