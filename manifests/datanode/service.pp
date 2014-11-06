@@ -16,19 +16,17 @@ class hadoop::datanode::service {
 		alias => "hadoop-datanode.service",
 		source => "puppet:///modules/hadoop/hadoop-datanode.service",
 	}
+	~>
 	# fix Fedora startup - reload systemd after changes
-	# XXX: should launch only after service file change,
-	#      but this is workaround for bug in Fedora which needs to be fixed anyway
-	exec { "systemctl-daemon-reload":
+	exec { "datanode-systemctl-daemon-reload":
 		command => "systemctl daemon-reload",
 		path => "/sbin:/usr/sbin:/bin:/usr/bin",
-		require => [File["sysconfig-hadoop-datanode"], File["hadoop-datanode.service"]],
-		subscribe => File["hadoop-datanode.service"],
+		refreshonly => true,
 	}
 	service { "hadoop-datanode":
 		ensure  => "running",
 		enable => true,
-		require => [Exec["systemctl-daemon-reload"]],
+		require => [Exec["datanode-systemctl-daemon-reload"]],
 		subscribe => [File["core-site.xml"], File["hdfs-site.xml"], File["sysconfig-hadoop-datanode"], File["hadoop-datanode.service"]],
 	}
 }

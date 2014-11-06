@@ -5,15 +5,18 @@
 #
 class hadoop::namenode::service {
 	contain hadoop::format
+	contain hadoop::create_dirs
 
+	Class["hadoop::format"]
+	->
 	service { "hadoop-namenode":
 		ensure  => "running",
 		enable => true,
 		subscribe => [File["core-site.xml"], File["hdfs-site.xml"]],
-		require => Class["format"],
 	}
-	class { "create_dirs":
-		require => [Service["hadoop-namenode"], Class["format"]],
-		subscribe => [Class["format"], User["mapred"]],
-	}
+	->
+	Class["hadoop::create_dirs"]
+
+	Class["hadoop::format"] ~> Class["hadoop::create_dirs"]
+	User["mapred"] -> Class["hadoop::create_dirs"]
 }

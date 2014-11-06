@@ -36,5 +36,6 @@ class hadoop::nodemanager::config {
 	exec { "nodemanager-systemctl-daemon-reload":
 		command => "systemctl daemon-reload",
 		path => "/sbin:/usr/sbin:/bin:/usr/bin",
+		refreshonly => true,
 	}
 }

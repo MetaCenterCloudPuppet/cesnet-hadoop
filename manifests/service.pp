@@ -10,6 +10,12 @@ class hadoop::service {
 
 	if $hadoop::daemon_resourcemanager {
 		contain hadoop::resourcemanager::service
+
+		# namenode should be launched first if it is colocated with historyserver
+		# (just cosmetics, some initial exceptions in logs) (tested on hadoop 2.4.1)
+		if $hadoop::daemon_namenode {
+			Class["hadoop::namenode::service"] -> Class["hadoop::resourcemanager::service"]
+		}
 	}
 
 	if $hadoop::daemon_historyserver {
@@ -34,6 +40,10 @@ class hadoop::service {
 
 	if $hadoop::daemon_datanode {
 		contain hadoop::datanode::service
+
+		if $hadoop::daemon_namenode {
+			Class["hadoop::namenode::service"] -> Class["hadoop::datanode::service"]
+		}
 	}
 
 	if $hadoop::frontend { contain hadoop::frontend::service }
