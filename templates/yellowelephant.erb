@@ -11,15 +11,36 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
-if [ "$1" == "clean" -o "$1" == "restart" ]; then
-	$0 stop
-	rm -rfv /var/log/hadoop-*/* 2>/dev/null || :
-	$0 start
-	exit $?
-fi
+while [ -n "$1" ]; do
 
-<%if scope.lookupvar('hadoop::daemon_namenode') -%>systemctl $1 hadoop-namenode<%end%>
-<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>systemctl $1 hadoop-resourcemanager<%end%>
-<%if scope.lookupvar('hadoop::daemon_historyserver') -%>systemctl $1 hadoop-historyserver<%end%>
-<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>systemctl $1 hadoop-nodemanager<%end%>
-<%if scope.lookupvar('hadoop::daemon_datanode') -%>systemctl $1 hadoop-datanode<%end%>
+	case "$1" in
+	clean)
+		rm -rfv /var/log/hadoop-*/* 2>/dev/null || :
+		;;
+	start|restart)
+		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "namenode $1"; systemctl $1 hadoop-namenode<%end%>
+		<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>echo "resourcemanager $1"; systemctl $1 hadoop-resourcemanager&<%end%>
+		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "historyserver $1"; systemctl $1 hadoop-historyserver&<%end%>
+		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "nodemanager $1"; systemctl $1 hadoop-nodemanager&<%end%>
+		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "datanode $1"; systemctl $1 hadoop-datanode&<%end%>
+		wait
+		;;
+	stop)
+		<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>echo "resourcemanager $1"; systemctl $1 hadoop-resourcemanager&<%end%>
+		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "historyserver $1"; systemctl $1 hadoop-historyserver&<%end%>
+		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "nodemanager $1"; systemctl $1 hadoop-nodemanager&<%end%>
+		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "datanode $1"; systemctl $1 hadoop-datanode&<%end%>
+		wait
+		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "namenode $1"; systemctl $1 hadoop-namenode<%end%>
+		;;
+	*)
+		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "namenode $1"; systemctl $1 hadoop-namenode<%end%>
+		<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>echo "resourcemanager $1"; systemctl $1 hadoop-resourcemanager<%end%>
+		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "historyserver $1"; systemctl $1 hadoop-historyserver<%end%>
+		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "nodemanager $1"; systemctl $1 hadoop-nodemanager<%end%>
+		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "datanode $1"; systemctl $1 hadoop-datanode<%end%>
+		;;
+	esac
+
+	shift
+done
