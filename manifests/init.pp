@@ -40,7 +40,7 @@
 # [*datanodes_hostnames*] (undef)
 #   Array of Data Node machines. Used *slaves* by default.
 #
-# [*hdfs_dirs*] (["file:///var/lib/hadoop-hdfs"])
+# [*hdfs_dirs*] (["/var/lib/hadoop-hdfs"])
 #  Directory prefixes to store the data.
 #    - namenode:
 #	- name table (fsimage) and DFS data blocks

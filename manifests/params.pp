@@ -26,5 +26,5 @@ class hadoop::params {
 	$cluster_name = ""
 	$replication = 1
 
-	$hdfs_dirs = [ "file:///var/lib/hadoop-hdfs" ]
+	$hdfs_dirs = [ "/var/lib/hadoop-hdfs" ]
 }

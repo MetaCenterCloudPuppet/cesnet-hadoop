@@ -5,9 +5,7 @@
 # This class is called from hadoop.
 #
 class hadoop::format {
-	$dirs = map($hadoop::hdfs_dirs) |$dir| { regsubst($dir, "^file://", "") }
-
-	file { $dirs:
+	file { $hadoop::hdfs_dirs:
 		ensure => directory,
 		owner => 'hdfs',
 		group => 'hadoop',
