@@ -47,8 +47,8 @@
   </property>
 <% end -%>
 
-<% @props.keys.each do |p| -%>
-<%if p =~ /^mapreduce\./ and @props[p] != '::undef' -%>
+<% mapred_properties = scope.lookupvar('hadoop::props').select { |name,value| name =~ /^mapreduce\./ and value != '::undef' } -%>
+<% mapred_properties.keys.each do |p| -%>
 <%if @descs[p] -%>
   <!-- <%= @descs[p] %> -->
 <% end -%>
@@ -56,7 +56,6 @@
     <name><%= p -%></name>
     <value><%= @props[p] -%></value>
   </property>
-<% end -%>
 <% end -%>
 
 </configuration>

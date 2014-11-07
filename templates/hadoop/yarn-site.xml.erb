@@ -119,8 +119,8 @@
   </property>
 <% end -%>
 
-<% @props.keys.each do |p| -%>
-<%if p =~ /^yarn\./ and @props[p] != '::undef' -%>
+<% yarn_properties = scope.lookupvar('hadoop::props').select { |name,value| name =~ /^yarn\./ and value != '::undef' } -%>
+<% yarn_properties.keys.each do |p| -%>
 <%if @descs[p] -%>
   <!-- <%= @descs[p] %> -->
 <% end -%>
@@ -128,7 +128,6 @@
     <name><%= p -%></name>
     <value><%= @props[p] -%></value>
   </property>
-<% end -%>
 <% end -%>
 
 </configuration>

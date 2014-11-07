@@ -70,8 +70,8 @@ DEFAULT
   </property>
 <% end -%>
 
-<% @props.keys.each do |p| -%>
-<%if not (p =~ /^hadoop\.hdfs\.|^dfs\./) and not (p =~ /^mapreduce\./) and not (p =~ /^yarn\./) and @props[p] != '::undef' -%>
+<% core_properties = scope.lookupvar('hadoop::props').select { |name,value| not (name =~ /^hadoop\.hdfs\.|^dfs\./) and not (name =~ /^mapreduce\./) and not (name =~ /^yarn\./) and value != '::undef' } -%>
+<% core_properties.keys.each do |p| -%>
 <%if @descs[p] -%>
   <!-- <%= @descs[p] %> -->
 <% end -%>
@@ -79,7 +79,6 @@ DEFAULT
     <name><%= p -%></name>
     <value><%= @props[p] -%></value>
   </property>
-<% end -%>
 <% end -%>
 
 </configuration>
