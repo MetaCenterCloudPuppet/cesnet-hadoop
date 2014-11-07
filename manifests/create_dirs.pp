@@ -9,6 +9,15 @@
 class hadoop::create_dirs {
 	$realm = $hadoop::realm
 
+	# existing kerberos ticket is in the way when using 'runuser',
+	# destroy it only when needed though
+	exec { "kdfs-kdestroy":
+		command => "kdestroy",
+		path => "/sbin:/usr/sbin:/bin:/usr/bin",
+		onlyif => "test -n \"$realm\"",
+		creates => "/var/lib/hadoop-hdfs/.puppet-hdfs-root-created",
+	}
+	->
 	exec { "hdfs-kinit":
 		command => "runuser hdfs -s /bin/bash /bin/bash -c \"kinit -k nn/$fqdn@$realm -t /etc/security/keytab/nn.service.keytab\"",
 		path => "/sbin:/usr/sbin:/bin:/usr/bin",
