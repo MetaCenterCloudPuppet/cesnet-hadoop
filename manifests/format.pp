@@ -5,15 +5,6 @@
 # This class is called from hadoop.
 #
 class hadoop::format {
-	file { $hadoop::hdfs_dirs:
-		ensure => directory,
-		owner => 'hdfs',
-		group => 'hadoop',
-		mode => '0755',
-	}
-
-	->
-
 	# 1) directory /var/lib/hadoop-hdfs/hdfs may be created by other
 	#    daemons, format command will create the namenode subdirectory
 	# 2) prefix can be different and/or replicated anyway
@@ -21,5 +12,6 @@ class hadoop::format {
 		command => "sudo -u hdfs hdfs namenode -format ${hadoop::cluster_name} && rm -f /var/lib/hadoop-hdfs/.puppet-hdfs-root-created && touch /var/lib/hadoop-hdfs/.puppet-hdfs-formatted",
 		creates => "/var/lib/hadoop-hdfs/.puppet-hdfs-formatted",
 		path => "/bin:/usr/bin",
+		require => File [ $hadoop::hdfs_dirs ],
 	}
 }

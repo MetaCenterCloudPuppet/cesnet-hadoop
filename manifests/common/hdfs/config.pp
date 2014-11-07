@@ -1,6 +1,14 @@
 # == Class hadoop::common::hdfs::config
 #
 class hadoop::common::hdfs::config {
+	# ensure proper owner and group
+	file { $hadoop::hdfs_dirs:
+		ensure => directory,
+		owner => 'hdfs',
+		group => 'hadoop',
+		mode => '0755',
+	}
+
 	file { "/etc/hadoop/hdfs-site.xml":
 		owner => "root",
 		group => "root",
