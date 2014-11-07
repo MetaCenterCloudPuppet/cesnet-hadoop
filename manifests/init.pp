@@ -16,9 +16,6 @@
 # [*frontends*]
 #   Array of frontend hostnames. Used *slaves* by default.
 #
-# [*replication*] (1)
-#   Number of replicas.
-#
 # [*cluster_name*] ("")
 #   Name of the cluster, used during initial formatting of HDFS.
 #
@@ -52,6 +49,29 @@
 #	- If there is multiple directories, then data will be stored in all directories, typically on different devices.
 #  When adding a new directory, you need to replicate the contents from some of the other ones. Or set dfs.namenode.name.dir.restore to true and create NEW_DIR/hdfs/dfs/namenode with proper owners.
 #
+# [*properties*] (see params.pp)
+#   "Raw" properties for hadoop cluster. "::undef" will remove property from defaults, empty string sets empty value.
+#
+# [*descriptions*] (see params.pp)
+#   Descriptions for the properties, just for cuteness.
+#
+# === Example
+#
+#class{"hadoop":
+#	hdfs_hostname => "hdfs.example.com",
+#	yarn_hostname => "yarn.example.com",
+#	slaves => [ "node1.example.com", "node2.example.com", "node3.example.com" ],
+#	frontends => [ "node1.example.com" ],
+#	realm => "EXAMPLE.COM",
+#	hdfs_dirs => [ "/var/lib/hadoop-hdfs", "/data2", "/data3", "/data4" ],
+#	cluster_name => "MY_CLUSTER_NAME",
+#	properties => {
+#		'dfs.replication' => 2,
+#	},
+#	descriptions => {
+#		'dfs.replication' => "default number of replicas",
+#	},
+#}
 #
 class hadoop (
 	$hdfs_hostname = $params::hdfs_hostname,
@@ -59,7 +79,6 @@ class hadoop (
 	$slaves = $params::slaves,
 	$frontends = [],
 	$cluster_name = $params::cluster_name,
-	$replication = $params::replication,
 	$realm,
 
 	$namenode_hostname = undef,
@@ -69,6 +88,8 @@ class hadoop (
 	$datanode_hostnames = undef,
 
 	$hdfs_dirs = $params::hdfs_dirs,
+	$properties = $params::properties,
+	$descriptions = $params::descriptions,
 ) inherits hadoop::params {
 	include 'stdlib'
 
@@ -111,6 +132,9 @@ class hadoop (
 	if member($frontend_hostnames, $fqdn) {
 		$frontend = 1
 	}
+
+	$props = merge($params::properties, $properties)
+	$descs = merge($params::descriptions, $descriptions)
 
 	class { 'hadoop::install': } ->
 	class { 'hadoop::config': } ~>

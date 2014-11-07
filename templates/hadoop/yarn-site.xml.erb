@@ -117,6 +117,18 @@
     <name>yarn.nodemanager.linux-container-executor.group</name>
     <value>hadoop</value>
   </property>
-
 <% end -%>
+
+<% @props.keys.each do |p| -%>
+<%if p =~ /^yarn\./ and @props[p] != '::undef' -%>
+<%if @descs[p] -%>
+  <!-- <%= @descs[p] %> -->
+<% end -%>
+  <property>
+    <name><%= p -%></name>
+    <value><%= @props[p] -%></value>
+  </property>
+<% end -%>
+<% end -%>
+
 </configuration>

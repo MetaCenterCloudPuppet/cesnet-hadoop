@@ -49,10 +49,10 @@ org.apache.hadoop.yarn.exceptions.YarnRuntimeException: org.apache.hadoop.securi
     <name>hadoop.security.authorization</name>
     <value>false</value>
   </property>
-  <!-- TODO: switch to integrity -->
+  <!-- authentication, integrity, privacy -->
   <property>
     <name>hadoop.rcp.protection</name>
-    <value>authentication</value> <!-- authentication, integrity, privacy -->
+    <value>integrity</value>
   </property>
 
   <!-- give Kerberos principles proper groups (through mapping to local
@@ -68,6 +68,18 @@ RULE:[2:$1;$2@$0](^[nd]n;.*@<%= @realm -%>$)s/^.*$/hdfs/
 DEFAULT
     </value>
   </property>
-
 <% end -%>
+
+<% @props.keys.each do |p| -%>
+<%if not (p =~ /^hadoop\.hdfs\.|^dfs\./) and not (p =~ /^mapreduce\./) and not (p =~ /^yarn\./) and @props[p] != '::undef' -%>
+<%if @descs[p] -%>
+  <!-- <%= @descs[p] %> -->
+<% end -%>
+  <property>
+    <name><%= p -%></name>
+    <value><%= @props[p] -%></value>
+  </property>
+<% end -%>
+<% end -%>
+
 </configuration>

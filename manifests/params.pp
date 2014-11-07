@@ -24,7 +24,10 @@ class hadoop::params {
 	$slaves = [ "localhost" ]
 
 	$cluster_name = ""
-	$replication = 1
 
 	$hdfs_dirs = [ "/var/lib/hadoop-hdfs" ]
+	$properties = {
+	}
+	$descriptions = {
+	}
 }
