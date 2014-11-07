@@ -55,14 +55,16 @@ org.apache.hadoop.yarn.exceptions.YarnRuntimeException: org.apache.hadoop.securi
     <value>authentication</value> <!-- authentication, integrity, privacy -->
   </property>
 
-  <!-- trying to make mapreduce to work -->
-  <!-- TODO: IMHO only mapred needed -->
+  <!-- give Kerberos principles proper groups (through mapping to local
+       users) -->
+  <!-- probably not needed:
+RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
+  -->
   <property>
     <name>hadoop.security.auth_to_local</name>
     <value>
 RULE:[2:$1;$2@$0](^jhs;.*@<%= @realm -%>$)s/^.*$/mapred/
 RULE:[2:$1;$2@$0](^[nd]n;.*@<%= @realm -%>$)s/^.*$/hdfs/
-RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
 DEFAULT
     </value>
   </property>
