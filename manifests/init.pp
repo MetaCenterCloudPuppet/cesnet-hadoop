@@ -151,10 +151,16 @@ class hadoop (
 	$props = merge($params::properties, $properties, $rm_ss_properties)
 	$descs = merge($params::descriptions, $descriptions)
 
-	class { 'hadoop::install': } ->
-	class { 'hadoop::config': } ~>
-	class { 'hadoop::service': } ->
+	include 'hadoop::install'
+	include 'hadoop::config'
+	include 'hadoop::service'
+
+	Class['hadoop::install'] ->
+	Class['hadoop::config'] ~>
+	Class['hadoop::service'] ->
 	Class['hadoop']
+
+	Class['hadoop::install'] -> Class [ 'hadoop::common::slaves' ]
 
 	# XXX: helper administrator script, move somewere else
 	file { "/usr/local/bin/yellowelephant":
