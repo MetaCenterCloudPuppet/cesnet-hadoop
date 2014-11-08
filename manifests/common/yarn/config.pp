@@ -1,4 +1,6 @@
 class hadoop::common::yarn::config {
+	include hadoop::common::slaves
+
 	file { "/etc/hadoop/yarn-site.xml":
 		owner => "root",
 		group => "root",

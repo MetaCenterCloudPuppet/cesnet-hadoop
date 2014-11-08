@@ -1,6 +1,8 @@
 # == Class hadoop::common::hdfs::config
 #
 class hadoop::common::hdfs::config {
+	include hadoop::common::slaves
+
 	# ensure proper owner and group
 	file { $hadoop::hdfs_dirs:
 		ensure => directory,
