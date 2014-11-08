@@ -55,6 +55,10 @@
 # [*descriptions*] (see params.pp)
 #   Descriptions for the properties, just for cuteness.
 #
+# [*features*] ()
+#   Enable additional features:
+#   - rmstore: ResourceManager recovery using state-store
+#
 # === Example
 #
 #class{"hadoop":
@@ -90,6 +94,7 @@ class hadoop (
 	$hdfs_dirs = $params::hdfs_dirs,
 	$properties = $params::properties,
 	$descriptions = $params::descriptions,
+	$features = $params::features,
 ) inherits hadoop::params {
 	include 'stdlib'
 
@@ -133,7 +138,17 @@ class hadoop (
 		$frontend = 1
 	}
 
-	$props = merge($params::properties, $properties)
+	if ($hadoop::features["rmstore"]) {
+		$rm_ss_properties = {
+			'yarn.resourcemanager.recovery.enabled' => true,
+			'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
+			'yarn.resourcemanager.fs.state-store.uri' => "hdfs://$nn_hostname:8020/rmstore",
+		}
+	} else {
+		$rm_ss_properties = {}
+	}
+
+	$props = merge($params::properties, $properties, $rm_ss_properties)
 	$descs = merge($params::descriptions, $descriptions)
 
 	class { 'hadoop::install': } ->

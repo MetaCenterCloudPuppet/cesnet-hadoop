@@ -26,8 +26,12 @@ class hadoop::params {
 	$cluster_name = ""
 
 	$hdfs_dirs = [ "/var/lib/hadoop-hdfs" ]
+	# other properties added in init.pp
 	$properties = {
 	}
 	$descriptions = {
+		'yarn.resourcemanager.recovery.enabled' => 'enable resubmit old jobs on start',
+	}
+	$features = {
 	}
 }

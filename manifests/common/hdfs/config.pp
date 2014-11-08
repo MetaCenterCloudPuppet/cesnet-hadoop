@@ -39,4 +39,26 @@ class hadoop::common::hdfs::config {
 		groups => [ "hadoop" ],
 		require => [Group["mapred"]]
 	}
+
+	#
+	# rm user (from principle) is required for ResourceManager state-store
+	# working with Kerberos
+	#
+	# org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore
+	# ignores hadoop.security.auth_to_local
+	#
+	if ($hadoop::realm and $hadoop::features["rmstore"]) {
+		user { "rm":
+			ensure => present,
+			comment => "Apache Hadoop Yarn",
+			password => "!!",
+			shell => "/sbin/nologin",
+			home => "/var/cache/hadoop-yarn",
+			managehome => false,
+			system => true,
+			gid => "mapred",
+			groups => [ "hadoop" ],
+			require => [Group["mapred"]]
+		}
+	}
 }
