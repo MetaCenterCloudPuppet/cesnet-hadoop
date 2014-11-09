@@ -58,6 +58,7 @@
 # [*features*] ()
 #   Enable additional features:
 #   - rmstore: resource manager recovery using state-store
+#   - rmrestart: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
 #   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY)
 #
 # === Example
