@@ -14,6 +14,36 @@ class hadoop::nodemanager::config {
 			alias => "nm.service.keytab",
 			before => File["yarn-site.xml"],
 		}
+
+		if $hadoop::features["krbrefresh"] {
+			$user = "yarn"
+			$file = "/tmp/krb5cc_nm"
+			$keytab = "/etc/security/keytab/nm.service.keytab"
+			$principal = "nm/$fqdn@$hadoop::realm"
+
+			file { "/etc/cron.d/hadoop-nodemanager-krb5cc":
+				owner => "root",
+				group => "root",
+				mode => "0644",
+				alias => "nm-cron",
+				content => template("hadoop/cron.erb"),
+			}
+
+			exec { "nm-kinit":
+				command => "kinit -k -t $keytab $principal",
+				user => $user,
+				path => "/bin:/usr/bin",
+				environment => [ "KRB5CCNAME=FILE:$file" ],
+				creates => $file,
+			}
+
+			file { "/etc/sysconfig/hadoop-nodemanager":
+				owner => "root",
+				group => "root",
+				alias => "nm-env",
+				source => "puppet:///modules/hadoop/hadoop-nodemanager",
+			}
+		}
 	}
 
 	file { "/etc/hadoop/container-executor.cfg":

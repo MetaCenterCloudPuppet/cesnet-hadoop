@@ -1,0 +1,1 @@
+<%= scope.lookupvar('hadoop::features')["krbrefresh"] -%>	<%= @user -%>	KRB5CCNAME=FILE:<%= @file -%> kinit -k -t <%= @keytab -%> <%= @principal -%> >/dev/null 2>&1

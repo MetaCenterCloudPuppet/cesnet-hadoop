@@ -57,7 +57,8 @@
 #
 # [*features*] ()
 #   Enable additional features:
-#   - rmstore: ResourceManager recovery using state-store
+#   - rmstore: resource manager recovery using state-store
+#   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY)
 #
 # === Example
 #
@@ -74,6 +75,10 @@
 #	},
 #	descriptions => {
 #		'dfs.replication' => "default number of replicas",
+#	},
+#	features => {
+#		rmstore => true,
+#		krbrefresh => '00 */4 * * *',
 #	},
 #}
 #
