@@ -16,6 +16,12 @@ class hadoop::service {
 		if $hadoop::daemon_namenode {
 			Class["hadoop::namenode::service"] -> Class["hadoop::resourcemanager::service"]
 		}
+
+		# any datanode needs to be launched when state-store feature is enabled,
+		# so rather always start it when colocated with resource manager
+		if $hadoop::daemon_datanode and $hadoop::features["rmstore"] {
+			Class["hadoop::datanode::service"] -> Class["hadoop::resourcemanager::service"]
+		}
 	}
 
 	if $hadoop::daemon_historyserver {
