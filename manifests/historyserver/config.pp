@@ -7,7 +7,9 @@ class hadoop::historyserver::config {
 	contain hadoop::common::yarn::config
 
 	if $hadoop::daemon_historyserver and $hadoop::realm {
-		file { "/etc/security/keytab/jhs.service.keytab":
+		$keytab = "/etc/security/keytab/jhs.service.keytab"
+
+		file { $keytab:
 			owner => "mapred",
 			group => "mapred",
 			mode => "0400",
@@ -18,7 +20,6 @@ class hadoop::historyserver::config {
 		if $hadoop::features["krbrefresh"] {
 			$user = "mapred"
 			$file = "/tmp/krb5cc_jhs"
-			$keytab = "/etc/security/keytab/jhs.service.keytab"
 			$principal = "jhs/$fqdn@$hadoop::realm"
 
 			file { "/etc/cron.d/hadoop-historyserver-krb5cc":
@@ -36,6 +37,8 @@ class hadoop::historyserver::config {
 				environment => [ "KRB5CCNAME=FILE:$file" ],
 				creates => $file,
 			}
+
+			File[$keytab] -> Exec["jhs-kinit"]
 
 			file { "/etc/sysconfig/hadoop-historyserver":
 				owner => "root",

@@ -5,7 +5,9 @@ class hadoop::datanode::config {
 	contain hadoop::common::hdfs::config
 
 	if $hadoop::daemon_datanode and $hadoop::realm {
-		file { "/etc/security/keytab/dn.service.keytab":
+		$keytab = "/etc/security/keytab/dn.service.keytab"
+
+		file { $keytab:
 			owner => "hdfs",
 			group => "hdfs",
 			mode => "0400",
@@ -15,7 +17,6 @@ class hadoop::datanode::config {
 		if $hadoop::features["krbrefresh"] {
 			$user = "hdfs"
 			$file = "/tmp/krb5cc_dn"
-			$keytab = "/etc/security/keytab/dn.service.keytab"
 			$principal = "dn/$fqdn@$hadoop::realm"
 
 			file { "/etc/cron.d/hadoop-datanode-krb5cc":
@@ -33,6 +34,8 @@ class hadoop::datanode::config {
 				environment => [ "KRB5CCNAME=FILE:$file" ],
 				creates => $file,
 			}
+
+			File[$keytab] -> Exec["dn-kinit"]
 
 			# already in service
 			#file { "/etc/sysconfig/hadoop-datanode":
