@@ -3,6 +3,7 @@
 class hadoop::datanode::service {
 	# TODO: needs also a patch for hadoop-daemon.sh
 	# fix Fedora startup - environment
+	# TODO: when removing this, update also hadoop::datanode::config
 	file { "/etc/sysconfig/hadoop-datanode":
 		owner => "root",
 		group => "root",
