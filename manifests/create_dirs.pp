@@ -12,7 +12,7 @@ class hadoop::create_dirs {
   # (Hadoop 2.4.1)
   if ($realm) { $rmstore_user = 'rm' }
   else { $rmstore_user = 'yarn' }
-  # lint:ignore:quoted_booleans
+  # lint:ignore:quoted_booleans 'true' and 'false' are commands to run here
   if ($hadoop::features["rmstore"]) { $rmstore = "true" }
   else { $rmstore = "false" }
   # lint:endignore
