@@ -4,7 +4,7 @@
 # It sets variables according to platform
 #
 class hadoop::params {
-	case "$::osfamily/${::operatingsystem}" {
+	case "${::osfamily}/${::operatingsystem}" {
 		'RedHat/Fedora': {
 			$packages_common = [ "hadoop-common", "hadoop-common-native" ]
 			$packages_nn = [ "hadoop-hdfs" ]

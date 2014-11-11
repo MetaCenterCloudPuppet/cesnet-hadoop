@@ -1,3 +1,7 @@
+# == Class: hadoop::common::yarn::config
+#
+# Setup the "yarn part" on the nodes. This class is used for example for historyserver, resourcemanager, nodemanagers or frontends.
+#
 class hadoop::common::yarn::config {
 	include hadoop::common::slaves
 

@@ -17,7 +17,7 @@ class hadoop::datanode::config {
 		if $hadoop::features["krbrefresh"] {
 			$user = "hdfs"
 			$file = "/tmp/krb5cc_dn"
-			$principal = "dn/$fqdn@$hadoop::realm"
+			$principal = "dn/${::fqdn}@${hadoop::realm}"
 
 			file { "/etc/cron.d/hadoop-datanode-krb5cc":
 				owner => "root",
@@ -28,10 +28,10 @@ class hadoop::datanode::config {
 			}
 
 			exec { "dn-kinit":
-				command => "kinit -k -t $keytab $principal",
+				command => "kinit -k -t ${keytab} ${principal}",
 				user => $user,
 				path => "/bin:/usr/bin",
-				environment => [ "KRB5CCNAME=FILE:$file" ],
+				environment => [ "KRB5CCNAME=FILE:${file}" ],
 				creates => $file,
 			}
 

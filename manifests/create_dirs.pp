@@ -12,22 +12,24 @@ class hadoop::create_dirs {
 	# (Hadoop 2.4.1)
 	if ($realm) { $rmstore_user = "rm" }
 	else { $rmstore_user = "yarn" }
+	# lint:ignore:quoted_booleans
 	if ($hadoop::features["rmstore"]) { $rmstore = "true" }
 	else { $rmstore = "false" }
+	# lint:endignore
 
 	# existing kerberos ticket is in the way when using 'runuser',
 	# destroy it only when needed though
 	exec { "kdfs-kdestroy":
 		command => "kdestroy",
 		path => "/sbin:/usr/sbin:/bin:/usr/bin",
-		onlyif => "test -n \"$realm\"",
+		onlyif => "test -n \"${realm}\"",
 		creates => "/var/lib/hadoop-hdfs/.puppet-hdfs-root-created",
 	}
 	->
 	exec { "hdfs-kinit":
-		command => "runuser hdfs -s /bin/bash /bin/bash -c \"kinit -k nn/$fqdn@$realm -t /etc/security/keytab/nn.service.keytab\"",
+		command => "runuser hdfs -s /bin/bash /bin/bash -c \"kinit -k nn/${::fqdn}@${realm} -t /etc/security/keytab/nn.service.keytab\"",
 		path => "/sbin:/usr/sbin:/bin:/usr/bin",
-		onlyif => "test -n \"$realm\"",
+		onlyif => "test -n \"${realm}\"",
 		creates => "/var/lib/hadoop-hdfs/.puppet-hdfs-root-created",
 	}
 	->
@@ -56,7 +58,7 @@ class hadoop::create_dirs {
 	exec { "hdfs-kdestroy":
 		command => "runuser hdfs -s /bin/bash /bin/bash -c \"kdestroy\"",
 		path => "/sbin:/usr/sbin:/bin:/usr/bin",
-		onlyif => "test -n \"$realm\"",
+		onlyif => "test -n \"${realm}\"",
 		creates => "/var/lib/hadoop-hdfs/.puppet-hdfs-root-created",
 	}
 }

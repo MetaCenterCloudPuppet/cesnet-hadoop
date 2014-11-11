@@ -118,29 +118,29 @@ class hadoop (
 	if $frontends { $frontend_hostnames = $frontends }
 	else { $frontend_hostnames = $slaves }
 
-	if $fqdn == $nn_hostname {
+	if $::fqdn == $nn_hostname {
 		$daemon_namenode = 1
 		$mapred_user = 1
 
 	}
 
-	if $fqdn == $rm_hostname {
+	if $::fqdn == $rm_hostname {
 		$daemon_resourcemanager = 1
 	}
 
-	if $fqdn == $hs_hostname {
+	if $::fqdn == $hs_hostname {
 		$daemon_historyserver = 1
 	}
 
-	if member($nm_hostnames, $fqdn) {
+	if member($nm_hostnames, $::fqdn) {
 		$daemon_nodemanager = 1
 	}
 
-	if member($dn_hostnames, $fqdn) {
+	if member($dn_hostnames, $::fqdn) {
 		$daemon_datanode = 1
 	}
 
-	if member($frontend_hostnames, $fqdn) {
+	if member($frontend_hostnames, $::fqdn) {
 		$frontend = 1
 	}
 
@@ -148,7 +148,7 @@ class hadoop (
 		$rm_ss_properties = {
 			'yarn.resourcemanager.recovery.enabled' => true,
 			'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
-			'yarn.resourcemanager.fs.state-store.uri' => "hdfs://$nn_hostname:8020/rmstore",
+			'yarn.resourcemanager.fs.state-store.uri' => "hdfs://${nn_hostname}:8020/rmstore",
 		}
 	} else {
 		$rm_ss_properties = {}

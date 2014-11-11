@@ -20,7 +20,7 @@ class hadoop::nodemanager::config {
 		if $hadoop::features["krbrefresh"] {
 			$user = "yarn"
 			$file = "/tmp/krb5cc_nm"
-			$principal = "nm/$fqdn@$hadoop::realm"
+			$principal = "nm/${::fqdn}@${hadoop::realm}"
 
 			file { "/etc/cron.d/hadoop-nodemanager-krb5cc":
 				owner => "root",
@@ -31,10 +31,10 @@ class hadoop::nodemanager::config {
 			}
 
 			exec { "nm-kinit":
-				command => "kinit -k -t $keytab $principal",
+				command => "kinit -k -t ${keytab} ${principal}",
 				user => $user,
 				path => "/bin:/usr/bin",
-				environment => [ "KRB5CCNAME=FILE:$file" ],
+				environment => [ "KRB5CCNAME=FILE:${file}" ],
 				creates => $file,
 			}
 

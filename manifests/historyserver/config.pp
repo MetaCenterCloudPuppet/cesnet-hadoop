@@ -20,7 +20,7 @@ class hadoop::historyserver::config {
 		if $hadoop::features["krbrefresh"] {
 			$user = "mapred"
 			$file = "/tmp/krb5cc_jhs"
-			$principal = "jhs/$fqdn@$hadoop::realm"
+			$principal = "jhs/${::fqdn}@${hadoop::realm}"
 
 			file { "/etc/cron.d/hadoop-historyserver-krb5cc":
 				owner => "root",
@@ -31,10 +31,10 @@ class hadoop::historyserver::config {
 			}
 
 			exec { "jhs-kinit":
-				command => "kinit -k -t $keytab $principal",
+				command => "kinit -k -t ${keytab} ${principal}",
 				user => $user,
 				path => "/bin:/usr/bin",
-				environment => [ "KRB5CCNAME=FILE:$file" ],
+				environment => [ "KRB5CCNAME=FILE:${file}" ],
 				creates => $file,
 			}
 

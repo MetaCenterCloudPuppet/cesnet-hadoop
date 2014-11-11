@@ -1,3 +1,7 @@
+# == Class: hadoop::common::config
+#
+# Setup the part common for all nodes - core-site.xml.
+#
 class hadoop::common::config {
 	file { "/etc/hadoop/core-site.xml":
 		owner => "root",
