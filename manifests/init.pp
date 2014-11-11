@@ -149,6 +149,8 @@ class hadoop (
     'yarn.resourcemanager.hostname' => "${rm_hostname}",
     'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
+    'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
+    'mapreduce.jobhistory.webapps.address' => "${hs_hostname}:19888",
   }
   if ($hadoop::realm) {
     $sec_properties = {
