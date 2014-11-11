@@ -6,7 +6,7 @@ class hadoop::historyserver::config {
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
 
-  if $hadoop::daemon_historyserver and $hadoop::realm {
+  if $hadoop::realm {
     $keytab = '/etc/security/keytab/jhs.service.keytab'
 
     file { $keytab:

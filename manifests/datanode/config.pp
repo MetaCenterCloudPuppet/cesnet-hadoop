@@ -4,7 +4,7 @@ class hadoop::datanode::config {
   contain hadoop::common::config
   contain hadoop::common::hdfs::config
 
-  if $hadoop::daemon_datanode and $hadoop::realm {
+  if $hadoop::realm {
     $keytab = '/etc/security/keytab/dn.service.keytab'
 
     file { $keytab:

@@ -1,4 +1,4 @@
-# == Class hadoop::frontend::service:
+# == Class hadoop::frontend::service
 #
 class hadoop::frontend::service {
 }

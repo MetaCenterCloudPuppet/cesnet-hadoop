@@ -6,7 +6,7 @@ class hadoop::nodemanager::config {
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
 
-  if $hadoop::daemon_nodemanager and $hadoop::realm {
+  if $hadoop::realm {
     $keytab = '/etc/security/keytab/nm.service.keytab'
 
     file { $keytab:

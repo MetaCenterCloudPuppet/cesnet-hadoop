@@ -6,7 +6,7 @@ class hadoop::namenode::config {
   contain hadoop::common::config
   contain hadoop::common::hdfs::config
 
-  if $hadoop::daemon_namenode and $hadoop::realm {
+  if $hadoop::realm {
     file { '/etc/security/keytab/nn.service.keytab':
       owner  => 'hdfs',
       group  => 'hdfs',
