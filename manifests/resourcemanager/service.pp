@@ -4,9 +4,9 @@
 # It ensure the services are running.
 #
 class hadoop::resourcemanager::service {
-	service { "hadoop-resourcemanager":
-		ensure  => "running",
-		enable => true,
-		subscribe => [File["core-site.xml"], File["yarn-site.xml"]],
-	}
+  service { 'hadoop-resourcemanager':
+    ensure    => 'running',
+    enable    => true,
+    subscribe => [File['core-site.xml'], File['yarn-site.xml']],
+  }
 }

@@ -3,7 +3,7 @@
 # Install Hadoop packages used for all nodes.
 #
 class hadoop::common::install {
-	include stdlib
+  include stdlib
 
-	ensure_packages($hadoop::packages_common)
+  ensure_packages($hadoop::packages_common)
 }
