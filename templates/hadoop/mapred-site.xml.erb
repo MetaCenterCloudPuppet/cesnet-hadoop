@@ -41,10 +41,6 @@
     <name>mapreduce.jobhistory.keytab</name>
     <value>/etc/security/keytab/jhs.service.keytab</value>
   </property>
-  <property>
-    <name>mapreduce.jobhistory.principal</name>
-    <value>jhs/_HOST@<%= @realm -%></value>
-  </property>
 <% end -%>
 
 <% mapred_properties = scope.lookupvar('hadoop::props').select { |name,value| name =~ /^mapreduce\./ and value != '::undef' } -%>

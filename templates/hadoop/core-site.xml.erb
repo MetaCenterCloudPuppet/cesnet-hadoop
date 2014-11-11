@@ -19,11 +19,6 @@
 
 <configuration>
 
-  <property>
-    <name>fs.default.name</name>
-    <value>hdfs://<%= @nn_hostname %>:8020</value>
-  </property>
-
   <!-- HTTPFS proxy user setting -->
   <property>
     <name>hadoop.proxyuser.tomcat.hosts</name>
@@ -33,42 +28,6 @@
     <name>hadoop.proxyuser.tomcat.groups</name>
     <value>*</value>
   </property>
-
-<% if @realm and not @realm.empty? -%>
-  <!-- secure mode -->
-  <property>
-    <name>hadoop.security.authentication</name>
-    <value>kerberos</value>
-  </property>
-  <!-- XXX:
-Probably bug in Hadoop: nodemanagers can't authorize to resourcemanager.
-
-org.apache.hadoop.yarn.exceptions.YarnRuntimeException: org.apache.hadoop.security.authorize.AuthorizationException: User nm/myriad2.zcu.cz@ZCU.CZ (auth:KERBEROS) is not authorized for protocol interface org.apache.hadoop.yarn.server.api.ResourceTrackerPB, expected client Kerberos principal is nm/myriad13.zcu.cz@ZCU.CZ
-  -->
-  <property>
-    <name>hadoop.security.authorization</name>
-    <value>false</value>
-  </property>
-  <!-- authentication, integrity, privacy -->
-  <property>
-    <name>hadoop.rcp.protection</name>
-    <value>integrity</value>
-  </property>
-
-  <!-- give Kerberos principles proper groups (through mapping to local
-       users) -->
-  <!-- probably not needed:
-RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
-  -->
-  <property>
-    <name>hadoop.security.auth_to_local</name>
-    <value>
-RULE:[2:$1;$2@$0](^jhs;.*@<%= @realm -%>$)s/^.*$/mapred/
-RULE:[2:$1;$2@$0](^[nd]n;.*@<%= @realm -%>$)s/^.*$/hdfs/
-DEFAULT
-    </value>
-  </property>
-<% end -%>
 
 <% core_properties = scope.lookupvar('hadoop::props').select { |name,value| not (name =~ /^hadoop\.hdfs\.|^dfs\./) and not (name =~ /^mapreduce\./) and not (name =~ /^yarn\./) and value != '::undef' } -%>
 <% core_properties.keys.each do |p| -%>

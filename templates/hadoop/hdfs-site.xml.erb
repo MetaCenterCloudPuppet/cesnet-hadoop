@@ -47,16 +47,6 @@
   </property>
 
 <% if @realm and not @realm.empty? -%>
-  <!-- different port with security enabled (original port 50010) -->
-  <property>
-      <name>dfs.datanode.address</name>
-      <value>0.0.0.0:1004</value>
-  </property>
-  <!-- different port with security enabled (original port 50075) -->
-  <property>
-      <name>dfs.datanode.http.address</name>
-      <value>0.0.0.0:1006</value>
-  </property>
 <!--
   <property>
       <name>dfs.http.address</name>
@@ -69,48 +59,16 @@
 -->
   <!-- secure mode -->
   <property>
-    <name>dfs.block.access.token.enable</name>
-    <value>true</value>
-  </property>
-  <property>
     <name>dfs.namenode.keytab.file</name>
     <value>/etc/security/keytab/nn.service.keytab</value>
-  </property>
-  <property>
-    <name>dfs.namenode.kerberos.principal</name>
-    <value>nn/<%= @hdfs_hostname -%>@<%= @realm -%></value>
-  </property>
-  <property>
-    <name>dfs.namenode.kerberos.https.principal</name>
-    <value>host/<%= @hdfs_hostname -%>@<%= @realm -%></value>
   </property>
   <property>
     <name>dfs.datanode.keytab.file</name>
     <value>/etc/security/keytab/dn.service.keytab</value>
   </property>
   <property>
-    <name>dfs.datanode.kerberos.principal</name>
-    <value>dn/_HOST@<%= @realm -%></value>
-  </property>
-  <property>
-    <name>dfs.datanode.kerberos.https.principal</name>
-    <value>host/_HOST@<%= @realm -%></value>
-  </property>
-  <property>
-    <name>dfs.encrypt.data.transfer</name>
-    <value>false</value>
-  </property>
-  <property>
-    <name>dfs.webhdfs.enabled</name>
-    <value>true</value>
-  </property>
-  <property>
     <name>dfs.web.authentication.kerberos.keytab</name>
     <value>/etc/security/keytab/http.service.keytab</value>
-  </property>
-  <property>
-    <name>dfs.web.authentication.kerberos.principal</name>
-    <value>http/_HOST@<%= @realm -%></value>
   </property>
 <% end -%>
 

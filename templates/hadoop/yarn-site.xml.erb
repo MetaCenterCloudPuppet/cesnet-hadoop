@@ -19,16 +19,6 @@
 
 <configuration>
 
-  <property>
-    <name>yarn.nodemanager.aux-services</name>
-    <value>mapreduce_shuffle</value>
-  </property>
-
-  <property>
-    <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
-    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
-  </property>
-
 <!--
   <property>
     <name>yarn.log-aggregation-enable</name>
@@ -74,11 +64,6 @@
      </value>
   </property>
 
-  <property>
-    <name>yarn.resourcemanager.hostname</name>
-    <value><%= scope.lookupvar('hadoop::rm_hostname') %></value>
-  </property>
-
   <!-- permitted rack nodes -->
   <property>
     <name>yarn.resourcemanager.nodes.include-path</name>
@@ -98,24 +83,8 @@
     <value>/etc/security/keytab/rm.service.keytab</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.principal</name>
-    <value>rm/_HOST@<%= @realm -%></value>
-  </property>
-  <property>
     <name>yarn.nodemanager.keytab</name>
     <value>/etc/security/keytab/nm.service.keytab</value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.principal</name>
-    <value>nm/_HOST@<%= @realm -%></value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.container-executor.class</name>
-    <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.linux-container-executor.group</name>
-    <value>hadoop</value>
   </property>
 <% end -%>
 

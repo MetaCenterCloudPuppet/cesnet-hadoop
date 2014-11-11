@@ -144,18 +144,64 @@ class hadoop (
     $frontend = 1
   }
 
+  $dyn_properties = {
+    'fs.default.name' => "hdfs://${nn_hostname}:8020",
+    'yarn.resourcemanager.hostname' => "${rm_hostname}",
+    'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
+    'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
+  }
+  if ($hadoop::realm) {
+    $sec_properties = {
+      'hadoop.security.authentication' => 'kerberos',
+      'hadoop.security.authorization' => false,
+      'hadoop.rcp.protection' => 'integrity',
+       # probably not needed:
+       # RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
+      'hadoop.security.auth_to_local' => "
+RULE:[2:\$1;\$2@\$0](^jhs;.*@${realm}$)s/^.*$/mapred/
+RULE:[2:\$1;\$2@\$0](^[nd]n;.*@${realm}$)s/^.*$/hdfs/
+DEFAULT
+",
+      'dfs.datanode.address' => '0.0.0.0:1004',
+      'dfs.datanode.http.address' => '0.0.0.0:1006',
+      'dfs.block.access.token.enable' => true,
+      'dfs.namenode.kerberos.principal' => "nn/${nn_hostname}@${hadoop::realm}",
+      'dfs.namenode.kerberos.https.principal' => "host/${nn_hostname}@${hadoop::realm}",
+      'dfs.datanode.kerberos.principal' => "dn/_HOST@${hadoop::realm}",
+      'dfs.datanode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
+      'dfs.encrypt.data.transfer' => false,
+      'dfs.webhdfs.enabled' => true,
+      'dfs.web.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
+      'mapreduce.jobhistory.principal' => "jhs/_HOST@${hadoop::realm}",
+      'yarn.resourcemanager.principal' => "rm/_HOST@${hadoop::realm}",
+      'yarn.nodemanager.principal' => "nm/_HOST@${hadoop::realm}",
+      'yarn.nodemanager.container-executor.class' => 'org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor',
+      'yarn.nodemanager.linux-container-executor.group' => 'hadoop',
+    }
+    $sec_descriptions = {
+      'hadoop.security.authorization' => 'XXX:
+Probably bug in Hadoop: nodemanagers can\'t authorize to resourcemanager.
+
+org.apache.hadoop.yarn.exceptions.YarnRuntimeException: org.apache.hadoop.security.authorize.AuthorizationException: User nm/myriad2.zcu.cz@ZCU.CZ (auth:KERBEROS) is not authorized for protocol interface org.apache.hadoop.yarn.server.api.ResourceTrackerPB, expected client Kerberos principal is nm/myriad13.zcu.cz@ZCU.CZ',
+      'hadoop.rcp.protection' => 'authentication, integrity, privacy',
+      'hadoop.security.auth_to_local' => "give Kerberos principles proper groups (through mapping to local users)",
+      'dfs.datanode.address' => 'different port with security enabled (original port 50010)',
+      'dfs.datanode.http.address' => 'different port with security enabled (original port 50075)',
+    }
+  }
   if ($hadoop::features["rmstore"]) {
     $rm_ss_properties = {
       'yarn.resourcemanager.recovery.enabled' => true,
       'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
       'yarn.resourcemanager.fs.state-store.uri' => "hdfs://${nn_hostname}:8020/rmstore",
+      'dfs.webhdfs.enabled' => 'TODO: check, has been problems',
     }
   } else {
     $rm_ss_properties = {}
   }
 
-  $props = merge($params::properties, $properties, $rm_ss_properties)
-  $descs = merge($params::descriptions, $descriptions)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $rm_ss_properties, $properties)
+  $descs = merge($params::descriptions, $sec_descriptions, $descriptions)
 
   include 'hadoop::install'
   include 'hadoop::config'
