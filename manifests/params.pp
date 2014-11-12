@@ -30,6 +30,11 @@ class hadoop::params {
   $properties = {
   }
   $descriptions = {
+    'hadoop.rcp.protection' => 'authentication, integrity, privacy',
+    'hadoop.security.auth_to_local' => 'give Kerberos principles proper groups (through mapping to local users)',
+    'hadoop.security.authorization' => 'enable authorization, see hadoop-policy.xml',
+    'dfs.datanode.address' => 'different port with security enabled (original port 50010)',
+    'dfs.datanode.http.address' => 'different port with security enabled (original port 50075)',
     'yarn.resourcemanager.recovery.enabled' => 'enable resubmit old jobs on start',
   }
   $features = {

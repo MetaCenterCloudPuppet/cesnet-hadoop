@@ -59,7 +59,8 @@
 #   Enable additional features:
 #   - rmstore: resource manager recovery using state-store
 #   - rmrestart: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
-#   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY)
+#   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
+#   - authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 #
 # === Example
 #
@@ -80,6 +81,7 @@
 #  features => {
 #    rmstore => true,
 #    krbrefresh => '00 */4 * * *',
+#    authorization => 'limit',
 #  },
 #}
 #
@@ -90,6 +92,7 @@ class hadoop (
   $frontends = [],
   $cluster_name = $params::cluster_name,
   $realm,
+  $authorization = $params::authorization,
 
   $namenode_hostname = undef,
   $resourcemanager_hostname = undef,
@@ -155,7 +158,6 @@ class hadoop (
   if ($hadoop::realm) {
     $sec_properties = {
       'hadoop.security.authentication' => 'kerberos',
-      'hadoop.security.authorization' => false,
       'hadoop.rcp.protection' => 'integrity',
        # probably not needed:
        # RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
@@ -180,15 +182,14 @@ DEFAULT
       'yarn.nodemanager.container-executor.class' => 'org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor',
       'yarn.nodemanager.linux-container-executor.group' => 'hadoop',
     }
-    $sec_descriptions = {
-      'hadoop.security.authorization' => 'XXX:
-Probably bug in Hadoop: nodemanagers can\'t authorize to resourcemanager.
-
-org.apache.hadoop.yarn.exceptions.YarnRuntimeException: org.apache.hadoop.security.authorize.AuthorizationException: User nm/myriad2.zcu.cz@ZCU.CZ (auth:KERBEROS) is not authorized for protocol interface org.apache.hadoop.yarn.server.api.ResourceTrackerPB, expected client Kerberos principal is nm/myriad13.zcu.cz@ZCU.CZ',
-      'hadoop.rcp.protection' => 'authentication, integrity, privacy',
-      'hadoop.security.auth_to_local' => "give Kerberos principles proper groups (through mapping to local users)",
-      'dfs.datanode.address' => 'different port with security enabled (original port 50010)',
-      'dfs.datanode.http.address' => 'different port with security enabled (original port 50075)',
+  }
+  if ($hadoop::features["authorization"]) {
+    $auth_properties = {
+      'hadoop.security.authorization' => true,
+    }
+  } else {
+    $auth_properties = {
+      'hadoop.security.authorization' => false,
     }
   }
   if ($hadoop::features["rmstore"]) {
@@ -202,8 +203,8 @@ org.apache.hadoop.yarn.exceptions.YarnRuntimeException: org.apache.hadoop.securi
     $rm_ss_properties = {}
   }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $rm_ss_properties, $properties)
-  $descs = merge($params::descriptions, $sec_descriptions, $descriptions)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $properties)
+  $descs = merge($params::descriptions, $descriptions)
 
   include 'hadoop::install'
   include 'hadoop::config'
