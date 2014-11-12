@@ -14,6 +14,13 @@ class hadoop::datanode::config {
       alias => 'dn.service.keytab',
     }
 
+    file { "/etc/sysconfig/hadoop-datanode":
+      owner  => "root",
+      group  => "root",
+      alias  => "dn-env",
+      source => "puppet:///modules/hadoop/hadoop-datanode",
+    }
+
     if $hadoop::features["krbrefresh"] {
       $user = 'hdfs'
       $file = '/tmp/krb5cc_dn'
@@ -37,13 +44,6 @@ class hadoop::datanode::config {
 
       File[$keytab] -> Exec['dn-kinit']
 
-      # already in service
-      #file { "/etc/sysconfig/hadoop-datanode":
-      #  owner => "root",
-      #  group => "root",
-      #  alias => "dn-env",
-      #  source => "puppet:///modules/hadoop/hadoop-datanode",
-      #}
     }
   }
 }

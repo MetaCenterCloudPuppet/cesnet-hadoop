@@ -1,4 +1,3 @@
-HADOOP_SECURE_DN_USER=hdfs
 HADOOP_CLASSPATH=/usr/lib/java/commons-daemon.jar
 JSVC_HOME=/usr/bin
 KRB5CCNAME=FILE:/tmp/krb5cc_dn

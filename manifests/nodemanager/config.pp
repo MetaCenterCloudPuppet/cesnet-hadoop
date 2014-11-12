@@ -56,19 +56,4 @@ class hadoop::nodemanager::config {
     alias   => 'container-executor.cfg',
     content => template('hadoop/hadoop/container-executor.cfg.erb'),
   }
-
-  # fix Fedora startup - launch under group yarn
-  file { '/etc/systemd/system/hadoop-nodemanager.service':
-    owner  => 'root',
-    group  => 'root',
-    alias  => 'hadoop-nodemanager.service',
-    source => 'puppet:///modules/hadoop/hadoop-nodemanager.service',
-  }
-  ~>
-  # fix Fedora startup - reload systemd after changes
-  exec { 'nodemanager-systemctl-daemon-reload':
-    command     => 'systemctl daemon-reload',
-    path        => '/sbin:/usr/sbin:/bin:/usr/bin',
-    refreshonly => true,
-  }
 }
