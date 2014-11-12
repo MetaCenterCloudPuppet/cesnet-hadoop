@@ -197,7 +197,6 @@ DEFAULT
       'yarn.resourcemanager.recovery.enabled' => true,
       'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
       'yarn.resourcemanager.fs.state-store.uri' => "hdfs://${nn_hostname}:8020/rmstore",
-      'dfs.webhdfs.enabled' => 'TODO: check, has been problems',
     }
   } else {
     $rm_ss_properties = {}
