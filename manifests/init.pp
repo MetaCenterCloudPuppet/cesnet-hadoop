@@ -151,7 +151,7 @@ class hadoop (
 
   $dyn_properties = {
     'fs.default.name' => "hdfs://${nn_hostname}:8020",
-    'yarn.resourcemanager.hostname' => "${rm_hostname}",
+    'yarn.resourcemanager.hostname' => $rm_hostname,
     'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
@@ -161,8 +161,8 @@ class hadoop (
     $sec_properties = {
       'hadoop.security.authentication' => 'kerberos',
       'hadoop.rcp.protection' => 'integrity',
-       # probably not needed:
-       # RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
+      # probably not needed:
+      # RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
       'hadoop.security.auth_to_local' => "
 RULE:[2:\$1;\$2@\$0](^jhs;.*@${realm}$)s/^.*$/mapred/
 RULE:[2:\$1;\$2@\$0](^[nd]n;.*@${realm}$)s/^.*$/hdfs/

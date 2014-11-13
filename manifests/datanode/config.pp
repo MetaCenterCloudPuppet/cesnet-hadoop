@@ -37,11 +37,11 @@ class hadoop::datanode::config {
 
       File[$keytab] -> Exec['dn-kinit']
 
-      file { "/etc/sysconfig/hadoop-datanode":
-        owner  => "root",
-        group  => "root",
-        alias  => "dn-env",
-        source => "puppet:///modules/hadoop/hadoop-datanode",
+      file { '/etc/sysconfig/hadoop-datanode':
+        owner  => 'root',
+        group  => 'root',
+        alias  => 'dn-env',
+        source => 'puppet:///modules/hadoop/hadoop-datanode',
       }
     }
   }
