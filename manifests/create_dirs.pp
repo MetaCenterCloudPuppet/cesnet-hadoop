@@ -37,6 +37,10 @@ class hadoop::create_dirs {
     command => '/usr/sbin/hdfs-create-dirs && touch /var/lib/hadoop-hdfs/.puppet-hdfs-root-created',
     path    => '/sbin:/usr/sbin:/bin:/usr/bin',
     creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-root-created',
+    # don't call multiple times (takes long) ==> use just 'true' as refresh
+    # lint:ignore:quoted_booleans 'true' and 'false' are commands to run here
+    refresh => 'true',
+    # lint:endignore
   }
   ->
   # this directory is needed for ResourceManager state-store to work
@@ -45,6 +49,10 @@ class hadoop::create_dirs {
     path    => '/sbin:/usr/sbin:/bin:/usr/bin',
     onlyif  => $rmstore,
     creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-rmstore-created',
+    # don't call multiple times (fails) ==> use just 'true' as refresh
+    # lint:ignore:quoted_booleans 'true' and 'false' are commands to run here
+    refresh => 'true',
+    # lint:endignore
   }
   ->
   # this directory is needed for ResourceManager state-store to work
