@@ -10,8 +10,4 @@ class hadoop::nodemanager::service {
     enable    => true,
     subscribe => [File['core-site.xml'], File['yarn-site.xml']],
   }
-
-  if $hadoop::realm and $hadoop::features['krbrefresh'] {
-    File['nm-env'] ~> Service['hadoop-nodemanager']
-  }
 }

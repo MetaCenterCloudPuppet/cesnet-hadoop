@@ -11,8 +11,4 @@ class hadoop::historyserver::service {
     enable    => true,
     subscribe => [File['core-site.xml'], File['yarn-site.xml']],
   }
-
-  if $hadoop::realm and $hadoop::features['krbrefresh'] {
-    File['jhs-env'] ~> Service['hadoop-historyserver']
-  }
 }

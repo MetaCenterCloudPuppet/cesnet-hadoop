@@ -6,8 +6,4 @@ class hadoop::datanode::service {
     enable    => true,
     subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
   }
-
-  if $hadoop::realm and $hadoop::features["krbrefresh"] {
-    File['dn-env'] ~> Service['hadoop-datanode']
-  }
 }
