@@ -47,7 +47,7 @@ class hadoop::common::hdfs::config {
   # org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore
   # ignores hadoop.security.auth_to_local
   #
-  if ($hadoop::realm and $hadoop::features["rmstore"]) {
+  if ($hadoop::realm) {
     user { 'rm':
       ensure     => present,
       comment    => 'Apache Hadoop Yarn',
