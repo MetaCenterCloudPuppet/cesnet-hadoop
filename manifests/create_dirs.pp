@@ -12,10 +12,6 @@ class hadoop::create_dirs {
   # (Hadoop 2.4.1)
   if ($realm) { $rmstore_user = 'rm' }
   else { $rmstore_user = 'yarn' }
-  # lint:ignore:quoted_booleans 'true' and 'false' are commands to run here
-  if ($hadoop::features["rmstore"]) { $rmstore = "true" }
-  else { $rmstore = "false" }
-  # lint:endignore
 
   # existing kerberos ticket is in the way when using 'runuser',
   # destroy it only when needed though
@@ -47,7 +43,6 @@ class hadoop::create_dirs {
   exec { 'hdfs-rmstore':
     command => "runuser hdfs -s /bin/bash /bin/bash -c \"hdfs dfs -mkdir /rmstore\"",
     path    => '/sbin:/usr/sbin:/bin:/usr/bin',
-    onlyif  => $rmstore,
     creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-rmstore-created',
     # don't call multiple times (fails) ==> use just 'true' as refresh
     # lint:ignore:quoted_booleans 'true' and 'false' are commands to run here
@@ -59,7 +54,6 @@ class hadoop::create_dirs {
   exec { 'hdfs-rmstore-chown':
     command => "runuser hdfs -s /bin/bash /bin/bash -c \"hdfs dfs -chown ${rmstore_user}:hadoop /rmstore\" && touch /var/lib/hadoop-hdfs/.puppet-hdfs-rmstore-created",
     path    => '/sbin:/usr/sbin:/bin:/usr/bin',
-    onlyif  => $rmstore,
     creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-rmstore-created',
   }
   ->
