@@ -6,7 +6,7 @@
   "license": "Apache 2.0",
   "source": "http://scientific.zcu.cz/git/cesnet-hadoop.git",
   "project_page": "https://github.com/CESNET/",
-  "issues_url": null,
+  "issues_url": "mailto://valtri@civ.zcu.cz",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
