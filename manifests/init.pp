@@ -219,7 +219,7 @@ DEFAULT
   Class['hadoop::install'] -> Class [ 'hadoop::common::slaves' ]
 
   if ($hadoop::features["yellowmanager"]) {
-    file { '/usr/local/bin/yellowmanager':
+    file { '/usr/local/sbin/yellowmanager':
       mode    => '0755',
       alias   => 'yellowmanager',
       content => template('hadoop/yellowmanager.erb'),
