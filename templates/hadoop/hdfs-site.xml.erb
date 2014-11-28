@@ -46,7 +46,7 @@
      <value>/etc/hadoop/excludes</value>
   </property>
 
-<% if @realm and not @realm.empty? -%>
+<% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>
 <!--
   <property>
       <name>dfs.http.address</name>
@@ -74,12 +74,12 @@
 
 <% hdfs_properties = scope.lookupvar('hadoop::props').select { |name,value| name =~ /^hadoop\.hdfs\.|^dfs\./ and value != '::undef' } -%>
 <% hdfs_properties.keys.each do |p| -%>
-<%if @descs[p] -%>
-  <!-- <%= @descs[p] %> -->
+<%if scope.lookupvar('hadoop::descs')[p] -%>
+  <!-- <%= scope.lookupvar('hadoop::descs')[p] %> -->
 <% end -%>
   <property>
     <name><%= p -%></name>
-    <value><%= @props[p] -%></value>
+    <value><%= scope.lookupvar('hadoop::props')[p] -%></value>
   </property>
 <% end -%>
 

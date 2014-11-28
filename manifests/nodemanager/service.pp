@@ -10,4 +10,11 @@ class hadoop::nodemanager::service {
     enable    => true,
     subscribe => [File['core-site.xml'], File['yarn-site.xml']],
   }
+
+  # namenode must be launched first if it is colocated with nodemanager
+  # (conflicting ports, and it's dependency anyway) (tested on hadoop 2.4.1)
+  if $hadoop::daemon_namenode {
+    include hadoop::namenode::service
+    Class['hadoop::namenode::service'] -> Class['hadoop::nodemanager::service']
+  }
 }

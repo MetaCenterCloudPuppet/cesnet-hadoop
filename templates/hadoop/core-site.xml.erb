@@ -31,12 +31,12 @@
 
 <% core_properties = scope.lookupvar('hadoop::props').select { |name,value| not (name =~ /^hadoop\.hdfs\.|^dfs\./) and not (name =~ /^mapreduce\./) and not (name =~ /^yarn\./) and value != '::undef' } -%>
 <% core_properties.keys.each do |p| -%>
-<%if @descs[p] -%>
-  <!-- <%= @descs[p] %> -->
+<%if scope.lookupvar('hadoop::descs')[p] -%>
+  <!-- <%= scope.lookupvar('hadoop::descs')[p] %> -->
 <% end -%>
   <property>
     <name><%= p -%></name>
-    <value><%= @props[p] -%></value>
+    <value><%= scope.lookupvar('hadoop::props')[p] -%></value>
   </property>
 <% end -%>
 

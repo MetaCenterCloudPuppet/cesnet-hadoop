@@ -11,4 +11,11 @@ class hadoop::historyserver::service {
     enable    => true,
     subscribe => [File['core-site.xml'], File['yarn-site.xml']],
   }
+
+  # namenode should be launched first if it is colocated with historyserver
+  # (just cosmetics, some initial exceptions in logs) (tested on hadoop 2.4.1)
+  if $hadoop::daemon_namenode {
+    include hadoop::namenode::service
+    Class['hadoop::namenode::service'] -> Class['hadoop::historyserver::service']
+  }
 }

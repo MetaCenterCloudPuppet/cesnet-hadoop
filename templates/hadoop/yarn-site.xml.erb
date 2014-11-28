@@ -76,7 +76,7 @@
     <value>/etc/hadoop/excludes</value>
   </property>
 
-<% if @realm and not @realm.empty? -%>
+<% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>
   <!-- security -->
   <property>
     <name>yarn.resourcemanager.keytab</name>
@@ -90,12 +90,12 @@
 
 <% yarn_properties = scope.lookupvar('hadoop::props').select { |name,value| name =~ /^yarn\./ and value != '::undef' } -%>
 <% yarn_properties.keys.each do |p| -%>
-<%if @descs[p] -%>
-  <!-- <%= @descs[p] %> -->
+<%if scope.lookupvar('hadoop::descs')[p] -%>
+  <!-- <%= scope.lookupvar('hadoop::descs')[p] %> -->
 <% end -%>
   <property>
     <name><%= p -%></name>
-    <value><%= @props[p] -%></value>
+    <value><%= scope.lookupvar('hadoop::props')[p] -%></value>
   </property>
 <% end -%>
 

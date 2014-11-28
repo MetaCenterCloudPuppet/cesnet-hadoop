@@ -40,4 +40,5 @@ class hadoop::params {
   }
   $features = {
   }
+  $perform = false
 }

@@ -21,4 +21,12 @@ class hadoop::common::config {
       source => "puppet:///modules/hadoop/hadoop-policy.xml.${rules}",
     }
   }
+
+  if ($hadoop::features["yellowmanager"]) {
+    file { '/usr/local/sbin/yellowmanager':
+      mode    => '0755',
+      alias   => 'yellowmanager',
+      content => template('hadoop/yellowmanager.erb'),
+    }
+  }
 }

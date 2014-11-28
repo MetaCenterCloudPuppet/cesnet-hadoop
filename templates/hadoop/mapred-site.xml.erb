@@ -35,7 +35,7 @@
     <value>/var/cache/hadoop-mapreduce/${user.name}/tasks</value>
   </property>
 
-<% if @realm and not @realm.empty? -%>
+<% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>
   <!-- security -->
   <property>
     <name>mapreduce.jobhistory.keytab</name>
@@ -45,12 +45,12 @@
 
 <% mapred_properties = scope.lookupvar('hadoop::props').select { |name,value| name =~ /^mapreduce\./ and value != '::undef' } -%>
 <% mapred_properties.keys.each do |p| -%>
-<%if @descs[p] -%>
-  <!-- <%= @descs[p] %> -->
+<%if scope.lookupvar('hadoop::descs')[p] -%>
+  <!-- <%= scope.lookupvar('hadoop::descs')[p] %> -->
 <% end -%>
   <property>
     <name><%= p -%></name>
-    <value><%= @props[p] -%></value>
+    <value><%= scope.lookupvar('hadoop::props')[p] -%></value>
   </property>
 <% end -%>
 

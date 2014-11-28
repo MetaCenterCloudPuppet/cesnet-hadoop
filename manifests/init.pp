@@ -63,6 +63,9 @@
 #   - authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 #   - yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
 #
+# [*perform*] (false)
+#   Launch all installation and setup here, from hadoop class.
+#
 # === Example
 #
 #class{"hadoop":
@@ -85,7 +88,31 @@
 #    authorization => 'limit',
 #    yellowmanager => true,
 #  },
+#  perform => true,
 #}
+#
+# Alternatively you can omit perform parameter (or use perform => false) and include particular nodes (it may be preferred in sense of best practices):
+#
+# class{"hadoop":
+#   ...
+#   perform => false,
+# }
+# node 'hdfs.example.com' {
+#   include hadoop::namenode
+# }
+# node 'yarn.example.com' {
+#   include hadoop::resourcemanager
+#   include hadoop::historyserver
+# }
+# node 'node1.example.com' {
+#   include hadoop::datanode
+#   include hadoop::nodemanager
+#   include hadoop::frontend
+# }
+# node 'node2.example.com', 'node3.example.com' {
+#   include hadoop::datanode
+#   include hadoop::nodemanager
+# }
 #
 class hadoop (
   $hdfs_hostname = $params::hdfs_hostname,
@@ -106,6 +133,7 @@ class hadoop (
   $properties = $params::properties,
   $descriptions = $params::descriptions,
   $features = $params::features,
+  $perform = $params::perform,
 ) inherits hadoop::params {
   include 'stdlib'
 
@@ -207,23 +235,14 @@ DEFAULT
   $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
-  include 'hadoop::install'
-  include 'hadoop::config'
-  include 'hadoop::service'
+  if $hadoop::perform {
+    include 'hadoop::install'
+    include 'hadoop::config'
+    include 'hadoop::service'
 
-  Class['hadoop::install'] ->
-  Class['hadoop::config'] ~>
-  Class['hadoop::service'] ->
-  Class['hadoop']
-
-  Class['hadoop::install'] -> Class [ 'hadoop::common::slaves' ]
-
-  if ($hadoop::features["yellowmanager"]) {
-    file { '/usr/local/sbin/yellowmanager':
-      mode    => '0755',
-      alias   => 'yellowmanager',
-      content => template('hadoop/yellowmanager.erb'),
-      require => Class['hadoop::config'],
-    }
+    Class['hadoop::install'] ->
+    Class['hadoop::config'] ~>
+    Class['hadoop::service'] ->
+    Class['hadoop']
   }
 }

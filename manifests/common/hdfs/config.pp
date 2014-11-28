@@ -1,6 +1,7 @@
 # == Class hadoop::common::hdfs::config
 #
 class hadoop::common::hdfs::config {
+  include hadoop::common::install
   include hadoop::common::slaves
 
   # ensure proper owner and group
@@ -61,4 +62,7 @@ class hadoop::common::hdfs::config {
       require    => [Group['mapred']]
     }
   }
+
+  # slaves needs /etc/hadoop
+  Class['hadoop::common::install'] -> Class['hadoop::common::slaves']
 }
