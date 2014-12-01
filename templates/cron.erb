@@ -1,1 +1,1 @@
-<%= scope.lookupvar('hadoop::features')["krbrefresh"] -%>	<%= scope.lookupvar('hadoop::user') -%>	KRB5CCNAME=FILE:<%= scope.lookupvar('hadoop::file') -%> kinit -k -t <%= scope.lookupvar('hadoop::keytab') -%> <%= scope.lookupvar('hadoop::principal') -%> >/dev/null 2>&1
+<%= scope.lookupvar('hadoop::features')["krbrefresh"] -%>	<%= scope.lookupvar('user') -%>	KRB5CCNAME=FILE:<%= scope.lookupvar('file') -%> kinit -k -t <%= scope.lookupvar('keytab') -%> <%= scope.lookupvar('principal') -%> >/dev/null 2>&1
