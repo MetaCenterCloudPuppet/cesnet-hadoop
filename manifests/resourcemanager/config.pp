@@ -15,7 +15,7 @@ class hadoop::resourcemanager::config {
     }
   }
 
-  if $hadoop::features["rmrestart"] {
+  if $hadoop::features["restarts"] {
     file { '/etc/cron.d/hadoop-resourcemanager-restarts':
       owner   => 'root',
       group   => 'root',

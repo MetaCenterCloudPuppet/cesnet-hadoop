@@ -58,7 +58,7 @@
 # [*features*] ()
 #   Enable additional features:
 #   - rmstore: resource manager recovery using state-store; this requires HDFS datanodes already running ==> keep disabled on initial setup!
-#   - rmrestart: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
+#   - restarts: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
 #   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
 #   - authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 #   - yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
