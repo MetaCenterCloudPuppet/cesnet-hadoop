@@ -5,14 +5,15 @@ class hadoop::common::hdfs::config {
   include hadoop::common::slaves
 
   # ensure proper owner and group
+  # (better to enable sticky bit for more protection)
   file { $hadoop::hdfs_dirs:
     ensure => directory,
     owner  => 'hdfs',
     group  => 'hadoop',
-    mode   => '0755',
+    mode   => '1755',
   }
 
-  file { '/etc/hadoop/hdfs-site.xml':
+  file { "${hadoop::confdir}/hdfs-site.xml":
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -28,17 +29,38 @@ class hadoop::common::hdfs::config {
     ensure => present,
     system => true,
   }
-  user { 'mapred':
-    ensure     => present,
-    comment    => 'Apache Hadoop MapReduce',
-    password   => '!!',
-    shell      => '/sbin/nologin',
-    home       => '/var/cache/hadoop-mapreduce',
-    managehome => true,
-    system     => true,
-    gid        => 'mapred',
-    groups     => [ 'hadoop' ],
-    require    => [Group['mapred']]
+  case "${::osfamily}/${::operatingsystem}" {
+    'RedHat/Fedora': {
+      user { 'mapred':
+        ensure     => present,
+        comment    => 'Apache Hadoop MapReduce',
+        password   => '!!',
+        shell      => '/sbin/nologin',
+        home       => '/var/cache/hadoop-mapreduce',
+        managehome => true,
+        system     => true,
+        gid        => 'mapred',
+        groups     => [ 'hadoop' ],
+        require    => [Group['mapred']]
+      }
+    }
+    'Debian/Debian': {
+      user { 'mapred':
+        ensure     => present,
+        comment    => 'Hadoop MapReduce',
+        password   => '!!',
+        shell      => '/bin/bash',
+        home       => '/var/lib/hadoop-mapreduce',
+        managehome => true,
+        system     => true,
+        gid        => 'mapred',
+        groups     => [ 'hadoop' ],
+        require    => [Group['mapred']]
+      }
+    }
+    default: {
+      fail("${::osfamily} (${::operatingsystem}) not supported")
+    }
   }
 
   #
@@ -63,6 +85,6 @@ class hadoop::common::hdfs::config {
     }
   }
 
-  # slaves needs /etc/hadoop
+  # slaves needs Hadoop configuration directory
   Class['hadoop::common::install'] -> Class['hadoop::common::slaves']
 }

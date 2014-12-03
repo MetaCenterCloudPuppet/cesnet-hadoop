@@ -4,7 +4,7 @@
 # It ensure the services are running.
 #
 class hadoop::resourcemanager::service {
-  service { 'hadoop-resourcemanager':
+  service { $hadoop::daemons['resourcemanager']:
     ensure    => 'running',
     enable    => true,
     subscribe => [File['core-site.xml'], File['yarn-site.xml']],

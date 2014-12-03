@@ -37,11 +37,11 @@
 # [*datanodes_hostnames*] (undef)
 #   Array of Data Node machines. Used *slaves* by default.
 #
-# [*hdfs_dirs*] (["/var/lib/hadoop-hdfs"])
+# [*hdfs_dirs*] (["/var/lib/hadoop-hdfs"], or ["/var/lib/hadoop-hdfs/cache"])
 #  Directory prefixes to store the data.
 #    - namenode:
 #  - name table (fsimage) and DFS data blocks
-#  - /${user.name}/dfs/namenode suffix is always added
+#  - /${user.name}/dfs/namenode or /${user.name}/dfs/name suffix is always added
 #       - If there is multiple directories, then the name table is replicated in all of the directories, for redundancy.
 #    - datanode:
 #  - DFS data blocks
@@ -60,6 +60,7 @@
 #   - rmstore: resource manager recovery using state-store; this requires HDFS datanodes already running ==> keep disabled on initial setup!
 #   - restarts: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
 #   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
+#     (TODO: Debian not supported)
 #   - authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 #   - yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
 #

@@ -6,7 +6,7 @@
 # It works OK automatically when using from parent hadoop::service class.
 #
 class hadoop::historyserver::service {
-  service { 'hadoop-historyserver':
+  service { $hadoop::daemons['historyserver']:
     ensure    => 'running',
     enable    => true,
     subscribe => [File['core-site.xml'], File['yarn-site.xml']],

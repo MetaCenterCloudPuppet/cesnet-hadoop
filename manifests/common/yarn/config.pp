@@ -6,7 +6,7 @@ class hadoop::common::yarn::config {
   include hadoop::common::install
   include hadoop::common::slaves
 
-  file { '/etc/hadoop/yarn-site.xml':
+  file { "${hadoop::confir}/yarn-site.xml":
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -15,6 +15,6 @@ class hadoop::common::yarn::config {
     require => [ Exec['touch-excludes'], File['slaves'] ],
   }
 
-  # slaves needs /etc/hadoop
+  # slaves needs Hadoop configuration directory
   Class['hadoop::common::install'] -> Class['hadoop::common::slaves']
 }

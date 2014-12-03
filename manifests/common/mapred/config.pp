@@ -3,7 +3,7 @@
 # This class is called from hadoop.
 #
 class hadoop::common::mapred::config {
-  file { '/etc/hadoop/mapred-site.xml':
+  file { "${hadoop::confdir}/mapred-site.xml":
     owner   => 'root',
     group   => 'root',
     mode    => '0644',

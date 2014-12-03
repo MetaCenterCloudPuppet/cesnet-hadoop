@@ -25,7 +25,7 @@
   </property>
   <property>
      <name>dfs.namenode.name.dir</name>
-     <value><%= scope.lookupvar('hadoop::hdfs_dirs').map{ |dir| "file://#{dir}/${user.name}/dfs/namenode" }.join(',') -%></value>
+     <value><%= suffix = scope.lookupvar('hadoop::hdfs_namenode_suffix'); scope.lookupvar('hadoop::hdfs_dirs').map{ |dir| "file://#{dir}/#{suffix}" }.join(',') -%></value>
   </property>
   <property>
      <name>dfs.namenode.checkpoint.dir</name>
@@ -38,12 +38,12 @@
   <!-- permitted data nodes -->
   <property>
      <name>dfs.hosts</name>
-     <value>/etc/hadoop/slaves</value>
+     <value><%= scope.lookupvar('hadoop::confdir') -%>/slaves</value>
   </property>
   <!-- decommissioning of data nodes -->
   <property>
      <name>dfs.hosts.exclude</name>
-     <value>/etc/hadoop/excludes</value>
+     <value><%= scope.lookupvar('hadoop::confdir') -%>/excludes</value>
   </property>
 
 <% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>

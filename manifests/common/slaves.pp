@@ -9,7 +9,7 @@
 # 2) resourcemanager machine: yarn rmadmin -refreshNodes
 #
 class hadoop::common::slaves {
-  file { '/etc/hadoop/slaves':
+  file { "${hadoop::confdir}/slaves":
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -19,8 +19,8 @@ class hadoop::common::slaves {
 
   # for decommissioned data nodes
   exec { 'touch-excludes' :
-    command => 'touch /etc/hadoop/excludes',
+    command => "touch ${hadoop::confdir}/excludes",
     path    => '/bin:/usr/bin',
-    creates => '/etc/hadoop/excludes',
+    creates => "${hadoop::confdir}/excludes",
   }
 }

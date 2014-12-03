@@ -3,7 +3,7 @@
 # Setup the part common for all nodes - core-site.xml.
 #
 class hadoop::common::config {
-  file { '/etc/hadoop/core-site.xml':
+  file { "${hadoop::confdir}/core-site.xml":
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -13,7 +13,7 @@ class hadoop::common::config {
 
   if $hadoop::features["authorization"] {
     $rules = $hadoop::features["authorization"]
-    file { '/etc/hadoop/hadoop-policy.xml':
+    file { "${hadoop::confdir}/hadoop-policy.xml":
       owner  => 'root',
       group  => 'root',
       mode   => '0644',

@@ -5,7 +5,7 @@
 # It works OK automatically when using from parent hadoop::service class.
 #
 class hadoop::nodemanager::service {
-  service { 'hadoop-nodemanager':
+  service { $hadoop::daemons['nodemanager']:
     ensure    => 'running',
     enable    => true,
     subscribe => [File['core-site.xml'], File['yarn-site.xml']],

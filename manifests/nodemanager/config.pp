@@ -49,7 +49,7 @@ class hadoop::nodemanager::config {
     }
   }
 
-  file { '/etc/hadoop/container-executor.cfg':
+  file { "${hadoop::confdir}/container-executor.cfg":
     owner   => 'root',
     group   => 'root',
     mode    => '0644',

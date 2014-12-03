@@ -32,12 +32,6 @@
   </property>
 
   <property>
-    <description>List of directories to store localized files in.</description>
-    <name>yarn.nodemanager.local-dirs</name>
-    <value>/var/cache/hadoop-yarn/${user.name}/nm-local-dir</value>
-  </property>
-
-  <property>
     <description>Where to store container logs.</description>
     <name>yarn.nodemanager.log-dirs</name>
     <value>/var/log/hadoop-yarn/containers</value>
@@ -51,29 +45,16 @@
   </property>
 -->
 
-  <property>
-    <description>Classpath for typical applications.</description>
-     <name>yarn.application.classpath</name>
-     <value>
-        $HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/$HADOOP_COMMON_DIR/*,
-        $HADOOP_COMMON_HOME/$HADOOP_COMMON_LIB_JARS_DIR/*,
-        $HADOOP_HDFS_HOME/$HDFS_DIR/*,$HADOOP_HDFS_HOME/$HDFS_LIB_JARS_DIR/*,
-        $HADOOP_MAPRED_HOME/$MAPRED_DIR/*,
-        $HADOOP_MAPRED_HOME/$MAPRED_LIB_JARS_DIR/*,
-        $HADOOP_YARN_HOME/$YARN_DIR/*,$HADOOP_YARN_HOME/$YARN_LIB_JARS_DIR/*
-     </value>
-  </property>
-
   <!-- permitted rack nodes -->
   <property>
     <name>yarn.resourcemanager.nodes.include-path</name>
-    <value>/etc/hadoop/slaves</value>
+    <value><%= scope.lookupvar('hadoop::confdir') -%>/slaves</value>
   </property>
 
   <!-- decommissioning of rack nodes -->
   <property>
     <name>yarn.resourcemanager.nodes.exclude-path</name>
-    <value>/etc/hadoop/excludes</value>
+    <value><%= scope.lookupvar('hadoop::confdir') -%>/excludes</value>
   </property>
 
 <% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>
