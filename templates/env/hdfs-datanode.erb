@@ -38,7 +38,7 @@ export HADOOP_SECURE_DN_LOG_DIR=/var/log/hadoop-hdfs
 <% if scope.lookupvar('hadoop::features')['krbrefresh'] -%>
 
 export KRB5CCNAME=FILE:<%= scope.lookupvar('file') -%>
-<% end %>
+<% end -%>
 <% else -%>
 # export HADOOP_SECURE_DN_USER=hdfs
 # export HADOOP_SECURE_DN_PID_DIR=/var/run/hadoop-hdfs
