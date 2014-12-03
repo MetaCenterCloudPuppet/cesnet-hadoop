@@ -9,7 +9,7 @@ class hadoop::namenode::service {
 
   Class['hadoop::format']
   ->
-  service { 'hadoop-namenode':
+  service { $hadoop::daemons['namenode']:
     ensure    => 'running',
     enable    => true,
     subscribe => [File['core-site.xml'], File['hdfs-site.xml']],

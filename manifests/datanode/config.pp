@@ -13,11 +13,14 @@ class hadoop::datanode::config {
       mode  => '0400',
       alias => 'dn.service.keytab',
     }
+  }
 
+  $user = 'hdfs'
+  $file = '/tmp/krb5cc_dn'
+  $principal = "dn/${::fqdn}@${hadoop::realm}"
+
+  if $hadoop::realm {
     if $hadoop::features["krbrefresh"] {
-      $user = 'hdfs'
-      $file = '/tmp/krb5cc_dn'
-      $principal = "dn/${::fqdn}@${hadoop::realm}"
 
       file { '/etc/cron.d/hadoop-datanode-krb5cc':
         owner   => 'root',
@@ -36,13 +39,20 @@ class hadoop::datanode::config {
       }
 
       File[$keytab] -> Exec['dn-kinit']
-
-      file { '/etc/sysconfig/hadoop-datanode':
-        owner  => 'root',
-        group  => 'root',
-        alias  => 'dn-env',
-        source => 'puppet:///modules/hadoop/hadoop-datanode',
-      }
     }
+  }
+
+  if $::osfamily == 'RedHat' and !$hadoop::features["krbrefresh"] {
+    $dn_env_ensure = 'absent'
+  } else {
+    $dn_env_ensure = 'present'
+  }
+  file { $hadoop::envs['datanode']:
+    ensure  => $dn_env_ensure,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    alias   => 'dn-env',
+    content => template('hadoop/env/hdfs-datanode.erb'),
   }
 }

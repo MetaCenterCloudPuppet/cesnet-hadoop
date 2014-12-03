@@ -21,6 +21,11 @@ class hadoop::params {
         'nodemanager' => 'hadoop-nodemanager',
         'historyserver' => 'hadoop-historyserver',
       }
+      $envs = {
+        'datanode' => '/etc/sysconfig/hadoop-datanode',
+        'nodemanager' => '/etc/sysconfig/hadoop-nodemanager',
+        'historyserver' => '/etc/sysconfig/hadoop-historyserver',
+      }
 
       $confdir = '/etc/hadoop'
       $hdfs_dirs = [ '/var/lib/hadoop-hdfs' ]
@@ -54,6 +59,11 @@ class hadoop::params {
         'resourcemanager' => 'hadoop-yarn-resourcemanager',
         'nodemanager' => 'hadoop-yarn-nodemanager',
         'historyserver' => 'hadoop-mapred-historyserver',
+      }
+      $envs = {
+        'datanode' => '/etc/default/hadoop-hdfs-datanode',
+        'nodemanager' => '/etc/default/hadoop-yarn-nodemanager',
+        'historyserver' => '/etc/default/hadoop-yarn-historyserver',
       }
 
       $confdir = '/etc/hadoop/conf'
