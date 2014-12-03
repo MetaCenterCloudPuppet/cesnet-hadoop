@@ -30,6 +30,9 @@ class hadoop::params {
       $confdir = '/etc/hadoop'
       $hdfs_dirs = [ '/var/lib/hadoop-hdfs' ]
       $hdfs_namenode_suffix = '/${user.name}/dfs/namenode'
+      # container group, official recommendation is 'hadoop'
+      # depends on result of: https://bugzilla.redhat.com/show_bug.cgi?id=1163892
+      $yarn_group = 'hadoop'
 
       # other properties added in init.pp
       $properties = {
@@ -69,6 +72,8 @@ class hadoop::params {
       $confdir = '/etc/hadoop/conf'
       $hdfs_dirs = [ '/var/lib/hadoop-hdfs/cache' ]
       $hdfs_namenode_suffix = '/${user.name}/dfs/name'
+      # container group
+      $yarn_group = 'yarn'
 
       # other properties added in init.pp
       $properties = {

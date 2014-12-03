@@ -6,9 +6,12 @@ class hadoop::nodemanager::config {
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
 
-  if $hadoop::realm {
-    $keytab = '/etc/security/keytab/nm.service.keytab'
+  $keytab = '/etc/security/keytab/nm.service.keytab'
+  $user = 'yarn'
+  $file = '/tmp/krb5cc_nm'
+  $principal = "nm/${::fqdn}@${hadoop::realm}"
 
+  if $hadoop::realm {
     file { $keytab:
       owner  => 'yarn',
       group  => 'yarn',
@@ -18,10 +21,6 @@ class hadoop::nodemanager::config {
     }
 
     if $hadoop::features["krbrefresh"] {
-      $user = 'yarn'
-      $file = '/tmp/krb5cc_nm'
-      $principal = "nm/${::fqdn}@${hadoop::realm}"
-
       file { '/etc/cron.d/hadoop-nodemanager-krb5cc':
         owner   => 'root',
         group   => 'root',
@@ -39,14 +38,20 @@ class hadoop::nodemanager::config {
       }
 
       File[$keytab] -> Exec['nm-kinit']
-
-      file { '/etc/sysconfig/hadoop-nodemanager':
-        owner  => 'root',
-        group  => 'root',
-        alias  => 'nm-env',
-        source => 'puppet:///modules/hadoop/hadoop-nodemanager',
-      }
     }
+  }
+
+  if $::osfamily == 'RedHat' and !$hadoop::features["krbrefresh"] {
+    $env_ensure = 'absent'
+  } else {
+    $env_ensure = 'present'
+  }
+  file { $hadoop::envs['nodemanager']:
+    ensure => $env_ensure,
+    owner  => 'root',
+    group  => 'root',
+    alias  => 'nm-env',
+    content => template('hadoop/env/yarn-nodemanager.erb'),
   }
 
   file { "${hadoop::confdir}/container-executor.cfg":

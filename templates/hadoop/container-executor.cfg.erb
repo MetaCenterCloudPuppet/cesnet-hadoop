@@ -1,5 +1,5 @@
 #configured value of yarn.nodemanager.linux-container-executor.group
-yarn.nodemanager.linux-container-executor.group=hadoop
+yarn.nodemanager.linux-container-executor.group=<%= scope.lookupvar('hadoop::yarn_group') %>
 #comma separated list of users who can not run applications
 banned.users=hfds,yarn,mapred,bin
 #Prevent other super-users

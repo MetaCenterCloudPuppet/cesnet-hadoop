@@ -4,24 +4,20 @@ class hadoop::datanode::config {
   contain hadoop::common::config
   contain hadoop::common::hdfs::config
 
-  if $hadoop::realm {
-    $keytab = '/etc/security/keytab/dn.service.keytab'
+  $keytab = '/etc/security/keytab/dn.service.keytab'
+  $user = 'hdfs'
+  $file = '/tmp/krb5cc_dn'
+  $principal = "dn/${::fqdn}@${hadoop::realm}"
 
+  if $hadoop::realm {
     file { $keytab:
       owner => 'hdfs',
       group => 'hdfs',
       mode  => '0400',
       alias => 'dn.service.keytab',
     }
-  }
 
-  $user = 'hdfs'
-  $file = '/tmp/krb5cc_dn'
-  $principal = "dn/${::fqdn}@${hadoop::realm}"
-
-  if $hadoop::realm {
     if $hadoop::features["krbrefresh"] {
-
       file { '/etc/cron.d/hadoop-datanode-krb5cc':
         owner   => 'root',
         group   => 'root',
@@ -43,12 +39,12 @@ class hadoop::datanode::config {
   }
 
   if $::osfamily == 'RedHat' and !$hadoop::features["krbrefresh"] {
-    $dn_env_ensure = 'absent'
+    $env_ensure = 'absent'
   } else {
-    $dn_env_ensure = 'present'
+    $env_ensure = 'present'
   }
   file { $hadoop::envs['datanode']:
-    ensure  => $dn_env_ensure,
+    ensure  => $env_ensure,
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
