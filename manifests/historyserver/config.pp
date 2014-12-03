@@ -6,9 +6,12 @@ class hadoop::historyserver::config {
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
 
-  if $hadoop::realm {
-    $keytab = '/etc/security/keytab/jhs.service.keytab'
+  $keytab = '/etc/security/keytab/jhs.service.keytab'
+  $user = 'mapred'
+  $file = '/tmp/krb5cc_jhs'
+  $principal = "jhs/${::fqdn}@${hadoop::realm}"
 
+  if $hadoop::realm {
     file { $keytab:
       owner  => 'mapred',
       group  => 'mapred',
@@ -18,10 +21,6 @@ class hadoop::historyserver::config {
     }
 
     if $hadoop::features["krbrefresh"] {
-      $user = 'mapred'
-      $file = '/tmp/krb5cc_jhs'
-      $principal = "jhs/${::fqdn}@${hadoop::realm}"
-
       file { '/etc/cron.d/hadoop-historyserver-krb5cc':
         owner   => 'root',
         group   => 'root',
@@ -39,13 +38,19 @@ class hadoop::historyserver::config {
       }
 
       File[$keytab] -> Exec['jhs-kinit']
-
-      file { '/etc/sysconfig/hadoop-historyserver':
-        owner  => 'root',
-        group  => 'root',
-        alias  => 'jhs-env',
-        source => 'puppet:///modules/hadoop/hadoop-historyserver',
-      }
     }
+  }
+
+  if $::osfamily == 'RedHat' and !$hadoop::features["krbrefresh"] {
+    $env_ensure = 'absent'
+  } else {
+    $env_ensure = 'present'
+  }
+  file { $hadoop::envs['historyserver']:
+    ensure => $env_ensure,
+    owner  => 'root',
+    group  => 'root',
+    alias  => 'jhs-env',
+    content => template('hadoop/env/mapred-historyserver.erb'),
   }
 }

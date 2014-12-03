@@ -61,12 +61,12 @@ class hadoop::params {
         'datanode' => 'hadoop-hdfs-datanode',
         'resourcemanager' => 'hadoop-yarn-resourcemanager',
         'nodemanager' => 'hadoop-yarn-nodemanager',
-        'historyserver' => 'hadoop-mapred-historyserver',
+        'historyserver' => 'hadoop-mapreduce-historyserver',
       }
       $envs = {
         'datanode' => '/etc/default/hadoop-hdfs-datanode',
         'nodemanager' => '/etc/default/hadoop-yarn-nodemanager',
-        'historyserver' => '/etc/default/hadoop-yarn-historyserver',
+        'historyserver' => '/etc/default/hadoop-mapreduce-historyserver',
       }
 
       $confdir = '/etc/hadoop/conf'
