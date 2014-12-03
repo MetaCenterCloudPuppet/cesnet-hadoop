@@ -6,7 +6,7 @@ class hadoop::common::yarn::config {
   include hadoop::common::install
   include hadoop::common::slaves
 
-  file { "${hadoop::confir}/yarn-site.xml":
+  file { "${hadoop::confdir}/yarn-site.xml":
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
