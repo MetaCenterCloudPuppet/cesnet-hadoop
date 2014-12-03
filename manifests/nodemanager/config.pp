@@ -21,14 +21,20 @@ class hadoop::nodemanager::config {
     }
 
     if $hadoop::features["krbrefresh"] {
-      file { '/etc/cron.d/hadoop-nodemanager-krb5cc':
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        alias   => 'nm-cron',
-        content => template('hadoop/cron.erb'),
-      }
+      $cron_ensure = 'present'
+    } else {
+      $cron_ensure = 'absent'
+    }
+    file { '/etc/cron.d/hadoop-nodemanager-krb5cc':
+      ensure  => $cron_ensure,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      alias   => 'nm-cron',
+      content => template('hadoop/cron.erb'),
+    }
 
+    if $hadoop::features["krbrefresh"] {
       exec { 'nm-kinit':
         command     => "kinit -k -t ${keytab} ${principal}",
         user        => $user,

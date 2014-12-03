@@ -21,14 +21,20 @@ class hadoop::historyserver::config {
     }
 
     if $hadoop::features["krbrefresh"] {
-      file { '/etc/cron.d/hadoop-historyserver-krb5cc':
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        alias   => 'jhs-cron',
-        content => template('hadoop/cron.erb'),
-      }
+      $cron_ensure = 'present'
+    } else {
+      $cron_ensure = 'absent'
+    }
+    file { '/etc/cron.d/hadoop-historyserver-krb5cc':
+      ensure  => $cron_ensure,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      alias   => 'jhs-cron',
+      content => template('hadoop/cron.erb'),
+    }
 
+    if $hadoop::features["krbrefresh"] {
       exec { 'jhs-kinit':
         command     => "kinit -k -t ${keytab} ${principal}",
         user        => $user,

@@ -16,12 +16,16 @@ class hadoop::resourcemanager::config {
   }
 
   if $hadoop::features["restarts"] {
-    file { '/etc/cron.d/hadoop-resourcemanager-restarts':
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      alias   => 'rm-cron',
-      content => template('hadoop/cron-resourcemanager.erb'),
-    }
+    $cron_ensure = 'present'
+  } else {
+    $cron_ensure = 'absent'
+  }
+  file { '/etc/cron.d/hadoop-resourcemanager-restarts':
+    ensure  => $cron_ensure,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    alias   => 'rm-cron',
+    content => template('hadoop/cron-resourcemanager.erb'),
   }
 }
