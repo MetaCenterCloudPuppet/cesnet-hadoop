@@ -9,6 +9,10 @@
   "issues_url": "mailto://valtri@civ.zcu.cz",
   "dependencies": [
     {
+      "name": "puppetlabs-java",
+      "version_range": ">= 1.0.0"
+    }
+    {
       "name": "puppetlabs-stdlib",
       "version_range": ">= 1.0.0"
     }

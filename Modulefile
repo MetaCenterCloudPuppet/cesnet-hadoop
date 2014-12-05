@@ -7,4 +7,5 @@ summary       'Hadoop Cluster'
 description   'Creates Hadoop cluster with enabled security'
 project_page  'https://github.com/CESNET/'
 
+dependency 'puppetlabs/java'
 dependency 'puppetlabs/stdlib'
