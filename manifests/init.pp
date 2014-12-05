@@ -131,8 +131,8 @@ class hadoop (
   $datanode_hostnames = undef,
 
   $hdfs_dirs = $params::hdfs_dirs,
-  $properties = $params::properties,
-  $descriptions = $params::descriptions,
+  $properties = undef,
+  $descriptions = undef,
   $features = $params::features,
   $perform = $params::perform,
 ) inherits hadoop::params {
