@@ -13,63 +13,45 @@ class hadoop::create_dirs {
   if ($realm) { $rmstore_user = 'rm' }
   else { $rmstore_user = 'yarn' }
 
-  case "${::osfamily}/${::operatingsystem}" {
-    'RedHat/Fedora': {
-      # existing kerberos ticket is in the way when using 'runuser',
-      # destroy it only when needed though
-      exec { 'kdfs-kdestroy':
-        command => 'kdestroy',
-        path    => '/sbin:/usr/sbin:/bin:/usr/bin',
-        onlyif  => "test -n \"${realm}\"",
-        creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-root-created',
-      }
-      ->
-      exec { 'hdfs-kinit':
-        command => "runuser hdfs -s /bin/bash /bin/bash -c \"kinit -k nn/${::fqdn}@${realm} -t /etc/security/keytab/nn.service.keytab\"",
-        path    => '/sbin:/usr/sbin:/bin:/usr/bin',
-        onlyif  => "test -n \"${realm}\"",
-        creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-root-created',
-      }
-      ->
-      exec { 'hdfs-dirs':
-        command => '/usr/sbin/hdfs-create-dirs && touch /var/lib/hadoop-hdfs/.puppet-hdfs-root-created',
-        path    => '/sbin:/usr/sbin:/bin:/usr/bin',
-        creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-root-created',
-        # don't call multiple times (takes long) ==> use just 'true' as refresh
-        # lint:ignore:quoted_booleans 'true' and 'false' are commands to run here
-        refresh => 'true',
-        # lint:endignore
-      }
-      ->
-      # this directory is needed for ResourceManager state-store to work
-      exec { 'hdfs-rmstore':
-        command => "runuser hdfs -s /bin/bash /bin/bash -c \"hdfs dfs -mkdir /rmstore\"",
-        path    => '/sbin:/usr/sbin:/bin:/usr/bin',
-        creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-rmstore-created',
-        # don't call multiple times (fails) ==> use just 'true' as refresh
-        # lint:ignore:quoted_booleans 'true' and 'false' are commands to run here
-        refresh => 'true',
-        # lint:endignore
-      }
-      ->
-      # this directory is needed for ResourceManager state-store to work
-      exec { 'hdfs-rmstore-chown':
-        command => "runuser hdfs -s /bin/bash /bin/bash -c \"hdfs dfs -chown ${rmstore_user}:hadoop /rmstore\" && touch /var/lib/hadoop-hdfs/.puppet-hdfs-rmstore-created",
-        path    => '/sbin:/usr/sbin:/bin:/usr/bin',
-        creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-rmstore-created',
-      }
-      ->
-      exec { 'hdfs-kdestroy':
-        command => "runuser hdfs -s /bin/bash /bin/bash -c \"kdestroy\"",
-        path    => '/sbin:/usr/sbin:/bin:/usr/bin',
-        onlyif  => "test -n \"${realm}\"",
-        creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-root-created',
-      }
-    }
-    'Debian/Debian': {
-    }
-    default: {
-#      fail("${::osfamily} (${::operatingsystem}) not supported")
-    }
+  hadoop::kinit { 'hdfs-kinit':
+    touchfile => 'hdfs-root-created',
+  }
+  ->
+  hadoop::mkdir { '/user':
+    touchfile => 'hdfs-root-created',
+  }
+  ->
+  hadoop::mkdir { '/var/log':
+    touchfile => 'hdfs-root-created',
+  }
+  ->
+  hadoop::mkdir { '/tmp':
+    mode => '1777',
+    touchfile => 'hdfs-root-created',
+  }
+  ->
+  hadoop::mkdir { ['/tmp/hadoop-yarn/staging', '/tmp/hadoop-yarn/staging/history', '/tmp/hadoop-yarn/staging/history/done', '/tmp/hadoop-yarn/staging/history/done_intermediate']:
+    mode => '1777',
+    owner => 'mapred',
+    group => 'mapred',
+    touchfile => 'hdfs-root-created',
+  }
+  ->
+  hadoop::mkdir { ['/tmp/hadoop-yarn', '/var/log/hadoop-yarn']:
+    owner => 'yarn',
+    group => 'mapred',
+    touchfile => 'hdfs-root-created',
+  }
+  ->
+  # for resource manager state store feature
+  hadoop::mkdir { '/rmstore':
+    owner => $rmstore_user,
+    group => 'hadoop',
+    touchfile => 'hdfs-root-created',
+  }
+  ->
+  hadoop::kdestroy { 'hdfs-kdestroy':
+    touchfile => 'hdfs-root-created',
+    touch => true,
   }
 }
