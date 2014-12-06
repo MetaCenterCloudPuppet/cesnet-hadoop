@@ -22,7 +22,8 @@
 # [*realm*]
 #   Kerberos realm. Required parameter, empty string disables Kerberos authentication.
 #   To enable security, there are required:
-#   * configured Kerberos (/etc/krb5.conf, /etc/krb5.keytab)
+#   * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
+#   * configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
 #   * /etc/security/keytab/dn.service.keytab (on data nodes)
 #   * /etc/security/keytab/jhs.service.keytab (on job history node)
 #   * /etc/security/keytab/nm.service.keytab (on node manager nodes)
