@@ -71,6 +71,7 @@
 #     (TODO: Debian not supported)
 #   - authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 #   - yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
+#   - alternatives - use alternatives to swicth configuration
 #
 # [*perform*] (false)
 #   Launch all installation and setup here, from hadoop class.
