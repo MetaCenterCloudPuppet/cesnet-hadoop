@@ -21,6 +21,13 @@
 #
 # [*realm*]
 #   Kerberos realm. Required parameter, empty string disables Kerberos authentication.
+#   To enable security, there are required:
+#   * configured Kerberos (/etc/krb5.conf, /etc/krb5.keytab)
+#   * /etc/security/keytab/dn.service.keytab (on data nodes)
+#   * /etc/security/keytab/jhs.service.keytab (on job history node)
+#   * /etc/security/keytab/nm.service.keytab (on node manager nodes)
+#   * /etc/security/keytab/nn.service.keytab (on name nodes)
+#   * /etc/security/keytab/rm.service.keytab (on resource manager node)
 #
 # [*namenode_hostname*] (undef)
 #   Name Node machine. Used *hdfs_hostname* by default.
