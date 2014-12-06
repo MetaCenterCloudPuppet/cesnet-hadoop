@@ -75,7 +75,10 @@ class hadoop::common::hdfs::config {
       ensure     => present,
       comment    => 'Apache Hadoop Yarn',
       password   => '!!',
-      shell      => '/sbin/nologin',
+      shell      => $::osfamily ? {
+        'RedHat' => '/sbin/nologin',
+        'Debian' => '/bin/false',
+      },
       home       => '/var/cache/hadoop-yarn',
       managehome => false,
       system     => true,
