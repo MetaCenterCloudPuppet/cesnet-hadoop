@@ -75,6 +75,31 @@
 # [*alternatives*] (Debian: 'cluster', other: undef)
 #   Use alternatives to switch configuration. It is used by Cloudera for example.
 #
+# [*https*] (undef)
+#   Support for https.
+#
+#   Requires:
+#   * enabled security (realm => ...)
+#   * /etc/security/cacerts file (https_cacerts parameter) - kept in the place, only permission changed, if needed
+#   * /etc/security/server.keystore file (https_keystore parameter) - copied for each daemon user
+#   * /etc/security/http-auth-signature-secret file (any data, string or blob) - copied for each daemon user
+#   * /etc/security/keytab/http.service.keytab - copied for each daemon user
+#
+# [*https_cacerts*] (/etc/security/cacerts)
+#   CA certificates file.
+#
+# [*https_cacerts_password*] ('')
+#   CA certificates keystore password.
+#
+# [*https_keystore*] (/etc/security/server.keystore)
+#   Certificates keystore file.
+#
+# [*https_keystore_password*] ('changeit')
+#   Certificates keystore file password.
+#
+# [*https_keystore_keypassword*] (undef)
+#   Certificates keystore key password. If not specified, https_keystore_password is used.
+#
 # [*perform*] (false)
 #   Launch all installation and setup here, from hadoop class.
 #
@@ -146,6 +171,12 @@ class hadoop (
   $descriptions = undef,
   $features = $params::features,
   $alternatives = $params::alternatives,
+  $https = undef,
+  $https_cacerts = $params::https_cacerts,
+  $https_cacerts_password = $params::https_cacerts_password,
+  $https_keystore = $params::https_keystore,
+  $https_keystore_password = $params::https_keystore_password,
+  $https_keystore_keypassword = $params::https_keystore_keypassword,
   $perform = $params::perform,
 ) inherits hadoop::params {
   include 'stdlib'
@@ -244,8 +275,28 @@ DEFAULT
   } else {
     $rm_ss_properties = {}
   }
+  if $hadoop::https {
+    if !$hadoop::realm {
+      err('Kerberos feature required for https support.')
+    }
+    $https_properties = {
+      'hadoop.http.filter.initializers' => 'org.apache.hadoop.security.AuthenticationFilterInitializer',
+      'hadoop.http.authentication.type' => 'kerberos',
+      'hadoop.http.authentication.token.validity' => '36000',
+      'hadoop.http.authentication.signature.secret.file' => '${user.home}/http-auth-signature-secret',
+      'hadoop.http.authentication.cookie.domain' => downcase($hadoop::features['realm']),
+      'hadoop.http.authentication.simple.anonymous.allowed' => 'false',
+      'hadoop.http.authentication.kerberos.principal' => 'HTTP/_HOST@ZCU.CZ',
+      'hadoop.http.authentication.kerberos.keytab' => '${user.home}/hadoop.keytab',
+      'dfs.http.policy' => 'HTTPS_ONLY',
+      'dfs.web.authentication.kerberos.keytab' => "${hadoop::hdfs_homedir}/hadoop.keytab",
+      'yarn.http.policy' => 'HTTPS_ONLY',
+    }
+  } else {
+    $https_properties = {}
+  }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $properties)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $https_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
   if $hadoop::perform {

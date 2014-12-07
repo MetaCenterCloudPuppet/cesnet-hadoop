@@ -5,6 +5,7 @@ class hadoop::nodemanager::config {
   contain hadoop::common::hdfs::config
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
+  contain hadoop::common::yarn::daemon
 
   $keytab = '/etc/security/keytab/nm.service.keytab'
   $user = 'yarn'

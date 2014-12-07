@@ -5,6 +5,7 @@ class hadoop::resourcemanager::config {
   contain hadoop::common::hdfs::config
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
+  contain hadoop::common::yarn::daemon
 
   if ($hadoop::realm) {
     file { '/etc/security/keytab/rm.service.keytab':

@@ -5,6 +5,7 @@ class hadoop::historyserver::config {
   contain hadoop::common::hdfs::config
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
+  contain hadoop::common::mapred::daemon
 
   $keytab = '/etc/security/keytab/jhs.service.keytab'
   $user = 'mapred'

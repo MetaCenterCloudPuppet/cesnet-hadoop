@@ -3,6 +3,7 @@
 class hadoop::datanode::config {
   contain hadoop::common::config
   contain hadoop::common::hdfs::config
+  contain hadoop::common::hdfs::daemon
 
   $keytab = '/etc/security/keytab/dn.service.keytab'
   $user = 'hdfs'

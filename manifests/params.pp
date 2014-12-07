@@ -116,5 +116,25 @@ class hadoop::params {
   }
   $features = {
   }
+  $https = undef
+  $https_cacerts = '/etc/security/cacerts'
+  $https_cacerts_password = ''
+  $https_keystore = '/etc/security/server.keystore'
+  $https_keystore_password = 'changeit'
+  $https_keystore_keypassword = undef
+
+  $hdfs_homedir = $::osfamily ? {
+    'Debian' => '/var/lib/hadoop-hdfs',
+    'RedHat' => '/var/lib/hadoop-hdfs',
+  }
+  $yarn_homedir = $::osfamily ? {
+    'Debian' => '/var/lib/hadoop-yarn',
+    'RedHat' => '/var/cache/hadoop-yarn',
+  }
+  $mapred_homedir = $::osfamily ? {
+    'Debian' => '/var/lib/hadoop-mapreduce',
+    'RedHat' => '/var/cache/hadoop-mapreduce',
+  }
+
   $perform = false
 }

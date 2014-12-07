@@ -29,4 +29,19 @@ class hadoop::common::config {
       content => template('hadoop/yellowmanager.erb'),
     }
   }
+
+  if $hadoop::https {
+    $keypass = $hadoop::https_keystore_keypassword
+    file { "${hadoop::confdir}/ssl-server.xml":
+      owner  => 'root',
+      group  => 'hadoop',
+      mode   => '0640',
+      content => template('hadoop/hadoop/ssl-server.xml.erb'),
+    }
+    file { "${hadoop::https_cacerts}":
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0644',
+    }
+  }
 }
