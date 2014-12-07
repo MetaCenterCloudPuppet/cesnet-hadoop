@@ -290,6 +290,7 @@ DEFAULT
       'hadoop.http.authentication.kerberos.keytab' => '${user.home}/hadoop.keytab',
       'dfs.http.policy' => 'HTTPS_ONLY',
       'dfs.web.authentication.kerberos.keytab' => "${hadoop::hdfs_homedir}/hadoop.keytab",
+      'mapreduce.jobhistory.http.policy' => 'HTTPS_ONLY',
       'yarn.http.policy' => 'HTTPS_ONLY',
     }
   } else {
