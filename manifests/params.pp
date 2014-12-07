@@ -45,6 +45,7 @@ class hadoop::params {
         $HADOOP_MAPRED_HOME/$MAPRED_LIB_JARS_DIR/*,
         $HADOOP_YARN_HOME/$YARN_DIR/*,$HADOOP_YARN_HOME/$YARN_LIB_JARS_DIR/*
 ',
+        'mapreduce.tasktracker.outofband.heartbeat' => true,
       }
     }
     'Debian/Debian': {
@@ -85,6 +86,7 @@ class hadoop::params {
         $HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,
         $HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*
 ',
+        'mapreduce.tasktracker.outofband.heartbeat' => true,
       }
     }
     default: {
@@ -108,6 +110,7 @@ class hadoop::params {
     'yarn.nodemanager.local-dirs' => 'List of directories to store localized files in.',
     'yarn.resourcemanager.recovery.enabled' => 'enable resubmit old jobs on start',
     'yarn.application.classpath' => 'Classpath for typical applications.',
+    'mapreduce.tasktracker.outofband.heartbeat' => 'let the TaskTracker send an out-of-band heartbeat on task completion to reduce latency',
   }
   $features = {
   }
