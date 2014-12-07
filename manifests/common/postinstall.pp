@@ -3,7 +3,7 @@
 # Preparation steps after installation. It switches hadoop-conf alternative, if enabled.
 #
 class hadoop::common::postinstall {
-  $confname = $hadoop::features['alternatives']
+  $confname = $hadoop::alternatives
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $altcmd = $::osfamily ? {
     'Debian' => 'update-alternatives',

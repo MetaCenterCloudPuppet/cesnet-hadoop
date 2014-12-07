@@ -71,7 +71,9 @@
 #     (TODO: Debian not supported)
 #   - authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 #   - yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
-#   - alternatives - use alternatives to swicth configuration
+#
+# [*alternatives*] (Debian: 'cluster', other: undef)
+#   Use alternatives to switch configuration. It is used by Cloudera for example.
 #
 # [*perform*] (false)
 #   Launch all installation and setup here, from hadoop class.
@@ -143,6 +145,7 @@ class hadoop (
   $properties = undef,
   $descriptions = undef,
   $features = $params::features,
+  $alternatives = $params::alternatives,
   $perform = $params::perform,
 ) inherits hadoop::params {
   include 'stdlib'

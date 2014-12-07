@@ -27,6 +27,7 @@ class hadoop::params {
         'historyserver' => '/etc/sysconfig/hadoop-historyserver',
       }
 
+      $alternatives = undef
       $confdir = '/etc/hadoop'
       $hdfs_dirs = [ '/var/lib/hadoop-hdfs' ]
       $hdfs_namenode_suffix = '/${user.name}/dfs/namenode'
@@ -70,6 +71,7 @@ class hadoop::params {
         'historyserver' => '/etc/default/hadoop-mapreduce-historyserver',
       }
 
+      $alternatives = 'cluster'
       $confdir = '/etc/hadoop/conf'
       $hdfs_dirs = [ '/var/lib/hadoop-hdfs/cache' ]
       $hdfs_namenode_suffix = '/${user.name}/dfs/name'
