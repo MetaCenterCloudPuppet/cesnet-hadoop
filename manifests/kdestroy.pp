@@ -21,7 +21,7 @@ define hadoop::kdestroy($touchfile, $touch) {
   }
 
   if $touch {
-    exec { "hadoop-touch-${dir}":
+    exec { "hadoop-touch-${touchfile}":
       command     => "touch ${puppetfile}",
       path        => $path,
       environment => $env,

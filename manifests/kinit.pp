@@ -21,7 +21,7 @@ define hadoop::kinit($touchfile) {
     creates     => $puppetfile,
   }
   ->
-  exec { "kinit-$touchfile":
+  exec { "kinit-${touchfile}":
     command     => "kinit -k nn/${::fqdn}@${realm} -t /etc/security/keytab/nn.service.keytab",
     path        => $path,
     environment => $env,
