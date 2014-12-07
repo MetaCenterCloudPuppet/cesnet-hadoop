@@ -54,10 +54,10 @@ class hadoop::nodemanager::config {
     $env_ensure = 'present'
   }
   file { $hadoop::envs['nodemanager']:
-    ensure => $env_ensure,
-    owner  => 'root',
-    group  => 'root',
-    alias  => 'nm-env',
+    ensure  => $env_ensure,
+    owner   => 'root',
+    group   => 'root',
+    alias   => 'nm-env',
     content => template('hadoop/env/yarn-nodemanager.erb'),
   }
 

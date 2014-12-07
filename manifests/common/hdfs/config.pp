@@ -70,15 +70,16 @@ class hadoop::common::hdfs::config {
   # org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore
   # ignores hadoop.security.auth_to_local
   #
+  $rm_shell = $::osfamily ? {
+    'RedHat' => '/sbin/nologin',
+    'Debian' => '/bin/false',
+  }
   if ($hadoop::realm) {
     user { 'rm':
       ensure     => present,
       comment    => 'Apache Hadoop Yarn',
       password   => '!!',
-      shell      => $::osfamily ? {
-        'RedHat' => '/sbin/nologin',
-        'Debian' => '/bin/false',
-      },
+      shell      => $rm_shell,
       home       => '/var/cache/hadoop-yarn',
       managehome => false,
       system     => true,

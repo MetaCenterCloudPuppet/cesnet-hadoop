@@ -29,7 +29,6 @@ class hadoop::params {
 
       $alternatives = undef
       $confdir = '/etc/hadoop'
-      $hdfs_dirs = [ '/var/lib/hadoop-hdfs' ]
       $hdfs_namenode_suffix = '/${user.name}/dfs/namenode'
       # container group, official recommendation is 'hadoop'
       # depends on result of: https://bugzilla.redhat.com/show_bug.cgi?id=1163892
@@ -73,7 +72,6 @@ class hadoop::params {
 
       $alternatives = 'cluster'
       $confdir = '/etc/hadoop/conf'
-      $hdfs_dirs = [ '/var/lib/hadoop-hdfs/cache' ]
       $hdfs_namenode_suffix = '/${user.name}/dfs/name'
       # container group
       $yarn_group = 'yarn'
@@ -123,6 +121,11 @@ class hadoop::params {
   $https_keystore_password = 'changeit'
   $https_keystore_keypassword = undef
 
+  $hdfs_dir = $::osfamily ? {
+    'Debian' => '/var/lib/hadoop-hdfs/cache',
+    'RedHat' => '/var/lib/hadoop-hdfs',
+  }
+  $hdfs_dirs = [ $hdfs_dir ]
   $hdfs_homedir = $::osfamily ? {
     'Debian' => '/var/lib/hadoop-hdfs',
     'RedHat' => '/var/lib/hadoop-hdfs',
@@ -135,6 +138,5 @@ class hadoop::params {
     'Debian' => '/var/lib/hadoop-mapreduce',
     'RedHat' => '/var/cache/hadoop-mapreduce',
   }
-
   $perform = false
 }

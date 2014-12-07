@@ -11,22 +11,22 @@ define hadoop::kinit($touchfile) {
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
 
-  # better to destroy the ticket (it may be owned by root),
-  # destroy it only when needed though
-  exec { "kdestroy-old-${touchfile}":
-    command     => 'kdestroy',
-    path        => $path,
-    environment => $env,
-    onlyif      => "test -n \"${realm}\"",
-    creates     => $puppetfile,
-  }
-  ->
-  exec { "kinit-${touchfile}":
-    command     => "kinit -k nn/${::fqdn}@${realm} -t /etc/security/keytab/nn.service.keytab",
-    path        => $path,
-    environment => $env,
-    onlyif      => "test -n \"${realm}\"",
-    user        => 'hdfs',
-    creates     => $puppetfile,
+  if $hadoop::realm {
+    # better to destroy the ticket (it may be owned by root),
+    # destroy it only when needed though
+    exec { "kdestroy-old-${touchfile}":
+      command     => 'kdestroy',
+      path        => $path,
+      environment => $env,
+      creates     => $puppetfile,
+    }
+    ->
+    exec { "kinit-${touchfile}":
+      command     => "kinit -k nn/${::fqdn}@${hadoop::realm} -t /etc/security/keytab/nn.service.keytab",
+      path        => $path,
+      environment => $env,
+      user        => 'hdfs',
+      creates     => $puppetfile,
+    }
   }
 }

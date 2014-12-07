@@ -54,10 +54,10 @@ class hadoop::historyserver::config {
     $env_ensure = 'present'
   }
   file { $hadoop::envs['historyserver']:
-    ensure => $env_ensure,
-    owner  => 'root',
-    group  => 'root',
-    alias  => 'jhs-env',
+    ensure  => $env_ensure,
+    owner   => 'root',
+    group   => 'root',
+    alias   => 'jhs-env',
     content => template('hadoop/env/mapred-historyserver.erb'),
   }
 }

@@ -26,32 +26,32 @@ class hadoop::create_dirs {
   }
   ->
   hadoop::mkdir { '/tmp':
-    mode => '1777',
+    mode      => '1777',
     touchfile => 'hdfs-root-created',
   }
   ->
   hadoop::mkdir { ['/tmp/hadoop-yarn/staging', '/tmp/hadoop-yarn/staging/history', '/tmp/hadoop-yarn/staging/history/done', '/tmp/hadoop-yarn/staging/history/done_intermediate']:
-    mode => '1777',
-    owner => 'mapred',
-    group => 'mapred',
+    mode      => '1777',
+    owner     => 'mapred',
+    group     => 'mapred',
     touchfile => 'hdfs-root-created',
   }
   ->
   hadoop::mkdir { ['/tmp/hadoop-yarn', '/var/log/hadoop-yarn']:
-    owner => 'yarn',
-    group => 'mapred',
+    owner     => 'yarn',
+    group     => 'mapred',
     touchfile => 'hdfs-root-created',
   }
   ->
   # for resource manager state store feature
   hadoop::mkdir { '/rmstore':
-    owner => $rmstore_user,
-    group => 'hadoop',
+    owner     => $rmstore_user,
+    group     => 'hadoop',
     touchfile => 'hdfs-root-created',
   }
   ->
   hadoop::kdestroy { 'hdfs-kdestroy':
     touchfile => 'hdfs-root-created',
-    touch => true,
+    touch     => true,
   }
 }

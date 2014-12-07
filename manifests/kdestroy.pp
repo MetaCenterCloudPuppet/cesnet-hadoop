@@ -15,7 +15,7 @@ define hadoop::kdestroy($touchfile, $touch) {
     command     => 'kdestroy',
     path        => $path,
     environment => $env,
-    onlyif      => "test -n \"${realm}\"",
+    onlyif      => "test -n \"${hadoop::realm}\"",
     user        => 'hdfs',
     creates     => $puppetfile,
   }
@@ -28,6 +28,6 @@ define hadoop::kdestroy($touchfile, $touch) {
       user        => 'hdfs',
       creates     => $puppetfile,
     }
-    Exec["kdestroy-old-${touchfile}"] -> Exec["hadoop-touch-${dir}"]
+    Exec["kdestroy-old-${touchfile}"] -> Exec["hadoop-touch-${touchfile}"]
   }
 }
