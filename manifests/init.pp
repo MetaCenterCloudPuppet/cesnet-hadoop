@@ -45,14 +45,16 @@
 # [*datanodes_hostnames*] (undef)
 #   Array of Data Node machines. Used *slaves* by default.
 #
-# [*hdfs_dirs*] (["/var/lib/hadoop-hdfs"], or ["/var/lib/hadoop-hdfs/cache"])
-#  Directory prefixes to store the data.
-#    - namenode:
+# [*hdfs_name_dirs*] (["/var/lib/hadoop-hdfs"], or ["/var/lib/hadoop-hdfs/cache"])
+#  Directory prefixes to store the metadata on the namenode.
 #  - name table (fsimage) and DFS data blocks
 #  - /${user.name}/dfs/namenode or /${user.name}/dfs/name suffix is always added
 #       - If there is multiple directories, then the name table is replicated in all of the directories, for redundancy.
-#    - datanode:
-#  - DFS data blocks
+#       - All directories needs to be available to namenode work properly (==> good on mirrored raid)
+#       - Crucial data (==> good to save at different physical locations)
+#
+# [*hdfs_data_dirs*] (["/var/lib/hadoop-hdfs"], or ["/var/lib/hadoop-hdfs/cache"])
+#  Directory prefixes to store the data on HDFS datanodes.
 #  - /${user.name}/dfs/datanode suffix is always added
 #  - If there is multiple directories, then data will be stored in all directories, typically on different devices.
 #  When adding a new directory, you need to replicate the contents from some of the other ones. Or set dfs.namenode.name.dir.restore to true and create NEW_DIR/hdfs/dfs/namenode with proper owners.
@@ -111,7 +113,8 @@
 #  slaves => [ "node1.example.com", "node2.example.com", "node3.example.com" ],
 #  frontends => [ "node1.example.com" ],
 #  realm => "EXAMPLE.COM",
-#  hdfs_dirs => [ "/var/lib/hadoop-hdfs", "/data2", "/data3", "/data4" ],
+#  hdfs_name_dirs => [ "/var/lib/hadoop-hdfs", "/data2" ],
+#  hdfs_data_dirs => [ "/var/lib/hadoop-hdfs", "/data2", "/data3", "/data4" ],
 #  cluster_name => "MY_CLUSTER_NAME",
 #  properties => {
 #    'dfs.replication' => 2,
@@ -166,7 +169,8 @@ class hadoop (
   $nodemanager_hostnames = undef,
   $datanode_hostnames = undef,
 
-  $hdfs_dirs = $params::hdfs_dirs,
+  $hdfs_name_dirs = $params::hdfs_name_dirs,
+  $hdfs_data_dirs = $params::hdfs_data_dirs,
   $properties = undef,
   $descriptions = undef,
   $features = $params::features,

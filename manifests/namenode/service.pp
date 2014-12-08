@@ -4,11 +4,8 @@
 # It ensure the service is running.
 #
 class hadoop::namenode::service {
-  contain hadoop::format
   contain hadoop::create_dirs
 
-  Class['hadoop::format']
-  ->
   service { $hadoop::daemons['namenode']:
     ensure    => 'running',
     enable    => true,
@@ -17,6 +14,5 @@ class hadoop::namenode::service {
   ->
   Class['hadoop::create_dirs']
 
-  Class['hadoop::format'] ~> Class['hadoop::create_dirs']
   User['mapred'] -> Class['hadoop::create_dirs']
 }

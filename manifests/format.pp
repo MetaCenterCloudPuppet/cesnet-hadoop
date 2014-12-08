@@ -21,6 +21,6 @@ class hadoop::format {
     creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-formatted',
     path    => '/bin:/usr/bin',
     user    => 'hdfs',
-    require => File [ $hadoop::hdfs_dirs ],
+    require => File [ $hadoop::hdfs_name_dirs ],
   }
 }

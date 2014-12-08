@@ -10,6 +10,15 @@ class hadoop::datanode::config {
   $file = '/tmp/krb5cc_dn'
   $principal = "dn/${::fqdn}@${hadoop::realm}"
 
+  # ensure proper owner and group
+  # (better to enable sticky bit for more protection)
+  ensure_resource('file', $hadoop::hdfs_data_dirs, {
+    ensure => directory,
+    owner  => 'hdfs',
+    group  => 'hadoop',
+    mode   => '1755',
+  })
+
   if $hadoop::realm {
     file { $keytab:
       owner => 'hdfs',

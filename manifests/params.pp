@@ -29,7 +29,6 @@ class hadoop::params {
 
       $alternatives = undef
       $confdir = '/etc/hadoop'
-      $hdfs_namenode_suffix = '/${user.name}/dfs/namenode'
       # container group, official recommendation is 'hadoop'
       # depends on result of: https://bugzilla.redhat.com/show_bug.cgi?id=1163892
       $yarn_group = 'hadoop'
@@ -72,7 +71,6 @@ class hadoop::params {
 
       $alternatives = 'cluster'
       $confdir = '/etc/hadoop/conf'
-      $hdfs_namenode_suffix = '/${user.name}/dfs/name'
       # container group
       $yarn_group = 'yarn'
 
@@ -125,7 +123,12 @@ class hadoop::params {
     'Debian' => '/var/lib/hadoop-hdfs/cache',
     'RedHat' => '/var/lib/hadoop-hdfs',
   }
-  $hdfs_dirs = [ $hdfs_dir ]
+  $hdfs_name_dirs = [ $hdfs_dir ]
+  $hdfs_data_dirs = [ $hdfs_dir ]
+  $hdfs_namenode_suffix = $::osfamily ? {
+    'RedHat' => '/${user.name}/dfs/namenode',
+    'Debian' => '/${user.name}/dfs/name',
+  }
   $hdfs_homedir = $::osfamily ? {
     'Debian' => '/var/lib/hadoop-hdfs',
     'RedHat' => '/var/lib/hadoop-hdfs',

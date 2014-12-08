@@ -25,15 +25,15 @@
   </property>
   <property>
      <name>dfs.namenode.name.dir</name>
-     <value><%= suffix = scope.lookupvar('hadoop::hdfs_namenode_suffix'); scope.lookupvar('hadoop::hdfs_dirs').map{ |dir| "file://#{dir}/#{suffix}" }.join(',') -%></value>
+     <value><%= suffix = scope.lookupvar('hadoop::hdfs_namenode_suffix'); scope.lookupvar('hadoop::hdfs_name_dirs').map{ |dir| "file://#{dir}/#{suffix}" }.join(',') -%></value>
   </property>
   <property>
      <name>dfs.namenode.checkpoint.dir</name>
-     <value><%= scope.lookupvar('hadoop::hdfs_dirs').map{ |dir| "file://#{dir}/${user.name}/dfs/secondarynamenode" }.join(',') -%></value>
+     <value><%= scope.lookupvar('hadoop::hdfs_name_dirs').map{ |dir| "file://#{dir}/${user.name}/dfs/secondarynamenode" }.join(',') -%></value>
   </property>
   <property>
      <name>dfs.datanode.data.dir</name>
-     <value><%= scope.lookupvar('hadoop::hdfs_dirs').map{ |dir| "file://#{dir}/${user.name}/dfs/datanode" }.join(',') -%></value>
+     <value><%= scope.lookupvar('hadoop::hdfs_data_dirs').map{ |dir| "file://#{dir}/${user.name}/dfs/datanode" }.join(',') -%></value>
   </property>
   <!-- permitted data nodes -->
   <property>

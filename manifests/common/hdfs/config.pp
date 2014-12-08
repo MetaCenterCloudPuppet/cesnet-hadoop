@@ -4,15 +4,6 @@ class hadoop::common::hdfs::config {
   include hadoop::common::install
   include hadoop::common::slaves
 
-  # ensure proper owner and group
-  # (better to enable sticky bit for more protection)
-  file { $hadoop::hdfs_dirs:
-    ensure => directory,
-    owner  => 'hdfs',
-    group  => 'hadoop',
-    mode   => '1755',
-  }
-
   file { "${hadoop::confdir}/hdfs-site.xml":
     owner   => 'root',
     group   => 'root',
