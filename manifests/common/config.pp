@@ -38,6 +38,12 @@ class hadoop::common::config {
       mode    => '0640',
       content => template('hadoop/hadoop/ssl-server.xml.erb'),
     }
+    file { "${hadoop::confdir}/ssl-client.xml":
+      owner   => 'root',
+      group   => 'hadoop',
+      mode    => '0640',
+      content => template('hadoop/hadoop/ssl-client.xml.erb'),
+    }
     file { $hadoop::https_cacerts:
       owner => 'root',
       group => 'root',
