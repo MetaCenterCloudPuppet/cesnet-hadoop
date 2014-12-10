@@ -22,7 +22,7 @@ define hadoop::kinit($touchfile) {
     }
     ->
     exec { "kinit-${touchfile}":
-      command     => "kinit -k nn/${::fqdn}@${hadoop::realm} -t /etc/security/keytab/nn.service.keytab",
+      command     => "kinit -k -t /etc/security/keytab/nn.service.keytab nn/${::fqdn}@${hadoop::realm}",
       path        => $path,
       environment => $env,
       user        => 'hdfs',
