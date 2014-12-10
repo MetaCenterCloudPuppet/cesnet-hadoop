@@ -35,6 +35,10 @@
      <name>dfs.datanode.data.dir</name>
      <value><%= scope.lookupvar('hadoop::hdfs_data_dirs').map{ |dir| "file://#{dir}/${user.name}/dfs/datanode" }.join(',') -%></value>
   </property>
+<!--  <property>
+     <name>dfs.journalnode.edits.dir</name>
+     <value><%= scope.lookupvar('hadoop::hdfs_name_dirs').map{ |dir| "#{dir}/${user.name}/dfs/journalnode" }.join(',') -%></value>
+  </property>-->
   <!-- permitted data nodes -->
   <property>
      <name>dfs.hosts</name>
@@ -65,6 +69,10 @@
   <property>
     <name>dfs.datanode.keytab.file</name>
     <value>/etc/security/keytab/dn.service.keytab</value>
+  </property>
+  <property>
+    <name>dfs.journalnode.keytab.file</name>
+    <value>/etc/security/keytab/jn.service.keytab</value>
   </property>
 <% end -%>
 
