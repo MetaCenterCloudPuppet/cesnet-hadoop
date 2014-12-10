@@ -120,7 +120,7 @@
 
   <property>
     <name>security.qjournal.service.protocol.acl</name>
-    <value>nn</value>
+    <value> hadoop</value>
     <description>ACL for QJournalProtocol, used by the NN to communicate with
     JNs when using the QuorumJournalManager for edit logs.</description>
   </property>
