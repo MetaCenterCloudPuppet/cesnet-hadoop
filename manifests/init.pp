@@ -226,7 +226,7 @@ class hadoop (
   }
 
   $dyn_properties = {
-    'fs.default.name' => "hdfs://${nn_hostname}:8020",
+    'fs.defaultFS' => "hdfs://${nn_hostname}:8020",
     'yarn.resourcemanager.hostname' => $rm_hostname,
     'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
