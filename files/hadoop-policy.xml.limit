@@ -67,7 +67,7 @@
 
   <property>
     <name>security.namenode.protocol.acl</name>
-    <value> hadoop</value>
+    <value>nn,sn</value>
     <description>ACL for NamenodeProtocol, the protocol used by the secondary
     namenode to communicate with the namenode.
     The ACL is a comma-separated list of user and group names. The user and
