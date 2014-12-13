@@ -280,7 +280,8 @@ DEFAULT
     $rm_ss_properties = {
       'yarn.resourcemanager.recovery.enabled' => true,
       'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
-      'yarn.resourcemanager.fs.state-store.uri' => "hdfs://${nn_hostname}:8020/rmstore",
+      # no hdfs://${nn_hostname}:8020 prefix - in case of HA HDFS
+      'yarn.resourcemanager.fs.state-store.uri' => "/rmstore",
     }
   } else {
     $rm_ss_properties = {}
