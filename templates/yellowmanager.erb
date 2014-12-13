@@ -23,6 +23,7 @@ while [ -n "$1" ]; do
 		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "historyserver $1"; service <%= scope.lookupvar('hadoop::daemons')['historyserver'] -%> $1&<%end%>
 		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "nodemanager $1"; service <%= scope.lookupvar('hadoop::daemons')['nodemanager'] -%> $1&<%end%>
 		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "datanode $1"; service <%= scope.lookupvar('hadoop::daemons')['datanode'] -%> $1&<%end%>
+		<%if scope.lookupvar('hadoop::daemon_journalnode') -%>echo "journalnode $1"; service <%= scope.lookupvar('hadoop::daemons')['journalnode'] -%> $1&<%end%>
 		wait
 		;;
 	stop)
@@ -30,6 +31,7 @@ while [ -n "$1" ]; do
 		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "historyserver $1"; service <%= scope.lookupvar('hadoop::daemons')['historyserver'] -%> $1&<%end%>
 		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "nodemanager $1"; service <%= scope.lookupvar('hadoop::daemons')['nodemanager'] -%> $1&<%end%>
 		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "datanode $1"; service <%= scope.lookupvar('hadoop::daemons')['datanode'] -%> $1&<%end%>
+		<%if scope.lookupvar('hadoop::daemon_journalnode') -%>echo "journalnode $1"; service <%= scope.lookupvar('hadoop::daemons')['journalnode'] -%> $1&<%end%>
 		wait
 		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "namenode $1"; service <%= scope.lookupvar('hadoop::daemons')['namenode'] -%> $1<%end%>
 		;;
@@ -39,6 +41,7 @@ while [ -n "$1" ]; do
 		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "historyserver $1"; service <%= scope.lookupvar('hadoop::daemons')['historyserver'] -%> $1<%end%>
 		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "nodemanager $1"; service <%= scope.lookupvar('hadoop::daemons')['nodemanager'] -%> $1<%end%>
 		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "datanode $1"; service <%= scope.lookupvar('hadoop::daemons')['datanode'] -%> $1<%end%>
+		<%if scope.lookupvar('hadoop::daemon_journalnode') -%>echo "journalnode $1"; service <%= scope.lookupvar('hadoop::daemons')['journalnode'] -%> $1<%end%>
 		;;
 	esac
 

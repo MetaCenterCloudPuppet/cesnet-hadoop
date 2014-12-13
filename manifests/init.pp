@@ -168,6 +168,7 @@ class hadoop (
   $historyserver_hostname = undef,
   $nodemanager_hostnames = undef,
   $datanode_hostnames = undef,
+  $journalnode_hostnames = undef,
 
   $hdfs_name_dirs = $params::hdfs_name_dirs,
   $hdfs_data_dirs = $params::hdfs_data_dirs,
@@ -219,6 +220,10 @@ class hadoop (
 
   if member($dn_hostnames, $::fqdn) {
     $daemon_datanode = 1
+  }
+
+  if member($journalnode_hostnames, $::fqdn) {
+    $daemon_journalnode = 1
   }
 
   if member($frontend_hostnames, $::fqdn) {
