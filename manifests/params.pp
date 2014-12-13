@@ -13,6 +13,7 @@ class hadoop::params {
       $packages_nm = [ 'hadoop-yarn', 'hadoop-yarn-security' ]
       $packages_dn = [ 'hadoop-hdfs' ]
       $packages_jn = [ 'hadoop-hdfs' ]
+      $packages_hdfs_zkfc = [ 'hadoop-hdfs' ]
       $packages_client = [ 'hadoop-client', 'hadoop-mapreduce-examples' ]
 
       $daemons = {
@@ -21,13 +22,15 @@ class hadoop::params {
         'resourcemanager' => 'hadoop-resourcemanager',
         'nodemanager' => 'hadoop-nodemanager',
         'historyserver' => 'hadoop-historyserver',
-        'journalnode' => 'hadoop-hdfs-journalnode',
+        'journalnode' => 'hadoop-journalnode',
+        'hdfs-zkfc' => 'hadoop-zkfc',
       }
       $envs = {
         'datanode' => '/etc/sysconfig/hadoop-datanode',
         'nodemanager' => '/etc/sysconfig/hadoop-nodemanager',
         'historyserver' => '/etc/sysconfig/hadoop-historyserver',
         'journalnode' => '/etc/sysconfig/hadoop-journalnode',
+        'hdfs-zkfc' => '/etc/sysconfig/hadoop-zkfc',
       }
 
       $alternatives = undef
@@ -58,6 +61,7 @@ class hadoop::params {
       $packages_nm = [ 'hadoop-yarn-nodemanager' ]
       $packages_dn = [ 'hadoop-hdfs-datanode' ]
       $packages_jn = [ 'hadoop-hdfs-journalnode' ]
+      $packages_hdfs_zkfc = [ 'hadoop-hdfs-zkfc' ]
       $packages_client = [ 'hadoop-client', 'hadoop-doc' ]
 
       $daemons = {
@@ -67,12 +71,14 @@ class hadoop::params {
         'nodemanager' => 'hadoop-yarn-nodemanager',
         'historyserver' => 'hadoop-mapreduce-historyserver',
         'journalnode' => 'hadoop-hdfs-journalnode',
+        'hdfs-zkfc' => 'hadoop-hdfs-zkfc',
       }
       $envs = {
         'datanode' => '/etc/default/hadoop-hdfs-datanode',
         'nodemanager' => '/etc/default/hadoop-yarn-nodemanager',
         'historyserver' => '/etc/default/hadoop-mapreduce-historyserver',
         'journalnode' => '/etc/default/hadoop-hdfs-journalnode',
+        'hdfs-zkfc' => '/etc/default/hadoop-hdfs-zkfc',
       }
 
       $alternatives = 'cluster'

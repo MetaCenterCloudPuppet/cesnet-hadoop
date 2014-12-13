@@ -45,6 +45,12 @@
 # [*datanodes_hostnames*] (undef)
 #   Array of Data Node machines. Used *slaves* by default.
 #
+# [*journalnode_hostnames*] (undef)
+#   Array of HDFS Journal Node machines. Used in HDFS namenode HA.
+#
+# [*zookeeper_hostnames*] (undef)
+#   Array of Zookeeper machines. Used in HDFS namenode HA for automatic failover.
+#
 # [*hdfs_name_dirs*] (["/var/lib/hadoop-hdfs"], or ["/var/lib/hadoop-hdfs/cache"])
 #  Directory prefixes to store the metadata on the namenode.
 #  - name table (fsimage) and DFS data blocks
@@ -169,6 +175,7 @@ class hadoop (
   $nodemanager_hostnames = undef,
   $datanode_hostnames = undef,
   $journalnode_hostnames = undef,
+  $zookeeper_hostnames = undef,
 
   $hdfs_name_dirs = $params::hdfs_name_dirs,
   $hdfs_data_dirs = $params::hdfs_data_dirs,
@@ -224,6 +231,10 @@ class hadoop (
 
   if member($journalnode_hostnames, $::fqdn) {
     $daemon_journalnode = 1
+  }
+
+  if $zookeeper_hostnames and $daemon_namenode {
+    $daemon_hdfs_zkfc = 1
   }
 
   if member($frontend_hostnames, $::fqdn) {
@@ -309,7 +320,15 @@ DEFAULT
     $https_properties = {}
   }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $https_properties, $properties)
+  if ($zookeeper_hostnames) {
+    $zkquorum = join($zookeeper_hostnames, ':2181,')
+    $zoo_properties = {
+      'dfs.ha.automatic-failover.enabled' => true,
+      'ha.zookeeper.quorum' => "${zkquorum}:2181",
+    }
+  }
+
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $https_properties, $zoo_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
   if $hadoop::perform {
