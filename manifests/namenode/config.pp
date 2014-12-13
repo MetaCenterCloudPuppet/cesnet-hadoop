@@ -7,7 +7,6 @@ class hadoop::namenode::config {
   contain hadoop::common::config
   contain hadoop::common::hdfs::config
   contain hadoop::common::hdfs::daemon
-  contain hadoop::format
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)
@@ -36,7 +35,12 @@ class hadoop::namenode::config {
     }
   }
 
-  File[$hadoop::hdfs_name_dirs] -> Class['hadoop::format']
-  Class['hadoop::common::config'] -> Class['hadoop::format']
-  Class['hadoop::common::hdfs::config'] -> Class['hadoop::format']
+  # format only on the first namenode
+  if $hdfs_hostname == $::fqdn {
+    contain hadoop::format
+
+    File[$hadoop::hdfs_name_dirs] -> Class['hadoop::format']
+    Class['hadoop::common::config'] -> Class['hadoop::format']
+    Class['hadoop::common::hdfs::config'] -> Class['hadoop::format']
+  }
 }

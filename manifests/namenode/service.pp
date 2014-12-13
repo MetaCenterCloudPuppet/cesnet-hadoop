@@ -4,15 +4,17 @@
 # It ensure the service is running.
 #
 class hadoop::namenode::service {
-  contain hadoop::create_dirs
-
   service { $hadoop::daemons['namenode']:
     ensure    => 'running',
     enable    => true,
     subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
   }
-  ->
-  Class['hadoop::create_dirs']
 
-  User['mapred'] -> Class['hadoop::create_dirs']
+  # create dirs only on the first namenode
+  if $hdfs_hostname == $::fqdn {
+    contain hadoop::create_dirs
+
+    Service[$hadoop::daemons['namenode']] -> Class['hadoop::create_dirs']
+    User['mapred'] -> Class['hadoop::create_dirs']
+  }
 }

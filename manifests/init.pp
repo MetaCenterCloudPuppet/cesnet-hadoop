@@ -7,6 +7,12 @@
 # [*hdfs_hostname*] (localhost)
 #   Hadoop Filesystem Name Node machine.
 #
+# [*hdfs_hostname2*] (localhost)
+#   Hadoop Filesystem Name Node machine, used for High Availability. This parameter will activate the HDFS HA feature.
+#
+#   If you're converting existing Hadoop cluster without HA to cluster with HA, you need to initialize journalnodes yet:
+#     hdfs namenode -initializeSharedEdits
+#
 # [*yarn_hostname*] (localhost)
 #   Yarn machine (with Resource Manager and Job History services).
 #
@@ -162,6 +168,7 @@
 #
 class hadoop (
   $hdfs_hostname = $params::hdfs_hostname,
+  $hdfs_hostname2 = undef,
   $yarn_hostname = $params::yarn_hostname,
   $slaves = $params::slaves,
   $frontends = [],
@@ -207,10 +214,9 @@ class hadoop (
   if $frontends { $frontend_hostnames = $frontends }
   else { $frontend_hostnames = $slaves }
 
-  if $::fqdn == $nn_hostname {
+  if $::fqdn == $nn_hostname or $::fqdn == $hdfs_hostname2 {
     $daemon_namenode = 1
     $mapred_user = 1
-
   }
 
   if $::fqdn == $rm_hostname {
@@ -320,7 +326,35 @@ DEFAULT
     $https_properties = {}
   }
 
-  if ($zookeeper_hostnames) {
+  # High Availability of HDFS
+  if $hdfs_hostname2 {
+    if ! $journalnode_hostnames {
+      notice('only QJM HA implemented, journalnodes required for HDFS HA')
+    }
+    if ($https) {
+      $ha_https_properties = {
+        'dfs.namenode.https-address.mycluster.nn1' => "${hdfs_hostname}:50470",
+        'dfs.namenode.https-address.mycluster.nn2' => "${hdfs_hostname2}:50470",
+      }
+    }
+    $ha_journals = join($journalnode_hostnames, ':8485;')
+    $ha_base_properties = {
+      'dfs.nameservices' => 'mycluster',
+      'dfs.ha.namenodes.mycluster' => 'nn1,nn2',
+      'dfs.namenode.rpc-address.mycluster.nn1' => "${hdfs_hostname}:8020",
+      'dfs.namenode.rpc-address.mycluster.nn2' => "${hdfs_hostname2}:8020",
+      'dfs.namenode.http-address.mycluster.nn1' => "${hdfs_hostname}:50070",
+      'dfs.namenode.http-address.mycluster.nn2' => "${hdfs_hostname2}:50070",
+      'dfs.namenode.shared.edits.dir' => "qjournal://${ha_journals}:8485/mycluster",
+      'dfs.client.failover.proxy.provider.mycluster' => 'org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider',
+      'dfs.ha.fencing.methods' => 'shell(/bin/true)',
+      'fs.defaultFS' => 'hdfs://mycluster',
+    }
+
+    $ha_properties = merge($ha_base_properties, $ha_https_properties)
+  }
+  # Automatic failover for HA HDFS
+  if $zookeeper_hostnames {
     $zkquorum = join($zookeeper_hostnames, ':2181,')
     $zoo_properties = {
       'dfs.ha.automatic-failover.enabled' => true,
@@ -328,7 +362,7 @@ DEFAULT
     }
   }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $https_properties, $zoo_properties, $properties)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
   if $hadoop::perform {
