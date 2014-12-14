@@ -248,7 +248,7 @@ class hadoop (
     $daemon_datanode = 1
   }
 
-  if member($journalnode_hostnames, $::fqdn) {
+  if $journalnode_hostnames and member($journalnode_hostnames, $::fqdn) {
     $daemon_journalnode = 1
   }
 
