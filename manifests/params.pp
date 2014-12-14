@@ -116,7 +116,7 @@ class hadoop::params {
     'hadoop.security.authorization' => 'enable authorization, see hadoop-policy.xml',
     'dfs.datanode.address' => 'different port with security enabled (original port 50010)',
     'dfs.datanode.http.address' => 'different port with security enabled (original port 50075)',
-    'dfs.webhdfs.enabled' => 'TODO: check, has been problems',
+    'dfs.webhdfs.enabled' => 'read-only Web HDFS access',
     'yarn.nodemanager.local-dirs' => 'List of directories to store localized files in.',
     'yarn.resourcemanager.recovery.enabled' => 'enable resubmit old jobs on start',
     'yarn.application.classpath' => 'Classpath for typical applications.',

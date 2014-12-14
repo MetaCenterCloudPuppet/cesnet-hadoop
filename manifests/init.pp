@@ -288,7 +288,7 @@ DEFAULT
       'dfs.datanode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
       'dfs.journalnode.kerberos.principal' => "jn/_HOST@${hadoop::realm}",
       'dfs.encrypt.data.transfer' => false,
-      'dfs.webhdfs.enabled' => false,
+      'dfs.webhdfs.enabled' => true,
       'dfs.web.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
       'mapreduce.jobhistory.principal' => "jhs/_HOST@${hadoop::realm}",
       'yarn.resourcemanager.principal' => "rm/_HOST@${hadoop::realm}",
