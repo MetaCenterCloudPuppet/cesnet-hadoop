@@ -8,7 +8,7 @@
 #   Hadoop Filesystem Name Node machine.
 #
 # [*hdfs_hostname2*] (localhost)
-#   Hadoop Filesystem Name Node machine, used for High Availability. This parameter will activate the HDFS HA feature.
+#   Another Hadoop Filesystem Name Node machine. used for High Availability. This parameter will activate the HDFS HA feature. See http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html .
 #
 #   If you're converting existing Hadoop cluster without HA to cluster with HA, you need to initialize journalnodes yet:
 #     hdfs namenode -initializeSharedEdits
@@ -35,9 +35,6 @@
 #   * /etc/security/keytab/nm.service.keytab (on node manager nodes)
 #   * /etc/security/keytab/nn.service.keytab (on name nodes)
 #   * /etc/security/keytab/rm.service.keytab (on resource manager node)
-#
-# [*namenode_hostname*] (undef)
-#   Name Node machine. Used *hdfs_hostname* by default.
 #
 # [*resourcemanager_hostname*] (undef)
 #   Resource Manager machine. Used *yarn_hostname* by default.
@@ -182,7 +179,6 @@ class hadoop (
   $realm,
   $authorization = $params::authorization,
 
-  $namenode_hostname = undef,
   $resourcemanager_hostname = undef,
   $historyserver_hostname = undef,
   $nodemanager_hostnames = undef,
@@ -209,8 +205,6 @@ class hadoop (
   include 'stdlib'
 
   # detailed deployment bases on convenient parameters
-  if $namenode_hostname { $nn_hostname = $namenode_hostname }
-  else { $nn_hostname = $hdfs_hostname }
   if $resourcemanager_hostname { $rm_hostname = $resourcemanager_hostname }
   else { $rm_hostname = $yarn_hostname }
   if $historyserver_hostname { $hs_hostname = $historyserver_hostname }
@@ -227,7 +221,7 @@ class hadoop (
   if !$hdfs_secondary_dirs { $_hdfs_secondary_dirs = $hadoop::hdfs_name_dirs }
   if !$hdfs_journal_dirs { $_hdfs_journal_dirs = $hadoop::hdfs_name_dirs }
 
-  if $::fqdn == $nn_hostname or $::fqdn == $hdfs_hostname2 {
+  if $::fqdn == $hdfs_hostname or $::fqdn == $hdfs_hostname2 {
     $daemon_namenode = 1
     $mapred_user = 1
   }
@@ -261,7 +255,7 @@ class hadoop (
   }
 
   $dyn_properties = {
-    'fs.defaultFS' => "hdfs://${nn_hostname}:8020",
+    'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
     'yarn.resourcemanager.hostname' => $rm_hostname,
     'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
@@ -310,7 +304,7 @@ DEFAULT
     $rm_ss_properties = {
       'yarn.resourcemanager.recovery.enabled' => true,
       'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
-      # no hdfs://${nn_hostname}:8020 prefix - in case of HA HDFS
+      # no hdfs://${hdfs_hostname}:8020 prefix - in case of HA HDFS
       'yarn.resourcemanager.fs.state-store.uri' => "/rmstore",
     }
   } else {

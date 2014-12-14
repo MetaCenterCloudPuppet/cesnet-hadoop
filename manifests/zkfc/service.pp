@@ -10,8 +10,8 @@ class hadoop::zkfc::service {
     subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
   }
 
-  # launch the format on the first (main) namenode
-  if $hadoop::zookeeper_hostnames and $hadoop::nn_hostname == $::fqdn {
+  # launch the format only once: on the first (main) namenode
+  if $hadoop::zookeeper_hostnames and $hadoop::hdfs_hostname == $::fqdn {
     hadoop::kinit {'hdfs-zkfc-kinit':
       touchfile => 'hdfs-zkfc-formatted',
     }
