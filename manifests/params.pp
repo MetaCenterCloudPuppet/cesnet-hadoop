@@ -137,9 +137,22 @@ class hadoop::params {
   }
   $hdfs_name_dirs = [ $hdfs_dir ]
   $hdfs_data_dirs = [ $hdfs_dir ]
+  # just cosmetics, daemons will create these directories automatically anyway
   $hdfs_namenode_suffix = $::osfamily ? {
     'RedHat' => '/${user.name}/dfs/namenode',
     'Debian' => '/${user.name}/dfs/name',
+  }
+  $hdfs_secondarynamenode_suffix = $::osfamily ? {
+    'RedHat' => '/${user.name}/dfs/secondarynamenode',
+    'Debian' => '/${user.name}/dfs/secondaryname',
+  }
+  $hdfs_datanode_suffix = $::osfamily ? {
+    'RedHat' => '/${user.name}/dfs/datanode',
+    'Debian' => '/${user.name}/dfs/data',
+  }
+  $hdfs_journalnode_suffix = $::osfamily ? {
+    'RedHat' => '/${user.name}/dfs/journalnode',
+    'Debian' => '/${user.name}/dfs/journal',
   }
   $hdfs_homedir = $::osfamily ? {
     'Debian' => '/var/lib/hadoop-hdfs',

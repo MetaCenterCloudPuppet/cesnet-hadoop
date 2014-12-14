@@ -3,6 +3,7 @@
 # Configure Hadoop Journal Node daemon. See also hadoop::journalnode.
 #
 class hadoop::journalnode::config {
+  include stdlib
   contain hadoop::common::config
   contain hadoop::common::hdfs::config
   contain hadoop::common::hdfs::daemon
@@ -11,6 +12,15 @@ class hadoop::journalnode::config {
   $user = 'hdfs'
   $file = '/tmp/krb5cc_jn'
   $principal = "jn/${::fqdn}@${hadoop::realm}"
+
+  # ensure proper owner and group
+  # (better to enable sticky bit for more protection)
+  ensure_resource('file', $hadoop::_hdfs_journal_dirs, {
+    ensure => directory,
+    owner  => 'hdfs',
+    group  => 'hadoop',
+    mode   => '1755',
+  })
 
   if $hadoop::realm {
     file { $keytab:

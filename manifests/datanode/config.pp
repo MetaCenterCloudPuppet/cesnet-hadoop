@@ -1,6 +1,7 @@
 # == Class hadoop::datanode::config
 #
 class hadoop::datanode::config {
+  include stdlib
   contain hadoop::common::config
   contain hadoop::common::hdfs::config
   contain hadoop::common::hdfs::daemon
@@ -12,7 +13,7 @@ class hadoop::datanode::config {
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)
-  ensure_resource('file', $hadoop::hdfs_data_dirs, {
+  ensure_resource('file', $hadoop::_hdfs_data_dirs, {
     ensure => directory,
     owner  => 'hdfs',
     group  => 'hadoop',

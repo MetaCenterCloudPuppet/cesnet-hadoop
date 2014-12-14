@@ -71,6 +71,12 @@
 #  - If there is multiple directories, then data will be stored in all directories, typically on different devices.
 #  When adding a new directory, you need to replicate the contents from some of the other ones. Or set dfs.namenode.name.dir.restore to true and create NEW_DIR/hdfs/dfs/namenode with proper owners.
 #
+# [*hdfs_secondary_dirs*] undef
+#   Directory prefixes to store metadata by secondary name nodes, if different from *hdfs_name_dirs*.
+#
+# [*hdfs_journal_dirs*] undef
+#   Directory prefixes to store journal logs by journal name nodes, if different from *hdfs_name_dirs*.
+#
 # [*properties*] (see params.pp)
 #   "Raw" properties for hadoop cluster. "::undef" will remove property from defaults, empty string sets empty value.
 #
@@ -186,6 +192,8 @@ class hadoop (
 
   $hdfs_name_dirs = $params::hdfs_name_dirs,
   $hdfs_data_dirs = $params::hdfs_data_dirs,
+  $hdfs_secondary_dirs = undef,
+  $hdfs_journal_dirs = undef,
   $properties = undef,
   $descriptions = undef,
   $features = $params::features,
@@ -213,6 +221,11 @@ class hadoop (
   else { $dn_hostnames = $slaves }
   if $frontends { $frontend_hostnames = $frontends }
   else { $frontend_hostnames = $slaves }
+
+  $_hdfs_name_dirs = $hdfs_name_dirs
+  $_hdfs_data_dirs = $hdfs_data_dirs
+  if !$hdfs_secondary_dirs { $_hdfs_secondary_dirs = $hadoop::hdfs_name_dirs }
+  if !$hdfs_journal_dirs { $_hdfs_journal_dirs = $hadoop::hdfs_name_dirs }
 
   if $::fqdn == $nn_hostname or $::fqdn == $hdfs_hostname2 {
     $daemon_namenode = 1

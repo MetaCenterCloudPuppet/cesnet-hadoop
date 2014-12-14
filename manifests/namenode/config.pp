@@ -10,7 +10,7 @@ class hadoop::namenode::config {
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)
-  ensure_resource('file', $hadoop::hdfs_name_dirs, {
+  ensure_resource('file', $hadoop::_hdfs_name_dirs, {
     ensure => directory,
     owner  => 'hdfs',
     group  => 'hadoop',
@@ -39,7 +39,7 @@ class hadoop::namenode::config {
   if $hdfs_hostname == $::fqdn {
     contain hadoop::format
 
-    File[$hadoop::hdfs_name_dirs] -> Class['hadoop::format']
+    File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::format']
     Class['hadoop::common::config'] -> Class['hadoop::format']
     Class['hadoop::common::hdfs::config'] -> Class['hadoop::format']
   }
