@@ -108,7 +108,7 @@ class hadoop::params {
   $yarn_hostname = 'localhost'
   $slaves = [ 'localhost' ]
 
-  $cluster_name = ''
+  $cluster_name = 'cluster'
 
   $descriptions = {
     'hadoop.rcp.protection' => 'authentication, integrity, privacy',

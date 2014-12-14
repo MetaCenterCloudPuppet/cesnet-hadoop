@@ -36,7 +36,7 @@ class hadoop::namenode::config {
   }
 
   # format only on the first namenode
-  if $hdfs_hostname == $::fqdn {
+  if $hadoop::hdfs_hostname == $::fqdn {
     contain hadoop::format
 
     File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::format']

@@ -22,8 +22,8 @@
 # [*frontends*]
 #   Array of frontend hostnames. Used *slaves* by default.
 #
-# [*cluster_name*] ("")
-#   Name of the cluster, used during initial formatting of HDFS.
+# [*cluster_name*] 'cluster'
+#   Name of the cluster, used during initial formatting of HDFS. For non-HA configurations it may be undef.
 #
 # [*realm*]
 #   Kerberos realm. Required parameter, empty string disables Kerberos authentication.
@@ -346,22 +346,22 @@ DEFAULT
     }
     if ($https) {
       $ha_https_properties = {
-        'dfs.namenode.https-address.mycluster.nn1' => "${hdfs_hostname}:50470",
-        'dfs.namenode.https-address.mycluster.nn2' => "${hdfs_hostname2}:50470",
+        "dfs.namenode.https-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:50470",
+        "dfs.namenode.https-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:50470",
       }
     }
     $ha_journals = join($journalnode_hostnames, ':8485;')
     $ha_base_properties = {
-      'dfs.nameservices' => 'mycluster',
-      'dfs.ha.namenodes.mycluster' => 'nn1,nn2',
-      'dfs.namenode.rpc-address.mycluster.nn1' => "${hdfs_hostname}:8020",
-      'dfs.namenode.rpc-address.mycluster.nn2' => "${hdfs_hostname2}:8020",
-      'dfs.namenode.http-address.mycluster.nn1' => "${hdfs_hostname}:50070",
-      'dfs.namenode.http-address.mycluster.nn2' => "${hdfs_hostname2}:50070",
-      'dfs.namenode.shared.edits.dir' => "qjournal://${ha_journals}:8485/mycluster",
-      'dfs.client.failover.proxy.provider.mycluster' => 'org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider',
+      'dfs.nameservices' => "${hadoop::cluster_name}",
+      "dfs.ha.namenodes.${hadoop::cluster_name}" => 'nn1,nn2',
+      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:8020",
+      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:8020",
+      "dfs.namenode.http-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:50070",
+      "dfs.namenode.http-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:50070",
+      'dfs.namenode.shared.edits.dir' => "qjournal://${ha_journals}:8485/${hadoop::cluster_name}",
+      "dfs.client.failover.proxy.provider.${hadoop::cluster_name}" => 'org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider',
       'dfs.ha.fencing.methods' => 'shell(/bin/true)',
-      'fs.defaultFS' => 'hdfs://mycluster',
+      'fs.defaultFS' => "hdfs://${hadoop::cluster_name}",
     }
 
     $ha_properties = merge($ha_base_properties, $ha_https_properties)

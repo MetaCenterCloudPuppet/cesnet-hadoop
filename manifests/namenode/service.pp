@@ -10,6 +10,13 @@ class hadoop::namenode::service {
     subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
   }
 
+  # journalnode should be launched first if it is collocated with namenode
+  # (to behave better during initial installation and enabled HDFS HA)
+  if $hadoop::daemon_journal {
+    include hadoop::journalnode::service
+    Class['hadoop::journalnode::service'] -> Class['hadoop::namenode::service']
+  }
+
   # create dirs only on the first namenode
   if $hadoop::hdfs_hostname == $::fqdn and $hadoop::hdfs_deployed {
     contain hadoop::create_dirs
