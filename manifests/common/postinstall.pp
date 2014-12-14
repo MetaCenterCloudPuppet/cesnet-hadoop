@@ -16,12 +16,14 @@ class hadoop::common::postinstall {
       path    => $path,
       creates => "/etc/hadoop/conf.${confname}",
     }
+    ->
     exec { 'hadoop-install-alternatives':
       command     => "${altcmd} --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.${confname} 50",
       path        => $path,
       refreshonly => true,
       subscribe   => Exec['hadoop-copy-config'],
     }
+    ->
     exec { 'hadoop-set-alternatives':
       command     => "${altcmd} --set hadoop-conf /etc/hadoop/conf.${confname}",
       path        => $path,
