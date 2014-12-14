@@ -84,7 +84,7 @@
 #
 # [*features*] ()
 #   Enable additional features:
-#   - rmstore: resource manager recovery using state-store; this requires HDFS datanodes already running ==> keep disabled on initial setup!
+#   - rmstore: resource manager recovery using state-store; this requires HDFS datanodes already running ==> keep disabled on initial setup! Requires *hdfs_deployed* to be true
 #   - restarts: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
 #   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
 #     (TODO: Debian not supported)
@@ -121,6 +121,9 @@
 #
 # [*perform*] (false)
 #   Launch all installation and setup here, from hadoop class.
+#
+# [*hdfs_deployed*] (true)
+#   Perform also creating directories in HDFS. This action requires running namenode and datanodes, so it is recommended to set this to false during initial installation.
 #
 # === Example
 #
@@ -203,6 +206,7 @@ class hadoop (
   $https_keystore_password = $params::https_keystore_password,
   $https_keystore_keypassword = $params::https_keystore_keypassword,
   $perform = $params::perform,
+  $hdfs_deployed = $params::hdfs_deployed
 ) inherits hadoop::params {
   include 'stdlib'
 
@@ -302,7 +306,7 @@ DEFAULT
       'hadoop.security.authorization' => false,
     }
   }
-  if ($hadoop::features["rmstore"]) {
+  if ($hadoop::features["rmstore"] and $hadoop::hdfs_deployed) {
     $rm_ss_properties = {
       'yarn.resourcemanager.recovery.enabled' => true,
       'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',

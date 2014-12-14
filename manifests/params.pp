@@ -167,4 +167,5 @@ class hadoop::params {
     'RedHat' => '/var/cache/hadoop-mapreduce',
   }
   $perform = false
+  $hdfs_deployed = true
 }

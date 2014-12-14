@@ -11,7 +11,7 @@ class hadoop::namenode::service {
   }
 
   # create dirs only on the first namenode
-  if $hdfs_hostname == $::fqdn {
+  if $hadoop::hdfs_hostname == $::fqdn and $hadoop::hdfs_deployed {
     contain hadoop::create_dirs
 
     Service[$hadoop::daemons['namenode']] -> Class['hadoop::create_dirs']
