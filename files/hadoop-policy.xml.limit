@@ -67,7 +67,7 @@
 
   <property>
     <name>security.namenode.protocol.acl</name>
-    <value>nn,sn</value>
+    <value>hdfs,nn,sn</value>
     <description>ACL for NamenodeProtocol, the protocol used by the secondary
     namenode to communicate with the namenode.
     The ACL is a comma-separated list of user and group names. The user and
@@ -139,7 +139,7 @@
 
   <property>
     <name>security.resourcetracker.protocol.acl</name>
-    <value>nm,rm</value>
+    <value>yarn,nm,rm</value>
     <description>ACL for ResourceTrackerProtocol, used by the
     ResourceManager and NodeManager to communicate with each other.
     The ACL is a comma-separated list of user and group names. The user and
