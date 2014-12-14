@@ -54,6 +54,8 @@
 # [*zookeeper_hostnames*] (undef)
 #   Array of Zookeeper machines. Used in HDFS namenode HA for automatic failover.
 #
+# With manual failover, the namenodes are always started in standby mode and one would need to be activated manually.
+#
 # [*hdfs_name_dirs*] (["/var/lib/hadoop-hdfs"], or ["/var/lib/hadoop-hdfs/cache"])
 #  Directory prefixes to store the metadata on the namenode.
 #  - name table (fsimage) and DFS data blocks
