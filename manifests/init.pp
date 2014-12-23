@@ -276,7 +276,14 @@ class hadoop (
       # RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
       'hadoop.security.auth_to_local' => "
 RULE:[2:\$1;\$2@\$0](^jhs;.*@${realm}$)s/^.*$/mapred/
-RULE:[2:\$1;\$2@\$0](^[nd]n;.*@${realm}$)s/^.*$/hdfs/
+RULE:[2:\$1;\$2@\$0](^[ndjs]n;.*@${realm}$)s/^.*$/hdfs/
+RULE:[2:\$1;\$2@\$0](^[rn]m;.*@${realm}$)s/^.*$/yarn/
+RULE:[2:\$1;\$2@\$0](^hbase;.*@${realm}$)s/^.*$/hbase/
+RULE:[2:\$1;\$2@\$0](^hive;.*@${realm}$)s/^.*$/hive/
+RULE:[2:\$1;\$2@\$0](^hue;.*@${realm}$)s/^.*$/hue/
+RULE:[2:\$1;\$2@\$0](^tomcat;.*@${realm}$)s/^.*$/tomcat/
+RULE:[2:\$1;\$2@\$0](^zookeeper;.*@${realm}$)s/^.*$/zookeeper/
+RULE:[2:\$1;\$2@\$0](^HTTP;.*@${realm}$)s/^.*$/HTTP/
 DEFAULT
 ",
       'dfs.datanode.address' => '0.0.0.0:1004',
