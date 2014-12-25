@@ -52,7 +52,7 @@
 #   Array of HDFS Journal Node machines. Used in HDFS namenode HA.
 #
 # [*zookeeper_hostnames*] (undef)
-#   Array of Zookeeper machines. Used in HDFS namenode HA for automatic failover.
+#   Array of Zookeeper machines. Used in HDFS namenode HA for automatic failover and YARN resourcemanager state-store feature.
 #
 # With manual failover, the namenodes are always started in standby mode and one would need to be activated manually.
 #
@@ -91,7 +91,10 @@
 #
 # [*features*] ()
 #   Enable additional features:
-#   - rmstore: resource manager recovery using state-store; this requires HDFS datanodes already running ==> keep disabled on initial setup! Requires *hdfs_deployed* to be true
+#   - rmstore: resource manager recovery using state-store
+#       *hdfs*: store state on HDFS, this requires HDFS datanodes already running and /rmstore directory created ==> keep disabled on initial setup! Requires *hdfs_deployed* to be true
+#       *zookeeper*: store state on zookeepers; Requires *zookeeper_hostnames* specified. Warning: no authentication is used.
+#       *true*: select automatically zookeeper or hdfs ccording to *zookeeper_hostnames*
 #   - restarts: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
 #   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
 #     (TODO: Debian not supported)
@@ -268,6 +271,11 @@ class hadoop (
     $frontend = 1
   }
 
+  if $zookeeper_hostnames {
+    $zkquorum0 = join($zookeeper_hostnames, ':2181,')
+    $zkquorum = "${zkquorum0}:2181"
+  }
+
   $dyn_properties = {
     'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
     'yarn.resourcemanager.hostname' => $rm_hostname,
@@ -321,16 +329,31 @@ DEFAULT
       'hadoop.security.authorization' => false,
     }
   }
-  if ($hadoop::features["rmstore"] and $hadoop::hdfs_deployed) {
-    $rm_ss_properties = {
-      'yarn.resourcemanager.recovery.enabled' => true,
-      'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
-      # no hdfs://${hdfs_hostname}:8020 prefix - in case of HA HDFS
-      'yarn.resourcemanager.fs.state-store.uri' => "/rmstore",
+
+  if $hadoop::features['rmstore'] {
+    if $hadoop::features['rmstore'] == 'hdfs' or ($hadoop::features['rmstore'] != 'zookeeper' and !$zookeeper_hostnames) {
+      if $hadoop::hdfs_deployed {
+        $rm_ss_properties = {
+          'yarn.resourcemanager.recovery.enabled' => true,
+          'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
+          # no hdfs://${hdfs_hostname}:8020 prefix - in case of HA HDFS
+          'yarn.resourcemanager.fs.state-store.uri' => '/rmstore',
+        }
+      } else {
+        $rm_ss_properties = {}
+      }
+    } elsif $hadoop::features['rmstore'] == 'zookeeper' or ($hadoop::features['rmstore'] != 'hdfs' and $zookeeper_hostnames) {
+      $rm_ss_properties = {
+        'yarn.resourcemanager.fs.state-store.uri' => '/rmstore',
+        'yarn.resourcemanager.recovery.enabled' => true,
+        'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore',
+        # XXX: need limit, "host:${rm_hostname}:rwcda" doesn't work (better proper auth anyway)
+        'yarn.resourcemanager.zk-acl' => "world:anyone:rwcda",
+        'yarn.resourcemanager.zk-address' => $zkquorum,
+      }
     }
-  } else {
-    $rm_ss_properties = {}
   }
+
   if $hadoop::https {
     if !$hadoop::realm {
       err('Kerberos feature required for https support.')
@@ -382,11 +405,10 @@ DEFAULT
     $ha_properties = merge($ha_base_properties, $ha_https_properties)
   }
   # Automatic failover for HA HDFS
-  if $zookeeper_hostnames {
-    $zkquorum = join($zookeeper_hostnames, ':2181,')
+  if $zookeeper_hostnames and $hdfs_hostname2 {
     $zoo_properties = {
       'dfs.ha.automatic-failover.enabled' => true,
-      'ha.zookeeper.quorum' => "${zkquorum}:2181",
+      'ha.zookeeper.quorum' => "${zkquorum}",
     }
   }
 

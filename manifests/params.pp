@@ -121,6 +121,7 @@ class hadoop::params {
     'dfs.webhdfs.enabled' => 'read-only Web HDFS access',
     'yarn.nodemanager.local-dirs' => 'List of directories to store localized files in.',
     'yarn.resourcemanager.recovery.enabled' => 'enable resubmit old jobs on start',
+    'yarn.resourcemanager.zk-acl' => 'default is world:anyone:rwcda',
     'yarn.application.classpath' => 'Classpath for typical applications.',
     'mapreduce.tasktracker.outofband.heartbeat' => 'let the TaskTracker send an out-of-band heartbeat on task completion to reduce latency',
   }
