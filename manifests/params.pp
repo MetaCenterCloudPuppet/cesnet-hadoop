@@ -26,6 +26,7 @@ class hadoop::params {
         'hdfs-zkfc' => 'hadoop-zkfc',
       }
       $envs = {
+        'common' => '/etc/sysconfig/hadoop',
         'datanode' => '/etc/sysconfig/hadoop-datanode',
         'nodemanager' => '/etc/sysconfig/hadoop-nodemanager',
         'historyserver' => '/etc/sysconfig/hadoop-historyserver',
@@ -74,6 +75,7 @@ class hadoop::params {
         'hdfs-zkfc' => 'hadoop-hdfs-zkfc',
       }
       $envs = {
+        'common' => '/etc/default/hadoop',
         'datanode' => '/etc/default/hadoop-hdfs-datanode',
         'nodemanager' => '/etc/default/hadoop-yarn-nodemanager',
         'historyserver' => '/etc/default/hadoop-mapreduce-historyserver',

@@ -82,6 +82,13 @@
 # [*descriptions*] (see params.pp)
 #   Descriptions for the properties, just for cuteness.
 #
+# [*environments*] undef
+#   Environment to set for all Hadoop daemons. Recommended is to increase java heap memory, if enough memory is available:
+#   environments => ['export HADOOP_HEAPSIZE=8192', 'export YARN_HEAPSIZE=8192']
+#
+# Note: whether to use 'export' or not is system dependent (Debian 7/wheezy:
+# yes, systemd-based distributions no).
+#
 # [*features*] ()
 #   Enable additional features:
 #   - rmstore: resource manager recovery using state-store; this requires HDFS datanodes already running ==> keep disabled on initial setup! Requires *hdfs_deployed* to be true
@@ -197,6 +204,7 @@ class hadoop (
   $hdfs_journal_dirs = undef,
   $properties = undef,
   $descriptions = undef,
+  $environments = undef,
   $features = $params::features,
   $alternatives = $params::alternatives,
   $https = undef,
