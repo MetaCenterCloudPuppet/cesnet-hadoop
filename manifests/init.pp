@@ -13,8 +13,15 @@
 #   If you're converting existing Hadoop cluster without HA to cluster with HA, you need to initialize journalnodes yet:
 #     hdfs namenode -initializeSharedEdits
 #
+#   Zookeepers are required for automatic transitions.
+#
 # [*yarn_hostname*] (localhost)
 #   Yarn machine (with Resource Manager and Job History services).
+#
+# [*yarn_hostname2*] (localhost)
+#   YARN resourcemanager second hostname for High Availability. This parameter will activate the YARN HA feature. See http://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html .
+#
+#   Zookeepers are required.
 #
 # [*slaves*] (localhost)
 #   Array of slave node hostnames.
@@ -35,9 +42,6 @@
 #   * /etc/security/keytab/nm.service.keytab (on node manager nodes)
 #   * /etc/security/keytab/nn.service.keytab (on name nodes)
 #   * /etc/security/keytab/rm.service.keytab (on resource manager node)
-#
-# [*resourcemanager_hostname*] (undef)
-#   Resource Manager machine. Used *yarn_hostname* by default.
 #
 # [*historyserver_hostname*] (undef)
 #   History Server machine. Used *yarn_hostname* by default.
@@ -188,13 +192,13 @@ class hadoop (
   $hdfs_hostname = $params::hdfs_hostname,
   $hdfs_hostname2 = undef,
   $yarn_hostname = $params::yarn_hostname,
+  $yarn_hostname2 = undef,
   $slaves = $params::slaves,
   $frontends = [],
   $cluster_name = $params::cluster_name,
   $realm,
   $authorization = $params::authorization,
 
-  $resourcemanager_hostname = undef,
   $historyserver_hostname = undef,
   $nodemanager_hostnames = undef,
   $datanode_hostnames = undef,
@@ -222,8 +226,6 @@ class hadoop (
   include 'stdlib'
 
   # detailed deployment bases on convenient parameters
-  if $resourcemanager_hostname { $rm_hostname = $resourcemanager_hostname }
-  else { $rm_hostname = $yarn_hostname }
   if $historyserver_hostname { $hs_hostname = $historyserver_hostname }
   else { $hs_hostname = $yarn_hostname }
   if $nodemanager_hostnames { $nm_hostnames = $nodemanager_hostnames }
@@ -243,7 +245,7 @@ class hadoop (
     $mapred_user = 1
   }
 
-  if $::fqdn == $rm_hostname {
+  if $::fqdn == $yarn_hostname or $::fqdn == $yarn_hostname2{
     $daemon_resourcemanager = 1
   }
 
@@ -278,7 +280,7 @@ class hadoop (
 
   $dyn_properties = {
     'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
-    'yarn.resourcemanager.hostname' => $rm_hostname,
+    'yarn.resourcemanager.hostname' => $yarn_hostname,
     'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
@@ -347,9 +349,6 @@ DEFAULT
         'yarn.resourcemanager.fs.state-store.uri' => '/rmstore',
         'yarn.resourcemanager.recovery.enabled' => true,
         'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore',
-        # XXX: need limit, "host:${rm_hostname}:rwcda" doesn't work (better proper auth anyway)
-        'yarn.resourcemanager.zk-acl' => "world:anyone:rwcda",
-        'yarn.resourcemanager.zk-address' => $zkquorum,
       }
     }
   }
@@ -402,15 +401,38 @@ DEFAULT
       'fs.defaultFS' => "hdfs://${hadoop::cluster_name}",
     }
 
-    $ha_properties = merge($ha_base_properties, $ha_https_properties)
+    $ha_hdfs_properties = merge($ha_base_properties, $ha_https_properties)
   }
+
+  # High Availability of YARN
+  if $yarn_hostname2 {
+    $ha_yarn_properties = {
+      'yarn.resourcemanager.cluster-id' => $hadoop::cluster_name,
+      'yarn.resourcemanager.ha.enabled' => true,
+      'yarn.resourcemanager.ha.rm-ids' => 'rm1,rm2',
+      'yarn.resourcemanager.hostname.rm1' => "${yarn_hostname}",
+      'yarn.resourcemanager.hostname.rm2' => "${yarn_hostname2}",
+    }
+  }
+  $ha_properties = merge($ha_hdfs_properties, $ha_yarn_properties)
+
   # Automatic failover for HA HDFS
   if $zookeeper_hostnames and $hdfs_hostname2 {
-    $zoo_properties = {
+    $zoo_hdfs_properties = {
       'dfs.ha.automatic-failover.enabled' => true,
       'ha.zookeeper.quorum' => "${zkquorum}",
     }
   }
+
+  if $zookeeper_hostnames and ($yarn_hostname2 or $features['rmstore'] and $features['rmstore'] != 'hdfs') {
+    $zoo_yarn_properties = {
+      'yarn.resourcemanager.ha.automatic-failover.enabled' => true,
+      # XXX: need limit, "host:${yarn_hostname}:rwcda" doesn't work (better proper auth anyway)
+      'yarn.resourcemanager.zk-acl' => "world:anyone:rwcda",
+      'yarn.resourcemanager.zk-address' => $zkquorum,
+    }
+  }
+  $zoo_properties = merge($zoo_hdfs_properties, $zoo_yarn_properties)
 
   $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
