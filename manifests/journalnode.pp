@@ -10,7 +10,7 @@ class hadoop::journalnode {
   include 'hadoop::journalnode::service'
 
   if !$hadoop::https {
-    warn('https is required for using journal nodes')
+    warning('https is required for using journal nodes')
   }
 
   Class['hadoop::journalnode::install'] ->
