@@ -28,6 +28,5 @@ define hadoop::kdestroy($touchfile, $touch) {
       user        => 'hdfs',
       creates     => $puppetfile,
     }
-    Exec["kdestroy-old-${touchfile}"] -> Exec["hadoop-touch-${touchfile}"]
   }
 }
