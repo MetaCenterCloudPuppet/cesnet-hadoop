@@ -7,11 +7,18 @@
   "source": "http://scientific.zcu.cz/git/cesnet-hadoop.git",
   "project_page": "https://github.com/CESNET/",
   "issues_url": "mailto://valtri@civ.zcu.cz",
-  "dependencies": [
+  "tags": ["hadoop"],
+  "operatingsystem_support": [
     {
-      "name": "puppetlabs-java",
-      "version_range": ">= 1.0.0"
+    "operatingsystem": "Debian",
+    "operatingsystemrelease": ["7"]
+    },
+    {
+    "operatingsystem": "Fedora",
+    "operatingsystemrelease": ["21"]
     }
+  ],
+  "dependencies": [
     {
       "name": "puppetlabs-stdlib",
       "version_range": ">= 1.0.0"
