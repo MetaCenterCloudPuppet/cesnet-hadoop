@@ -13,10 +13,12 @@
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
+<a name="overview"></a>
 ##Overview
 
 Management of Hadoop Cluster with security based on Kerberos and High Availability. Puppet 3.x is required. Supported and tested are Fedora (native Hadoop) and Debian (Cloudera distribution).
 
+<a name="module-description"></a>
 ##Module Description
 
 This module installs and setups Hadoop Cluster, with all services colocated or separated across all nodes or single node as needed. Optionally can be enabled other features:
@@ -30,8 +32,10 @@ Supported are:
 
 There are some limitations how to use this module. You should read the documentation, especially the **Setup Requirements section**.
 
+<a name="setup"></a>
 ##Setup
 
+<a name="what-hadoop-affects"></a>
 ###What cesnet-hadoop module affects
 
 * Packages: installs Hadoop packages (common packages, and subsets for requested services or the client)
@@ -53,6 +57,7 @@ There are some limitations how to use this module. You should read the documenta
 ** /var/lib/hadoop-hdfs/.puppet-hdfs-\*
 * security files (keytabs, certificates): some files are copied to home directories of service users: ~hdfs/, ~yarn/, ~mapred/
 
+<a name="setup-requirements"></a>
 ###Setup Requirements
 
 There are several known or intended limitations in this module.
@@ -80,51 +85,82 @@ Be aware of:
 ** prepare /etc/security/http-auth-signature-secret file (with any content)
 ** Note: some files are copied into ~hadfs, ~yarn/, and ~mapred/ directories
 
+<a name="beginning-with-hadoop"></a>
 ###Beginning with hadoop
 
-The simplest setup is one-node Hadoop cluster without security with everything on single machine:
+Let's start with brief examples. Before begining you should read the (#setup-requirements) above.
 
-*site.pp* file:
- class{"hadoop":
-   hdfs\_hostname => $::fqdn,
-   yarn\_hostname => $::fqdn,
-   slaves => [ $::fqdn ],
-   frontends => [ $:fqdn ],
-   # security needs to be disabled explicitely by using empty string
-   realm => '',
-   properties => {
-     'dfs.replication' => 1,
-   }
- }
+Example: The simplest setup is one-node Hadoop cluster without security, with everything on single machine:
 
- node $::fqdn {
-   # HDFS
-   include hadoop::namenode
-   # YARN
-   include hadoop::resourcemanager
-   # MAPRED
-   include hadoop::historyserver
-   # slave (HDFS)
-   include hadoop::datanode
-   # slave (YARN)
-   include hadoop::nodemanager
-   # client
-   include hadoop::frontend
- }
+    class{"hadoop":
+      hdfs\_hostname => $::fqdn,
+      yarn\_hostname => $::fqdn,
+      slaves => [ $::fqdn ],
+      frontends => [ $:fqdn ],
+      # security needs to be disabled explicitely by using empty string
+      realm => '',
+      properties => {
+        'dfs.replication' => 1,
+      }
+    }
 
-For full-fledged Hadoop cluster it is recommended:
-* one HDFS namenode (or two for high availability, see bellow)
-* one YARN resourcemanager (or two for high availability, see bellow)
+    node $::fqdn {
+      # HDFS
+      include hadoop::namenode
+      # YARN
+      include hadoop::resourcemanager
+      # MAPRED
+      include hadoop::historyserver
+      # slave (HDFS)
+      include hadoop::datanode
+      # slave (YARN)
+      include hadoop::nodemanager
+      # client
+      include hadoop::frontend
+    }
+
+For full-fledged Hadoop cluster it is recommended (services can be collocated):
+* one HDFS namenode (or two for high availability, see below)
+* one YARN resourcemanager (or two for high availability, see below)
 * N slaves with HDFS datanode and YARN nodemanager
 
-Services may be collocated as needed. Multiple HDFS namespaces are not supported now (ask or send patches, if you need it :-)).
+Modify $::fqdn and node(s) section as needed. You can also remove the dfs.replication property with more data nodes.
 
-TODO: security example, high availability example and dependency on zookeeper
+Multiple HDFS namespaces are not supported now (ask or send patches, if you need it :-)).
 
+Example: One-node Hadoop cluster with security (add also the node section from the setup above):
+
+    class{"hadoop":
+      hdfs\_hostname => $::fqdn,
+      yarn\_hostname => $::fqdn,
+      slaves => [ $::fqdn ],
+      frontends => [ $:fqdn ],
+      realm => 'MY.REALM',
+      properties => {
+        'dfs.replication' => 1,
+      }
+      features => {
+        #restarts => '00 */12 * * *',
+        #krbrefresh => '00 */12 * * *',
+        authorization => 'limit',
+      },
+      # https recommended (and other extensions may require it)
+      https => true,
+      https_cacerts_password => '',
+      https_keystore_keypassword => 'changeit',
+      https_keystore_password => 'changeit',
+    }
+
+Modify $::fqdn and add node(s) sections as needed for multi-node cluster.
+
+TODO: try security example, high availability example and dependency on zookeeper
+
+<a name="usage"></a>
 ##Usage
 
 TODO: Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here.
 
+<a name="security"></a>
 ###Enable Security
 
 Security in Hadoop is based on Kerberos. Keytab files needs to be prepared on the proper places before enabling the security.
@@ -152,6 +188,7 @@ Note: for long-running applications as Spark Streaming jobs you may need to work
   'hadoop.proxyuser.yarn.hosts' => RESOURCE MANAGER HOSTS,
   'hadoop.proxyuser.yarn.groups' => 'hadoop',
 
+<a name="https"></a>
 ###Enable HTTPS
 
 Hadoop is able to use SPNEGO protocol (="Kerberos tickets through HTTPS"). This requires proper configuration of the browser on the client side and valid Kerberos ticket.
@@ -220,21 +257,21 @@ Following hadoop class parameters are used for HTTPS (see also hadoop class):
   Certificates keystore key password. If not specified, https_keystore_password is used.
 
 
+<a name="reference"></a>
 ##Reference
 
 TODO: Here, list the classes, types, providers, facts, etc contained in your module. This section should include all of the under-the-hood workings of your module so people know what the module is touching on their system but don't need to mess with things. (We are working on automating this section!)
 TODO2: HDFS dirs resource type
 
+<a name="limitations"></a>
 ##Limitations
 
 Idea in this module is to do only one thing - setup Hadoop cluster - and don't limit generic usage of this module by doing other stuff. You can have your own repository with Hadoop SW, you can use this module just by *puppet apply* (PuppetDB is not used so puppet master is not required). You can select which Kerberos implementation or Java version to use.
 
-On other hand this leads to some limitations as mentioned in #setup-requirements and you may need site-specific puppet module together with this one.
+On other hand this leads to some limitations as mentioned in [#setup-requirements] and you may need site-specific puppet module together with this one.
 
+<a name="development"></a>
 ##Development
 
-Idea in this module is to do only one thing - setup Hadoop cluster - and don't limit general usage of this module. You can have your own repository with Hadoop SW (Cloudera/Hortonworks is not setup), you can you this module just by using 'puppet apply) (PuppetDB is not used so puppet master is not required).
-
-##Release Notes/Contributors/Etc **Optional**
-
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You may also add any additional sections you feel are necessary or important to include here. Please use the `## ` header.
+* Repository: [http://scientific.zcu.cz/git/?p=cesnet-hadoop.git;a=summary](http://scientific.zcu.cz/git/?p=cesnet-hadoop.git;a=summary)
+* Email: František Dvořák &lt;valtri@civ.zcu.cz&gt;
