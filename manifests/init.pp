@@ -32,8 +32,8 @@
 # [*cluster_name*] 'cluster'
 #   Name of the cluster, used during initial formatting of HDFS. For non-HA configurations it may be undef.
 #
-# [*realm*]
-#   Kerberos realm. Required parameter, empty string disables Kerberos authentication.
+# [*realm*] (required parameter, may be empty string)
+#   Enable security and Kerberos realm to use. Empty string disables the security.
 #   To enable security, there are required:
 #   * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
 #   * configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
@@ -42,6 +42,8 @@
 #   * /etc/security/keytab/nm.service.keytab (on node manager nodes)
 #   * /etc/security/keytab/nn.service.keytab (on name nodes)
 #   * /etc/security/keytab/rm.service.keytab (on resource manager node)
+#
+#   It is used also as cookie domain (lowercased), if https is enabled. This may be overriden by http.authentication.cookie.domain in [*properties*].
 #
 # [*historyserver_hostname*] (undef)
 #   History Server machine. Used *yarn_hostname* by default.
@@ -108,7 +110,7 @@
 #   Use alternatives to switch configuration. It is used by Cloudera for example.
 #
 # [*https*] (undef)
-#   Support for https.
+#   Enable support for https.
 #
 #   Requires:
 #   * enabled security (realm => ...)

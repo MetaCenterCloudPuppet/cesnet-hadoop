@@ -7,6 +7,8 @@
     * [Setup requirements](#setup-requirements)
     * [Beginning with hadoop](#beginning-with-hadoop)
 4. [Usage - Configuration options and additional functionality](#usage)
+    * [Enable Security](#security)
+    * [Enable HTTPS](#https)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -56,21 +58,26 @@ There are some limitations how to use this module. You should read the documenta
 There are several known or intended limitations in this module.
 
 Be aware of:
+
 * **Hadoop repositories**
 ** neither Cloudera nor Hortonworks repositories are configured in this module (for cloudera you can find list and key files here: http://archive.cloudera.com/cdh5/debian/wheezy/amd64/cdh/, Fedora has Hadoop as part of distribution, ...)
 ** *java* is not installed by this module (*openjdk-7-jre-headless* is OK for Debian 7/wheezy)
-** package providing kinit is also needed (Debian: *krb5-util*/*heimdal-clients*, Fedora: *krb5-workstation*)
+** for security the package providing kinit is also needed (Debian: *krb5-util*/*heimdal-clients*, Fedora: *krb5-workstation*)
+
 * **one-node Hadoop cluster** (may be collocated on one machine): Hadoop replicates by default all data to at least 3 datanodes. For one-node Hadoop cluster use property *dfs.replication=1* in *properties* parameter
+
 * **no inter-node depedencies**: working HDFS (namenode+some datanodes) is required before history server launch, or for state-store resourcemanager feature; some workarounds exists:
 ** helper parameter *hdfs_deployed*: when false, services dependent on HDFS are not launched (default: true)
 ** administrators are encouraged to use any other way to solve inter-node dependencies (PuppetDB?)
 ** or just repeat setup on historyserver and resourcemenagager machines
 ** Note: Hadoop cluster collocated on one-machine is handled OK
+
 * **secure mode**: keytabs must be prepared in /etc/security/keytabs/ (see *realm* parameter)
-** Fedora: 1) see https://bugzilla.redhat.com/show\_bug.cgi?id=1163892, you may use repository at http://copr-fe.cloud.fedoraproject.org/coprs/valtri/hadoop/; 2) you need to enable refresh and RM restarts (see *features* module parameter)
+** Fedora: 1) see https://bugzilla.redhat.com/show\_bug.cgi?id=1163892, you may use repository at http://copr-fe.cloud.fedoraproject.org/coprs/valtri/hadoop/; 2) you need to enable ticket refresh and RM restarts (see *features* module parameter)
+
 * **https**:
 ** prepare CA certificate keystore and machine certificate keystore in /etc/security/cacerts and /etc/security/server.keystore (location can be modified by *https_cacerts* and *https_keystore* parameters), see init.pp class for more https-related parameters.
-** prepared /etc/security/http-auth-signature-secret file (with any content)
+** prepare /etc/security/http-auth-signature-secret file (with any content)
 ** Note: some files are copied into ~hadfs, ~yarn/, and ~mapred/ directories
 
 ###Beginning with hadoop
@@ -89,12 +96,14 @@ The simplest setup is one-node Hadoop cluster without security with everything o
      'dfs.replication' => 1,
    }
  }
- 
+
  node $::fqdn {
    # HDFS
    include hadoop::namenode
    # YARN
    include hadoop::resourcemanager
+   # MAPRED
+   include hadoop::historyserver
    # slave (HDFS)
    include hadoop::datanode
    # slave (YARN)
@@ -108,13 +117,108 @@ For full-fledged Hadoop cluster it is recommended:
 * one YARN resourcemanager (or two for high availability, see bellow)
 * N slaves with HDFS datanode and YARN nodemanager
 
-Services may be collocated as needed. Multiple HDFS namespaces are not supported here (ask or send patches, if you need it :-)).
+Services may be collocated as needed. Multiple HDFS namespaces are not supported now (ask or send patches, if you need it :-)).
 
 TODO: security example, high availability example and dependency on zookeeper
 
 ##Usage
 
 TODO: Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here.
+
+###Enable Security
+
+Security in Hadoop is based on Kerberos. Keytab files needs to be prepared on the proper places before enabling the security.
+
+Following parameters are used for security (see also hadoop class):
+
+[*realm*] (required parameter, empty string disables the security)
+  Enable security and Kerberos realm to use. Empty string disables the security.
+  To enable security, there are required:
+  * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
+  * configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
+  * /etc/security/keytab/dn.service.keytab (on data nodes)
+  * /etc/security/keytab/jhs.service.keytab (on job history node)
+  * /etc/security/keytab/nm.service.keytab (on node manager nodes)
+  * /etc/security/keytab/nn.service.keytab (on name nodes)
+  * /etc/security/keytab/rm.service.keytab (on resource manager node)
+
+[*features*] (empty hash by default)
+  authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
+
+It is recommended also to enable HTTPS when security is enabled. See (#https).
+
+Note: for long-running applications as Spark Streaming jobs you may need to workaround user's delegation tokens a maximum lifetime of 7 days by these properties:
+  'yarn.resourcemanager.proxy-user-privileges.enabled' => true
+  'hadoop.proxyuser.yarn.hosts' => RESOURCE MANAGER HOSTS,
+  'hadoop.proxyuser.yarn.groups' => 'hadoop',
+
+###Enable HTTPS
+
+Hadoop is able to use SPNEGO protocol (="Kerberos tickets through HTTPS"). This requires proper configuration of the browser on the client side and valid Kerberos ticket.
+
+HTTPS support requires:
+* enabled security (realm => ...)
+* /etc/security/cacerts file (https_cacerts parameter) - kept in the place, only permission changed if needed
+* /etc/security/server.keystore file (https_keystore parameter) - copied for each daemon user
+* /etc/security/http-auth-signature-secret file (any data, string or blob) - copied for each daemon user
+* /etc/security/keytab/http.service.keytab - copied for each daemon user
+
+Preparing the CA certificates store (/etc/security/cacerts):
+ # for each CA certificate in the chain
+ keytool -importcert -keystore cacerts -storepass changeit -trustcacerts -alias some-alias -file some-file.pem
+ # check
+ keytool -list -keystore cacerts -storepass changeit
+ # move to the right default location
+ mv cacerts /etc/security/
+
+Preparing the certificates keystore (/etc/security/server.keystore):
+ # X509 -> pkcs12
+ # (enter some passphrase)
+ openssl pkcs12 -export -in /etc/grid-security/hostcert.pem
+                -inkey /etc/grid-security/hostkey.pem \
+                -out server.p12 -name hadoop-dcv -certfile tcs-ca-bundle.pem
+
+ # pkcs12 -> java
+ # (the alias must be the same as the name above)
+ keytool -importkeystore \
+         -deststorepass changeit1 -destkeypass changeit2 -destkeystore server.keystore \
+         -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass some-passphrase \
+         -alias hadoop-dcv
+
+ # check
+ keytool -list -keystore server.keystore -storepass changeit1
+
+ # move to the right default location
+ chmod 0600 server.keystore
+ mv server.keystore /etc/security/
+
+Preparing the signature secret file (/etc/security/http-auth-signature-secret):
+ dd if=/dev/random bs=128 count=1 > http-auth-signature-secret
+ chmod 0600 http-auth-signature-secret
+ mv http-auth-signature-secret /etc/security/
+
+Following hadoop class parameters are used for HTTPS (see also hadoop class):
+[*realm*] (required for HTTPS)
+  Enable security and Kerberos realm to use. See (#security)
+
+[*https*] (undef)
+  Enable support for https.
+
+[*https_cacerts*] (/etc/security/cacerts)
+  CA certificates file.
+
+[*https_cacerts_password*] ('')
+  CA certificates keystore password.
+
+[*https_keystore*] (/etc/security/server.keystore)
+  Certificates keystore file.
+
+[*https_keystore_password*] ('changeit')
+  Certificates keystore file password.
+
+[*https_keystore_keypassword*] (undef)
+  Certificates keystore key password. If not specified, https_keystore_password is used.
+
 
 ##Reference
 
@@ -133,4 +237,4 @@ Idea in this module is to do only one thing - setup Hadoop cluster - and don't l
 
 ##Release Notes/Contributors/Etc **Optional**
 
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You may also add any additional sections you feel are necessary or important to include here. Please use the `## ` header. 
+If you aren't using changelog, put your release notes here (though you should consider using changelog). You may also add any additional sections you feel are necessary or important to include here. Please use the `## ` header.
