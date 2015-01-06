@@ -1,6 +1,6 @@
 <% if @osfamily == 'RedHat' -%>
-<% if scope.lookupvar('hadoop::features')['krbrefresh'] -%>
-KRB5CCNAME=FILE:<%= scope.lookupvar('file') -%>
+<% if @krbrefresh -%>
+KRB5CCNAME=FILE:<%= scope.lookupvar('file') %>
 <% end -%>
 <% elsif @osfamily == 'Debian' -%>
 # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,8 +23,8 @@ export HADOOP_MAPRED_PID_DIR=/var/run/hadoop-mapreduce
 export HADOOP_MAPRED_LOG_DIR=/var/log/hadoop-mapreduce
 export HADOOP_LOG_DIR=/var/log/hadoop-mapreduce
 export HADOOP_MAPRED_HOME=/usr/lib/hadoop-mapreduce
-<% if scope.lookupvar('hadoop::features')['krbrefresh'] -%>
+<% if @krbrefresh -%>
 
-export KRB5CCNAME=FILE:<%= scope.lookupvar('file') -%>
+export KRB5CCNAME=FILE:<%= scope.lookupvar('file') %>
 <% end -%>
 <% end -%>

@@ -1,6 +1,6 @@
 <% if @osfamily == 'RedHat' -%>
-<% if scope.lookupvar('hadoop::features')['krbrefresh'] -%>
-KRB5CCNAME=FILE:<%= scope.lookupvar('file') -%>
+<% if @krbrefresh -%>
+KRB5CCNAME=FILE:<%= scope.lookupvar('file') %>
 <% end -%>
 <% elsif @osfamily == 'Debian' -%>
 # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -21,8 +21,8 @@ export YARN_IDENT_STRING=yarn
 export YARN_PID_DIR=/var/run/hadoop-yarn
 export YARN_LOG_DIR=/var/log/hadoop-yarn
 export YARN_CONF_DIR=/etc/hadoop/conf
-<% if scope.lookupvar('hadoop::features')['krbrefresh'] -%>
+<% if @krbrefresh -%>
 
-export KRB5CCNAME=FILE:<%= scope.lookupvar('file') -%>
+export KRB5CCNAME=FILE:<%= scope.lookupvar('file') %>
 <% end -%>
 <% end -%>

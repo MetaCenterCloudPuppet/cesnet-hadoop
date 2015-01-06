@@ -12,6 +12,8 @@ class hadoop::journalnode::config {
   $user = 'hdfs'
   $file = '/tmp/krb5cc_jn'
   $principal = "jn/${::fqdn}@${hadoop::realm}"
+  # for templates in env/*
+  $krbrefresh = $hadoop::features["krbrefresh"]
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)

@@ -1,6 +1,6 @@
 <% if @osfamily == 'RedHat' -%>
-<% if scope.lookupvar('hadoop::features')['krbrefresh'] -%>
-KRB5CCNAME=FILE:<%= scope.lookupvar('file') -%>
+<% if @krbrefresh -%>
+KRB5CCNAME=FILE:<%= scope.lookupvar('file') %>
 <% end -%>
 <% elsif @osfamily == 'Debian' -%>
 # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -34,8 +34,8 @@ export HADOOP_PRIVILEGED_NFS_LOG_DIR=/var/log/hadoop-hdfs
 # export HADOOP_SECURE_DN_USER=hdfs
 # export HADOOP_SECURE_DN_PID_DIR=/var/run/hadoop-hdfs
 # export HADOOP_SECURE_DN_LOG_DIR=/var/log/hadoop-hdfs
-<% if scope.lookupvar('hadoop::features')['krbrefresh'] -%>
+<% if @krbrefresh -%>
 
-export KRB5CCNAME=FILE:<%= scope.lookupvar('file') -%>
+export KRB5CCNAME=FILE:<%= scope.lookupvar('file') %>
 <% end -%>
 <% end -%>

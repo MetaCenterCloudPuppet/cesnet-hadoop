@@ -10,6 +10,9 @@ class hadoop::datanode::config {
   $user = 'hdfs'
   $file = '/tmp/krb5cc_dn'
   $principal = "dn/${::fqdn}@${hadoop::realm}"
+  # for templates in env/*
+  $krbrefresh = $hadoop::features["krbrefresh"]
+  $realm = $hadoop::realm
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)

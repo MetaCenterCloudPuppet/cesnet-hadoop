@@ -11,6 +11,8 @@ class hadoop::historyserver::config {
   $user = 'mapred'
   $file = '/tmp/krb5cc_jhs'
   $principal = "jhs/${::fqdn}@${hadoop::realm}"
+  # for templates in env/*
+  $krbrefresh = $hadoop::features["krbrefresh"]
 
   if $hadoop::realm {
     file { $keytab:

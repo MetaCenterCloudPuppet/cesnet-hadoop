@@ -11,6 +11,8 @@ class hadoop::nodemanager::config {
   $user = 'yarn'
   $file = '/tmp/krb5cc_nm'
   $principal = "nm/${::fqdn}@${hadoop::realm}"
+  # for templates in env/*
+  $krbrefresh = $hadoop::features["krbrefresh"]
 
   if $hadoop::realm {
     file { $keytab:
