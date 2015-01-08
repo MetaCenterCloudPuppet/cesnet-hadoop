@@ -280,10 +280,14 @@ class hadoop (
   }
 
   $dyn_properties = {
+    'dfs.hosts' => "${hadoop::confdir}/slaves",
+    'dfs.hosts.exclude' => "${hadoop::confdir}/excludes",
     'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
     'yarn.resourcemanager.hostname' => $yarn_hostname,
     'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
+    'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/slaves",
+    'yarn.resourcemanager.nodes.exclude-path' => "${hadoop::confdir}/excludes",
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
     'mapreduce.jobhistory.webapps.address' => "${hs_hostname}:19888",
   }

@@ -113,17 +113,21 @@ class hadoop::params {
   $cluster_name = 'cluster'
 
   $descriptions = {
+    'dfs.hosts' => 'permitted data nodes',
+    'dfs.hosts.exclude' => 'decommissioning of data nodes',
     'hadoop.rcp.protection' => 'authentication, integrity, privacy',
     'hadoop.security.auth_to_local' => 'give Kerberos principles proper groups (through mapping to local users), also useful when default realm is different from the service principals',
     'hadoop.security.authorization' => 'enable authorization, see hadoop-policy.xml',
     'dfs.datanode.address' => 'different port with security enabled (original port 50010)',
     'dfs.datanode.http.address' => 'different port with security enabled (original port 50075)',
     'dfs.webhdfs.enabled' => 'read-only Web HDFS access',
+    'mapreduce.tasktracker.outofband.heartbeat' => 'let the TaskTracker send an out-of-band heartbeat on task completion to reduce latency',
     'yarn.nodemanager.local-dirs' => 'List of directories to store localized files in.',
     'yarn.resourcemanager.recovery.enabled' => 'enable resubmit old jobs on start',
     'yarn.resourcemanager.zk-acl' => 'default is world:anyone:rwcda',
     'yarn.application.classpath' => 'Classpath for typical applications.',
-    'mapreduce.tasktracker.outofband.heartbeat' => 'let the TaskTracker send an out-of-band heartbeat on task completion to reduce latency',
+    'yarn.resourcemanager.nodes.include-path' => "permitted nodes",
+    'yarn.resourcemanager.nodes.exclude-path' => "decommissioning of the nodes",
   }
   $features = {
   }

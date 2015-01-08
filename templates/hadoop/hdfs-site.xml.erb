@@ -39,16 +39,6 @@
      <name>dfs.journalnode.edits.dir</name>
      <value><%= suffix = scope.lookupvar('hadoop::hdfs_journalnode_suffix'); scope.lookupvar('hadoop::_hdfs_journal_dirs').map{ |dir| "#{dir}/#{suffix}" }.join(',') -%></value>
   </property>
-  <!-- permitted data nodes -->
-  <property>
-     <name>dfs.hosts</name>
-     <value><%= scope.lookupvar('hadoop::confdir') -%>/slaves</value>
-  </property>
-  <!-- decommissioning of data nodes -->
-  <property>
-     <name>dfs.hosts.exclude</name>
-     <value><%= scope.lookupvar('hadoop::confdir') -%>/excludes</value>
-  </property>
 
 <% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>
 <!--

@@ -45,18 +45,6 @@
   </property>
 -->
 
-  <!-- permitted rack nodes -->
-  <property>
-    <name>yarn.resourcemanager.nodes.include-path</name>
-    <value><%= scope.lookupvar('hadoop::confdir') -%>/slaves</value>
-  </property>
-
-  <!-- decommissioning of rack nodes -->
-  <property>
-    <name>yarn.resourcemanager.nodes.exclude-path</name>
-    <value><%= scope.lookupvar('hadoop::confdir') -%>/excludes</value>
-  </property>
-
 <% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>
   <!-- security -->
   <property>
