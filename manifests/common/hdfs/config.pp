@@ -4,13 +4,31 @@ class hadoop::common::hdfs::config {
   include hadoop::common::install
   include hadoop::common::slaves
 
+  if $hadoop::datanode_hostnames {
+    $file_slaves = 'slaves-hdfs'
+
+    file { "${hadoop::confdir}/slaves-hdfs":
+      ensure  => $ensure_slaves,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      alias   => 'slaves-hdfs',
+      content => template('hadoop/hadoop/slaves-hdfs.erb'),
+    }
+  } else {
+    $file_slaves = 'slaves'
+
+    file { "${hadoop::confdir}/slaves-hdfs":
+      ensure  => absent,
+    }
+  }
   file { "${hadoop::confdir}/hdfs-site.xml":
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
     alias   => 'hdfs-site.xml',
     content => template('hadoop/hadoop/hdfs-site.xml.erb'),
-    require => [ Exec['touch-excludes'], File['slaves'] ],
+    require => [ Exec['touch-excludes'], File[$file_slaves] ],
   }
 
   # mapred user is required on name node,

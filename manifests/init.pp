@@ -51,7 +51,7 @@
 # [*nodemanager_hostnames*] (undef)
 #   Array of Node Manager machines. Used *slaves* by default.
 #
-# [*datanodes_hostnames*] (undef)
+# [*datanode_hostnames*] (undef)
 #   Array of Data Node machines. Used *slaves* by default.
 #
 # [*journalnode_hostnames*] (undef)
@@ -229,10 +229,10 @@ class hadoop (
   # detailed deployment bases on convenient parameters
   if $historyserver_hostname { $hs_hostname = $historyserver_hostname }
   else { $hs_hostname = $yarn_hostname }
-  if $nodemanager_hostnames { $nm_hostnames = $nodemanager_hostnames }
-  else { $nm_hostnames = $slaves }
-  if $datanode_hostnames { $dn_hostnames = $datanode_hostnames }
-  else { $dn_hostnames = $slaves }
+  if $nodemanager_hostnames { $_nodemanager_hostnames = $nodemanager_hostnames }
+  else { $_nodemanager_hostnames = $slaves }
+  if $datanode_hostnames { $_datanode_hostnames = $datanode_hostnames }
+  else { $_datanode_hostnames = $slaves }
   if $frontends { $frontend_hostnames = $frontends }
   else { $frontend_hostnames = $slaves }
 
@@ -254,11 +254,11 @@ class hadoop (
     $daemon_historyserver = 1
   }
 
-  if member($nm_hostnames, $::fqdn) {
+  if member($_nodemanager_hostnames, $::fqdn) {
     $daemon_nodemanager = 1
   }
 
-  if member($dn_hostnames, $::fqdn) {
+  if member($_datanode_hostnames, $::fqdn) {
     $daemon_datanode = 1
   }
 
@@ -279,14 +279,24 @@ class hadoop (
     $zkquorum = "${zkquorum0}:2181"
   }
 
+  if $datanode_hostnames {
+    $slaves_hdfs = 'slaves-hdfs'
+  } else {
+    $slaves_hdfs = 'slaves'
+  }
+  if $nodemanager_hostnames {
+    $slaves_yarn = 'slaves-yarn'
+  } else {
+    $slaves_yarn = 'slaves'
+  }
   $dyn_properties = {
-    'dfs.hosts' => "${hadoop::confdir}/slaves",
+    'dfs.hosts' => "${hadoop::confdir}/${slaves_hdfs}",
     'dfs.hosts.exclude' => "${hadoop::confdir}/excludes",
     'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
     'yarn.resourcemanager.hostname' => $yarn_hostname,
     'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
-    'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/slaves",
+    'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/${slaves_yarn}",
     'yarn.resourcemanager.nodes.exclude-path' => "${hadoop::confdir}/excludes",
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
     'mapreduce.jobhistory.webapps.address' => "${hs_hostname}:19888",

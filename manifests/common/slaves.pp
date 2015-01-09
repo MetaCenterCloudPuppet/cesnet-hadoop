@@ -9,12 +9,19 @@
 # 2) resourcemanager machine: yarn rmadmin -refreshNodes
 #
 class hadoop::common::slaves {
-  file { "${hadoop::confdir}/slaves":
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    alias   => 'slaves',
-    content => template('hadoop/hadoop/slaves.erb'),
+  if $hadoop::slaves and (!$hadoop::datanode_hostnames or !$hadoop::nodemanager_hostnames) {
+    file { "${hadoop::confdir}/slaves":
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      alias   => 'slaves',
+      content => template('hadoop/hadoop/slaves.erb'),
+    }
+  } else {
+    file { "${hadoop::confdir}/slaves":
+      ensure => 'absent',
+      alias  => 'slaves',
+    }
   }
 
   # for decommissioned data nodes
