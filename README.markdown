@@ -9,6 +9,7 @@
 4. [Usage - Configuration options and additional functionality](#usage)
     * [Enable Security](#security)
     * [Enable HTTPS](#https)
+    * [Multihome Support](#multihome)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -267,6 +268,34 @@ The following hadoop class parameters are used for HTTPS (see also hadoop class)
 
 * *https_keystore_keypassword* (undef)
   Certificates keystore key password. If not specified, *https_keystore_password* is used.
+
+
+<a name="multihome"></a>
+###Multihome Support
+
+Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Properties and bind hacks to multihome support can be enabled by **multihome => true** in *features*. You will also need to add secondary IPs of datanodes to *datanode_hostnames* or *slaves*:
+
+    class{"hadoop":
+      hdfs\_hostname => $::fqdn,
+      yarn\_hostname => $::fqdn,
+      # for multi-home
+      datanode\_hostnames => [ $::fqdn, '10.0.0.2', '192.169.0.2' ],
+      slaves => [ $::fqdn ],
+      frontends => [ $:fqdn ],
+      realm => '',
+      properties => {
+        'dfs.replication' => 1,
+      }
+      # for multi-home
+      features => {
+        multihome => true,
+      }
+    }
+
+Multi-home feature enables following properties:
+* 'hadoop.security.token.service.use_ip' => false
+* 'yarn.resourcemanager.bind-host' => '0.0.0.0'
+* 'dfs.namenode.rpc-bind-host' => '0.0.0.0'
 
 
 <a name="reference"></a>

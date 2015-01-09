@@ -105,6 +105,7 @@
 #   - krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
 #   - authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 #   - yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
+#   - multihome - enable properties required for multihome usage, you will need also add secondary IP addresses to *datanode_hostnames*
 #
 # [*alternatives*] (Debian: 'cluster', other: undef)
 #   Use alternatives to switch configuration. It is used by Cloudera for example.
@@ -368,6 +369,14 @@ DEFAULT
     }
   }
 
+  if $hadoop::features['multihome'] {
+    $mh_properties = {
+      'hadoop.security.token.service.use_ip' => false,
+      'yarn.resourcemanager.bind-host' => '0.0.0.0',
+      'dfs.namenode.rpc-bind-host' => '0.0.0.0',
+    }
+  }
+
   if $hadoop::https {
     if !$hadoop::realm {
       err('Kerberos feature required for https support.')
@@ -449,7 +458,7 @@ DEFAULT
   }
   $zoo_properties = merge($zoo_hdfs_properties, $zoo_yarn_properties)
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
   if $hadoop::perform {
