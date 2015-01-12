@@ -53,16 +53,21 @@ class hadoop::common::config {
 
   if $hadoop::https {
     $keypass = $hadoop::https_keystore_keypassword
+    if $hadoop::acl {
+       $ssl_perms = '0640'
+    } else {
+       $ssl_perms = '0644'
+    }
     file { "${hadoop::confdir}/ssl-server.xml":
       owner   => 'root',
       group   => 'hadoop',
-      mode    => '0640',
+      mode    => $ssl_perms,
       content => template('hadoop/hadoop/ssl-server.xml.erb'),
     }
     file { "${hadoop::confdir}/ssl-client.xml":
       owner   => 'root',
       group   => 'hadoop',
-      mode    => '0640',
+      mode    => $ssl_perms,
       content => template('hadoop/hadoop/ssl-client.xml.erb'),
     }
     file { $hadoop::https_cacerts:

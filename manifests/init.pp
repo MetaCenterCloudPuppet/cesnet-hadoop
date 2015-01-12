@@ -132,11 +132,16 @@
 # * yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
 # * multihome - enable properties required for multihome usage, you will need also add secondary IP addresses to *datanode_hostnames*
 #
+# [*acl*] undef
+#
+#   Set to true, if setfacl command is available and /etc/hadoop is on filesystem supporting POSIX ACL.
+#   It is used only when https is enabled to set less open privileges on ssl-server.xml.
+#
 # [*alternatives*] (Debian: 'cluster', other: undef)
 #
 #   Use alternatives to switch configuration. It is used by Cloudera for example.
 #
-# [*https*] (undef)
+# [*https*] undef
 #
 #   Enable support for https.
 #
@@ -250,6 +255,7 @@ class hadoop (
   $descriptions = undef,
   $environments = undef,
   $features = $params::features,
+  $acl = undef,
   $alternatives = $params::alternatives,
   $https = undef,
   $https_cacerts = $params::https_cacerts,

@@ -274,6 +274,8 @@ The following hadoop class parameters are used for HTTPS (see also hadoop class)
 * *https_keystore_keypassword* (undef)
   Certificates keystore key password. If not specified, *https_keystore_password* is used.
 
+Consider also checking POSIX ACL support in the system and enable *acl* in Hadoop module. It's usefull for more pedantic rights on ssl-\*.xml files, which needs to be read by Hadoop additions (like HBase).
+
 
 <a name="multihome"></a>
 ###Multihome Support
@@ -509,7 +511,12 @@ yes, systemd-based distributions no).
 
   Use alternatives to switch configuration. It is used by Cloudera for example.
 
-[*https*] (undef)
+[*acl*] undef
+
+  Set to true, if setfacl command is available and /etc/hadoop is on filesystem supporting POSIX ACL.
+  It is used only when https is enabled to set less open privileges on ssl-server.xml.
+
+[*https*] undef
 
   Enable support for https.
 
