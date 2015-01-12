@@ -45,6 +45,8 @@ class hadoop::common::config {
 
   if ($hadoop::features["yellowmanager"]) {
     file { '/usr/local/sbin/yellowmanager':
+      owner   => 'root',
+      group   => 'root',
       mode    => '0755',
       alias   => 'yellowmanager',
       content => template('hadoop/yellowmanager.erb'),
