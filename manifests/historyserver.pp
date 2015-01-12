@@ -1,5 +1,7 @@
 # == Class hadoop::historyserver
 #
+# MapReduce Job History Server.
+#
 class hadoop::historyserver {
   include 'hadoop::historyserver::install'
   include 'hadoop::historyserver::config'

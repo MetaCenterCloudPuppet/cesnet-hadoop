@@ -1,5 +1,7 @@
 # == Class hadoop::nodemanager
 #
+# YARN Node Manager.
+#
 class hadoop::nodemanager {
   include 'hadoop::nodemanager::install'
   include 'hadoop::nodemanager::config'

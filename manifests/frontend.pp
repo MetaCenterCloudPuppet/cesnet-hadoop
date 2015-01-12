@@ -1,5 +1,7 @@
 # == Class hadoop::frontend
 #
+# Hadoop client and examples.
+#
 class hadoop::frontend {
   include 'hadoop::frontend::install'
   include 'hadoop::frontend::config'

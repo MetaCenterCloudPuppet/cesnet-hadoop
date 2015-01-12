@@ -1,5 +1,7 @@
 # == Class hadoop::datanode
 #
+# HDFS Data Node.
+#
 class hadoop::datanode {
   include 'hadoop::datanode::install'
   include 'hadoop::datanode::config'

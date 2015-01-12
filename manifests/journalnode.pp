@@ -1,6 +1,6 @@
 # == Class hadoop::journalnode
 #
-# Main Haddop Journal Node class for Quorum Journal Manager. This is needed only when using two Name Nodes with HA. The alternative is to use NFS shared storage.
+# HDFS Journal Node used for Quorum Journal Manager. This is needed only when using two Name Nodes with HA. The alternative is to use NFS shared storage.
 #
 # Requires configured https on HDFS.
 #

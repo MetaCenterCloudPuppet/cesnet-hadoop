@@ -1,5 +1,7 @@
 # == Class hadoop::zkfc
 #
+# HDFS Zookeeper/Failover Controller.
+#
 class hadoop::zkfc {
   include 'hadoop::zkfc::install'
   include 'hadoop::zkfc::config'

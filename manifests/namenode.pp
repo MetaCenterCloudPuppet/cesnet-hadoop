@@ -1,5 +1,7 @@
 # == Class hadoop::namenode
 #
+# HDFS Name Node.
+#
 class hadoop::namenode {
   include 'hadoop::namenode::install'
   include 'hadoop::namenode::config'
