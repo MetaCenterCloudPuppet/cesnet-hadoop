@@ -32,14 +32,13 @@ class hadoop::common::config {
     content => template('hadoop/env/common.erb'),
   }
 
-  if $hadoop::features["authorization"] {
-    $rules = $hadoop::features["authorization"]
+  if $hadoop::authorization {
     file { "${hadoop::confdir}/hadoop-policy.xml":
       owner  => 'root',
       group  => 'root',
       mode   => '0644',
       alias  => 'hadoop-policy.xml',
-      source => "puppet:///modules/hadoop/hadoop-policy.xml.${rules}",
+      content => template('hadoop/hadoop/hadoop-policy.xml.erb'),
     }
   }
 

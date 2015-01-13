@@ -155,7 +155,11 @@ Multiple HDFS namespaces are not supported now (ask or send patches, if you need
       features => {
         #restarts => '00 */12 * * *',
         #krbrefresh => '00 */12 * * *',
-        authorization => 'limit',
+      },
+      authorization => {
+        'rules' => 'limit',
+        # more paranoid permissions to users in "hadoopusers" group
+        #'security.service.authorization.default.acl' => ' hadoop,hbase,hive,hadoopusers',
       },
       # https recommended (and other extensions may require it)
       https => true,
@@ -191,8 +195,7 @@ Following parameters are used for security (see also hadoop class):
   * /etc/security/keytab/nn.service.keytab (on name nodes)
   * /etc/security/keytab/rm.service.keytab (on resource manager node)
 
-* *features* (empty hash by default)<br />
- * *authorization* - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
+* *authorization* (empty hash by default)
 
 It is recommended also to enable HTTPS when security is enabled. See [Enable HTTPS](#https).
 
@@ -500,21 +503,91 @@ yes, systemd-based distributions no).
 * rmstore: resource manager recovery using state-store
  * *hdfs*: store state on HDFS, this requires HDFS datanodes already running and /rmstore directory created ==> keep disabled on initial setup! Requires *hdfs\_deployed* to be true
  * *zookeeper*: store state on zookeepers; Requires *zookeeper_hostnames* specified. Warning: no authentication is used.
-      *true*: select automatically zookeeper or hdfs ccording to *zookeeper_hostnames*
+ * *true*: select automatically zookeeper or hdfs according to *zookeeper_hostnames*
 * restarts: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
 * krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
-* authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 * yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
 * multihome - enable properties required for multihome usage, you will need also add secondary IP addresses to *datanode_hostnames*
-
-[*alternatives*] (Debian: 'cluster', other: undef)
-
-  Use alternatives to switch configuration. It is used by Cloudera for example.
 
 [*acl*] undef
 
   Set to true, if setfacl command is available and /etc/hadoop is on filesystem supporting POSIX ACL.
   It is used only when https is enabled to set less open privileges on ssl-server.xml.
+
+[*alternatives*] (Debian: 'cluster', other: undef)
+
+  Use alternatives to switch configuration. It is used by Cloudera for example.
+
+[*authorization*] ()
+
+Hadoop service level authorization ACLs. Authorizations are enabled and predefined rule set and/or particular properties can be specified.
+
+Each ACL is in the form of: (note the space character, wildcard "\*" allowed)
+
+* "USER1,USER2,... GROUP1,GROUP2"
+* "USER1,USER2,..."
+* " GROUP1,GROUP2,..."
+
+These properties are available:
+
+* *rules* (**limit**, **permit**, **false**): predefined ACL sets in cesnet-hadoop puppet module
+* *security.service.authorization.default.acl*: default ACL
+* *security.client.datanode.protocol.acl*
+* *security.client.protocol.acl*
+* *security.datanode.protocol.acl*
+* *security.inter.datanode.protocol.acl*
+* *security.namenode.protocol.acl*
+* *security.admin.operations.protocol.acl*
+* *security.refresh.usertogroups.mappings.protocol.acl*
+* *security.refresh.policy.protocol.acl*
+* *security.ha.service.protocol.acl*
+* *security.zkfc.protocol.acl*
+* *security.qjournal.service.protocol.acl*
+* *security.mrhs.client.protocol.acl*
+* *security.resourcetracker.protocol.acl*
+* *security.resourcemanager-administration.protocol.acl*
+* *security.applicationclient.protocol.acl*
+* *security.applicationmaster.protocol.acl*
+* *security.containermanagement.protocol.acl*
+* *security.resourcelocalizer.protocol.acl*
+* *security.job.task.protocol.acl*
+* *security.job.client.protocol.acl*
+* ... and everything with *.blocked* suffix
+
+ACL set: **limit**: policy tuned with minimal set of permissions:
+
+* *security.datanode.protocol.acl* => ' hadoop'
+* *security.inter.datanode.protocol.acl* => ' hadoop'
+* *security.namenode.protocol.acl* => 'hdfs,nn,sn'
+* *security.admin.operations.protocol.acl* => ' hadoop'
+* *security.refresh.usertogroups.mappings.protocol.acl* => ' hadoop'
+* *security.refresh.policy.protocol.acl* => ' hadoop'
+* *security.ha.service.protocol.acl* => ' hadoop'
+* *security.zkfc.protocol.acl* => ' hadoop'
+* *security.qjournal.service.protocol.acl* => ' hadoop'
+* *security.resourcetracker.protocol.acl* => 'yarn,nm,rm'
+* *security.resourcemanager-administration.protocol.acl* => ' hadoop',
+* *security.applicationmaster.protocol.acl* => '\*',
+* *security.containermanagement.protocol.acl* => '\*',
+* *security.resourcelocalizer.protocol.acl* => '\*',
+* *security.job.task.protocol.acl* => '\*',
+
+ACL set: **permit** defines this policy (it's default):
+
+* *security.service.authorization.default.acl* => '\*'
+
+See also [Service Level Authorization Hadoop documentation](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ServiceLevelAuth.html).
+
+You can use **limit** rules and define *security.service.authorization.default.acl* to something different from '\*':
+
+    authorization => {
+      'rules' => 'limit',
+      'security.service.authorization.default.acl' => ' hadoop,hbase,hive,users',
+    }
+
+Note: beware *...acl.blocked* are not used if the *....acl* counterpart is defined.
+
+Note 2: if not using wildcards in permit rules you should enable access also for all Hadoop additions.
 
 [*https*] undef
 
@@ -546,7 +619,7 @@ yes, systemd-based distributions no).
 
 [*https_keystore_keypassword*] (undef)
 
-  Certificates keystore key password. If not specified, https_keystore_password is used.
+  Certificates keystore key password. If not specified, https\_keystore\_password is used.
 
 [*perform*] (false)
 

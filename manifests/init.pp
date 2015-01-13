@@ -90,6 +90,7 @@
 # [*hdfs_data_dirs*] (["/var/lib/hadoop-hdfs"], or ["/var/lib/hadoop-hdfs/cache"])
 #
 #  Directory prefixes to store the data on HDFS datanodes.
+#
 #  * /${user.name}/dfs/datanode suffix is always added
 #  * If there is multiple directories, then data will be stored in all directories, typically on different devices.
 #  When adding a new directory, you need to replicate the contents from some of the other ones. Or set dfs.namenode.name.dir.restore to true and create NEW\_DIR/hdfs/dfs/namenode with proper owners.
@@ -123,12 +124,11 @@
 #   Enable additional features:
 #
 # * rmstore: resource manager recovery using state-store
-#  * *hdfs*: store state on HDFS, this requires HDFS datanodes already running and /rmstore directory created ==> keep disabled on initial setup! Requires *hdfs_deployed* to be true
+#  * *hdfs*: store state on HDFS, this requires HDFS datanodes already running and /rmstore directory created ==> keep disabled on initial setup! Requires *hdfs\_deployed* to be true
 #  * *zookeeper*: store state on zookeepers; Requires *zookeeper_hostnames* specified. Warning: no authentication is used.
-#  * *true*: select automatically zookeeper or hdfs ccording to *zookeeper_hostnames*
+#  * *true*: select automatically zookeeper or hdfs according to *zookeeper_hostnames*
 # * restarts: regular resource manager restarts (MIN HOUR MDAY MONTH WDAY); it shall never be restarted, but it may be needed for refreshing Kerberos tickets
 # * krbrefresh: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
-# * authorization - enable authorization and select authorization rules (permit, limit); recommended to try 'permit' rules first
 # * yellowmanager - script in /usr/local to start/stop all daemons relevant for given node
 # * multihome - enable properties required for multihome usage, you will need also add secondary IP addresses to *datanode_hostnames*
 #
@@ -140,6 +140,77 @@
 # [*alternatives*] (Debian: 'cluster', other: undef)
 #
 #   Use alternatives to switch configuration. It is used by Cloudera for example.
+#
+# [*authorization*] ()
+#
+# Hadoop service level authorization ACLs. Authorizations are enabled and predefined rule set and/or particular properties can be specified.
+#
+# Each ACL is in the form of: (note the space character, wildcard "\*" allowed)
+#
+# * "USER1,USER2,... GROUP1,GROUP2"
+# * "USER1,USER2,..."
+# * " GROUP1,GROUP2,..."
+#
+# These properties are available:
+#
+# * *rules* (**limit**, **permit**, **false**): predefined ACL sets in cesnet-hadoop puppet module
+# * *security.service.authorization.default.acl*: default ACL
+# * *security.client.datanode.protocol.acl*
+# * *security.client.protocol.acl*
+# * *security.datanode.protocol.acl*
+# * *security.inter.datanode.protocol.acl*
+# * *security.namenode.protocol.acl*
+# * *security.admin.operations.protocol.acl*
+# * *security.refresh.usertogroups.mappings.protocol.acl*
+# * *security.refresh.policy.protocol.acl*
+# * *security.ha.service.protocol.acl*
+# * *security.zkfc.protocol.acl*
+# * *security.qjournal.service.protocol.acl*
+# * *security.mrhs.client.protocol.acl*
+# * *security.resourcetracker.protocol.acl*
+# * *security.resourcemanager-administration.protocol.acl*
+# * *security.applicationclient.protocol.acl*
+# * *security.applicationmaster.protocol.acl*
+# * *security.containermanagement.protocol.acl*
+# * *security.resourcelocalizer.protocol.acl*
+# * *security.job.task.protocol.acl*
+# * *security.job.client.protocol.acl*
+# * ... and everything with *.blocked* suffix
+#
+# ACL set: **limit**: policy tuned with minimal set of permissions:
+#
+# * *security.datanode.protocol.acl* => ' hadoop'
+# * *security.inter.datanode.protocol.acl* => ' hadoop'
+# * *security.namenode.protocol.acl* => 'hdfs,nn,sn'
+# * *security.admin.operations.protocol.acl* => ' hadoop'
+# * *security.refresh.usertogroups.mappings.protocol.acl* => ' hadoop'
+# * *security.refresh.policy.protocol.acl* => ' hadoop'
+# * *security.ha.service.protocol.acl* => ' hadoop'
+# * *security.zkfc.protocol.acl* => ' hadoop'
+# * *security.qjournal.service.protocol.acl* => ' hadoop'
+# * *security.resourcetracker.protocol.acl* => 'yarn,nm,rm'
+# * *security.resourcemanager-administration.protocol.acl* => ' hadoop',
+# * *security.applicationmaster.protocol.acl* => '\*',
+# * *security.containermanagement.protocol.acl* => '\*',
+# * *security.resourcelocalizer.protocol.acl* => '\*',
+# * *security.job.task.protocol.acl* => '\*',
+#
+# ACL set: **permit** defines this policy (it's default):
+#
+# * *security.service.authorization.default.acl* => '\*'
+#
+# See also [Service Level Authorization Hadoop documentation](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ServiceLevelAuth.html).
+#
+# You can use **limit** rules and define *security.service.authorization.default.acl* to something different from '\*':
+#
+#     authorization => {
+#       'rules' => 'limit',
+#       'security.service.authorization.default.acl' => ' hadoop,hbase,hive,users',
+#     }
+#
+# Note: beware *...acl.blocked* are not used if the *....acl* counterpart is defined.
+#
+# Note 2: if not using wildcards in permit rules you should enable access also for all Hadoop additions.
 #
 # [*https*] undef
 #
@@ -201,9 +272,11 @@
 #  features => {
 #    rmstore => true,
 #    krbrefresh => '00 */4 * * *',
-#    authorization => 'limit',
 #    yellowmanager => true,
 #  },
+#  authorization => {
+#    'rules' => 'limit',
+#  }
 #  perform => true,
 #}
 #
@@ -239,7 +312,6 @@ class hadoop (
   $frontends = [],
   $cluster_name = $params::cluster_name,
   $realm,
-  $authorization = $params::authorization,
 
   $historyserver_hostname = undef,
   $nodemanager_hostnames = undef,
@@ -257,6 +329,7 @@ class hadoop (
   $features = $params::features,
   $acl = undef,
   $alternatives = $params::alternatives,
+  $authorization = undef,
   $https = undef,
   $https_cacerts = $params::https_cacerts,
   $https_cacerts_password = $params::https_cacerts_password,
@@ -380,7 +453,7 @@ DEFAULT
       'yarn.nodemanager.linux-container-executor.group' => 'hadoop',
     }
   }
-  if ($hadoop::features["authorization"]) {
+  if $hadoop::authorization {
     $auth_properties = {
       'hadoop.security.authorization' => true,
     }
@@ -500,8 +573,42 @@ DEFAULT
   }
   $zoo_properties = merge($zoo_hdfs_properties, $zoo_yarn_properties)
 
+  if $authorization {
+    case $authorization['rules'] {
+      'limit', true: {
+        $preset_authorization = {
+          'security.datanode.protocol.acl' => ' hadoop',
+          'security.inter.datanode.protocol.acl' => ' hadoop',
+          'security.namenode.protocol.acl' => 'hdfs,nn,sn',
+          'security.admin.operations.protocol.acl' => ' hadoop',
+          'security.refresh.usertogroups.mappings.protocol.acl' => ' hadoop',
+          'security.refresh.policy.protocol.acl' => ' hadoop',
+          'security.ha.service.protocol.acl' => ' hadoop',
+          'security.zkfc.protocol.acl' => ' hadoop',
+          'security.qjournal.service.protocol.acl' => ' hadoop',
+          'security.resourcetracker.protocol.acl' => 'yarn,nm,rm',
+          'security.resourcemanager-administration.protocol.acl' => ' hadoop',
+          'security.applicationmaster.protocol.acl' => '*',
+          'security.containermanagement.protocol.acl' => '*',
+          'security.resourcelocalizer.protocol.acl' => '*',
+          'security.job.task.protocol.acl' => '*',
+        }
+      }
+      'permit': {
+        $preset_authorization = {
+          'security.service.authorization.default.acl' => '*',
+        }
+      }
+      'permit', default: {
+        $preset_authorization = {}
+      }
+    }
+  }
+
   $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
+
+  $_authorization = merge($preset_authorization, delete($authorization, 'rules'))
 
   if $hadoop::perform {
     include 'hadoop::install'
