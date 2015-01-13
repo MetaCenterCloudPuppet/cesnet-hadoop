@@ -364,6 +364,7 @@ DEFAULT
       'dfs.datanode.address' => '0.0.0.0:1004',
       'dfs.datanode.http.address' => '0.0.0.0:1006',
       'dfs.block.access.token.enable' => true,
+      'dfs.namenode.acls.enabled' => true,
       'dfs.namenode.kerberos.principal' => "nn/_HOST@${hadoop::realm}",
       'dfs.namenode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
       'dfs.datanode.kerberos.principal' => "dn/_HOST@${hadoop::realm}",
