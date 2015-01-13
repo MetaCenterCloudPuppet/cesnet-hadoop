@@ -27,9 +27,9 @@ Management of Hadoop Cluster with security based on Kerberos and with High Avail
 
 This module installs and setups Hadoop Cluster, with all services collocated or separated across all nodes or single node as needed. Optionally other features can be enabled:
 
-* the security based on Kerberos
-* https
-* high availability for HDFS Name Node and YARN Resource Manager (requires zookeeper)
+* Security based on Kerberos
+* HTTPS
+* High availability for HDFS Name Node and YARN Resource Manager (requires zookeeper)
 
 Supported are:
 
@@ -75,21 +75,21 @@ Be aware of:
  * *java* is not installed by this module (*openjdk-7-jre-headless* is OK for Debian 7/wheezy)
  * for security the package providing kinit is also needed (Debian: *krb5-util*/*heimdal-clients*, Fedora: *krb5-workstation*)
 
-* **one-node Hadoop cluster** (may be collocated on one machine): Hadoop replicates by default all data to at least to 3 data nodes. For one-node Hadoop cluster use property *dfs.replication=1* in *properties* parameter
+* **One-node Hadoop cluster** (may be collocated on one machine): Hadoop replicates by default all data to at least to 3 data nodes. For one-node Hadoop cluster use property *dfs.replication=1* in *properties* parameter
 
-* **no inter-node dependencies**: working HDFS (namenode+some data nodes) is required before history server launch or for state-store resourcemanager feature; some workarounds exists:
+* **No inter-node dependencies**: working HDFS (namenode+some data nodes) is required before history server launch or for state-store resourcemanager feature; some workarounds exists:
  * helper parameter *hdfs_deployed*: when false, services dependent on HDFS are not launched (default: true)
  * administrators are encouraged to use any other way to solve inter-node dependencies (PuppetDB?)
  * or just repeat setup on historyserver and resourcemanager machines
 
    Note: Hadoop cluster collocated on one-machine is handled OK
 
-* **secure mode**: keytabs must be prepared in /etc/security/keytabs/ (see *realm* parameter)
+* **Secure mode**: keytabs must be prepared in /etc/security/keytabs/ (see *realm* parameter)
  * Fedora:<br />
  1) see [RedHat Bug #1163892](https://bugzilla.redhat.com/show\_bug.cgi?id=1163892), you may use repository at [http://copr-fe.cloud.fedoraproject.org/coprs/valtri/hadoop/](http://copr-fe.cloud.fedoraproject.org/coprs/valtri/hadoop/)<br />
  2) you need to enable ticket refresh and RM restarts (see *features* module parameter)
 
-* **https**:
+* **HTTPS**:
  * prepare CA certificate keystore and machine certificate keystore in /etc/security/cacerts and /etc/security/server.keystore (location can be modified by *https_cacerts* and *https_keystore* parameters), see init.pp class for more https-related parameters
  * prepare /etc/security/http-auth-signature-secret file (with any content)
 
@@ -105,10 +105,10 @@ Let's start with brief examples. Before beginning you should read the [Setup Req
 **Example 1**: The simplest setup is one-node Hadoop cluster without security, with everything on single machine:
 
     class{"hadoop":
-      hdfs\_hostname => $::fqdn,
-      yarn\_hostname => $::fqdn,
+      hdfs_hostname => $::fqdn,
+      yarn_hostname => $::fqdn,
       slaves => [ $::fqdn ],
-      frontends => [ $:fqdn ],
+      frontends => [ $::fqdn ],
       # security needs to be disabled explicitly by using empty string
       realm => '',
       properties => {
@@ -116,7 +116,7 @@ Let's start with brief examples. Before beginning you should read the [Setup Req
       }
     }
 
-    node $::fqdn {
+    node default {
       # HDFS
       include hadoop::namenode
       # YARN
@@ -144,14 +144,14 @@ Multiple HDFS namespaces are not supported now (ask or send patches, if you need
 **Example 2**: One-node Hadoop cluster with security (add also the node section from the single setup above):
 
     class{"hadoop":
-      hdfs\_hostname => $::fqdn,
-      yarn\_hostname => $::fqdn,
+      hdfs_hostname => $::fqdn,
+      yarn_hostname => $::fqdn,
       slaves => [ $::fqdn ],
       frontends => [ $:fqdn ],
       realm => 'MY.REALM',
       properties => {
         'dfs.replication' => 1,
-      }
+      },
       features => {
         #restarts => '00 */12 * * *',
         #krbrefresh => '00 */12 * * *',
@@ -168,9 +168,9 @@ Multiple HDFS namespaces are not supported now (ask or send patches, if you need
       https_keystore_password => 'changeit',
     }
 
-Modify $::fqdn and add node(s) sections as needed for multi-node cluster.
+Modify $::fqdn and add node sections as needed for multi-node cluster.
 
-TODO: try security example, high availability example and dependency on zookeeper
+TODO: high availability example and dependency on zookeeper
 
 <a name="usage"></a>
 ##Usage
@@ -182,10 +182,10 @@ TODO: Put the classes, types, and resources for customizing, configuring, and do
 
 Security in Hadoop is based on Kerberos. Keytab files needs to be prepared on the proper places before enabling the security.
 
-Following parameters are used for security (see also hadoop class):
+Following parameters are used for security (see also [Module Parameters](#parameters):
 
-* *realm* (required parameter, empty string disables the security)<br />
-  Enable security and Kerberos realm to use. Empty string disables the security.
+* *realm* (required parameter, empty string disables security)<br />
+  Enable security and Kerberos realm to use. Empty string disables security.
   To enable security, there are required:
   * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
   * configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
@@ -255,7 +255,7 @@ Preparing the signature secret file (/etc/security/http-auth-signature-secret):
     chmod 0600 http-auth-signature-secret
     mv http-auth-signature-secret /etc/security/
 
-The following hadoop class parameters are used for HTTPS (see also hadoop class):
+The following hadoop class parameters are used for HTTPS (see also [Module Parameters](#parameters)):
 * *realm* (required for HTTPS)
   Enable security and Kerberos realm to use. See [Security](#security).
 
@@ -286,8 +286,8 @@ Consider also checking POSIX ACL support in the system and enable *acl* in Hadoo
 Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Properties and bind hacks to multihome support can be enabled by **multihome => true** in *features*. You will also need to add secondary IPs of datanodes to *datanode_hostnames* or *slaves*:
 
     class{"hadoop":
-      hdfs\_hostname => $::fqdn,
-      yarn\_hostname => $::fqdn,
+      hdfs_hostname => $::fqdn,
+      yarn_hostname => $::fqdn,
       # for multi-home
       datanode\_hostnames => [ $::fqdn, '10.0.0.2', '192.169.0.2' ],
       slaves => [ $::fqdn ],
@@ -303,6 +303,7 @@ Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Propert
     }
 
 Multi-home feature enables following properties:
+
 * 'hadoop.security.token.service.use\_ip' => false
 * 'yarn.resourcemanager.bind-host' => '0.0.0.0'
 * 'dfs.namenode.rpc-bind-host' => '0.0.0.0'
@@ -310,9 +311,6 @@ Multi-home feature enables following properties:
 
 <a name="reference"></a>
 ##Reference
-
-TODO: Here, list the classes, types, providers, facts, etc contained in your module. This section should include all of the under-the-hood workings of your module so people know what the module is touching on their system but don't need to mess with things. (We are working on automating this section!)
-TODO2: HDFS dirs resource type
 
 <a name="classes"></a>
 ###Classes
@@ -419,10 +417,10 @@ TODO2: HDFS dirs resource type
 
 [*realm*] (required parameter, may be empty string)
 
-  Enable security and Kerberos realm to use. Empty string disables the security.
+  Enable security and Kerberos realm to use. Empty string disables security.
   To enable security, there are required:
 
-  * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
+  * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat,Fedora: krb5-workstation)
   * configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
   * /etc/security/keytab/dn.service.keytab (on data nodes)
   * /etc/security/keytab/jhs.service.keytab (on job history node)
