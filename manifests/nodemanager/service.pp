@@ -17,4 +17,11 @@ class hadoop::nodemanager::service {
     include hadoop::namenode::service
     Class['hadoop::namenode::service'] -> Class['hadoop::nodemanager::service']
   }
+
+  # resourcemanager must be launched before nodemanager
+  # (on Debian YARN ResourceManager is started unconfigured and it talks nonsense to nodemanagers)
+  if $hadoop::daemon_resourcemanager {
+    include hadoop::resourcemanager::service
+    Class['hadoop::resourcemanager::service'] -> Class['hadoop::nodemanager::service']
+  }
 }
