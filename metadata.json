@@ -1,11 +1,11 @@
 {
   "name": "cesnet-hadoop",
-  "version": "0.1.0",
-  "author": "CESNET",
+  "version": "0.9.0",
+  "author": "František Dvořák <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
-  "license": "Apache 2.0",
+  "license": "MIT",
   "source": "http://scientific.zcu.cz/git/cesnet-hadoop.git",
-  "project_page": "https://github.com/CESNET/",
+  "project_page": "https://github.com/MetaCenterCloudPuppet",
   "issues_url": "mailto://valtri@civ.zcu.cz",
   "tags": ["hadoop"],
   "operatingsystem_support": [
