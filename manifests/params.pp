@@ -129,8 +129,8 @@ class hadoop::params {
     'yarn.resourcemanager.recovery.enabled' => 'enable resubmit old jobs on start',
     'yarn.resourcemanager.zk-acl' => 'default is world:anyone:rwcda',
     'yarn.application.classpath' => 'Classpath for typical applications.',
-    'yarn.resourcemanager.nodes.include-path' => "permitted nodes",
-    'yarn.resourcemanager.nodes.exclude-path' => "decommissioning of the nodes",
+    'yarn.resourcemanager.nodes.include-path' => 'permitted nodes',
+    'yarn.resourcemanager.nodes.exclude-path' => 'decommissioning of the nodes',
   }
   $features = {
   }

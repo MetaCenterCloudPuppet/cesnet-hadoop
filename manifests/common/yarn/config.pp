@@ -10,7 +10,6 @@ class hadoop::common::yarn::config {
     $file_slaves = 'slaves-yarn'
 
     file { "${hadoop::confdir}/slaves-yarn":
-      ensure  => $ensure_slaves,
       owner   => 'root',
       group   => 'root',
       mode    => '0644',

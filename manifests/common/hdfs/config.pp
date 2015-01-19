@@ -8,7 +8,6 @@ class hadoop::common::hdfs::config {
     $file_slaves = 'slaves-hdfs'
 
     file { "${hadoop::confdir}/slaves-hdfs":
-      ensure  => $ensure_slaves,
       owner   => 'root',
       group   => 'root',
       mode    => '0644',

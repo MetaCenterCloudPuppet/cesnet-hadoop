@@ -34,10 +34,10 @@ class hadoop::common::config {
 
   if $hadoop::authorization {
     file { "${hadoop::confdir}/hadoop-policy.xml":
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0644',
-      alias  => 'hadoop-policy.xml',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      alias   => 'hadoop-policy.xml',
       content => template('hadoop/hadoop/hadoop-policy.xml.erb'),
     }
   }
@@ -55,9 +55,9 @@ class hadoop::common::config {
   if $hadoop::https {
     $keypass = $hadoop::https_keystore_keypassword
     if $hadoop::acl {
-       $ssl_perms = '0640'
+      $ssl_perms = '0640'
     } else {
-       $ssl_perms = '0644'
+      $ssl_perms = '0644'
     }
     file { "${hadoop::confdir}/ssl-server.xml":
       owner   => 'root',

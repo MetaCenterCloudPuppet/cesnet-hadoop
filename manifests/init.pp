@@ -528,7 +528,7 @@ DEFAULT
     }
     $ha_journals = join($journalnode_hostnames, ':8485;')
     $ha_base_properties = {
-      'dfs.nameservices' => "${hadoop::cluster_name}",
+      'dfs.nameservices' => $hadoop::cluster_name,
       "dfs.ha.namenodes.${hadoop::cluster_name}" => 'nn1,nn2',
       "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:8020",
       "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:8020",
@@ -549,8 +549,8 @@ DEFAULT
       'yarn.resourcemanager.cluster-id' => $hadoop::cluster_name,
       'yarn.resourcemanager.ha.enabled' => true,
       'yarn.resourcemanager.ha.rm-ids' => 'rm1,rm2',
-      'yarn.resourcemanager.hostname.rm1' => "${yarn_hostname}",
-      'yarn.resourcemanager.hostname.rm2' => "${yarn_hostname2}",
+      'yarn.resourcemanager.hostname.rm1' => $yarn_hostname,
+      'yarn.resourcemanager.hostname.rm2' => $yarn_hostname2,
     }
   }
   $ha_properties = merge($ha_hdfs_properties, $ha_yarn_properties)
@@ -559,7 +559,7 @@ DEFAULT
   if $zookeeper_hostnames and $hdfs_hostname2 {
     $zoo_hdfs_properties = {
       'dfs.ha.automatic-failover.enabled' => true,
-      'ha.zookeeper.quorum' => "${zkquorum}",
+      'ha.zookeeper.quorum' => $zkquorum,
     }
   }
 
@@ -567,7 +567,7 @@ DEFAULT
     $zoo_yarn_properties = {
       'yarn.resourcemanager.ha.automatic-failover.enabled' => true,
       # XXX: need limit, "host:${yarn_hostname}:rwcda" doesn't work (better proper auth anyway)
-      'yarn.resourcemanager.zk-acl' => "world:anyone:rwcda",
+      'yarn.resourcemanager.zk-acl' => 'world:anyone:rwcda',
       'yarn.resourcemanager.zk-address' => $zkquorum,
     }
   }

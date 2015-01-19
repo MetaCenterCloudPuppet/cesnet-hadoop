@@ -19,10 +19,7 @@ class hadoop::common::slaves {
     }
   } else {
     file { "${hadoop::confdir}/slaves":
-      owner  => 'root',
-      group  => 'root',
       ensure => 'absent',
-      alias  => 'slaves',
     }
   }
 
