@@ -4,9 +4,9 @@
   "author": "František Dvořák <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
-  "source": "http://scientific.zcu.cz/git/cesnet-hadoop.git",
+  "source": "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop",
   "project_page": "https://github.com/MetaCenterCloudPuppet",
-  "issues_url": "mailto://valtri@civ.zcu.cz",
+  "issues_url": "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop/issues",
   "tags": ["hadoop"],
   "operatingsystem_support": [
     {
