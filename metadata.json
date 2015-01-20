@@ -1,6 +1,6 @@
 {
   "name": "cesnet-hadoop",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "author": "František Dvořák <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
