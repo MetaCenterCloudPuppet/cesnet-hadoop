@@ -5,10 +5,6 @@
 class hadoop::common::postinstall {
   $confname = $hadoop::alternatives
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
-  $altcmd = $::osfamily ? {
-    'Debian' => 'update-alternatives',
-    'RedHat' => 'alternatives',
-  }
 
   if $confname {
     exec { 'hadoop-copy-config':
@@ -17,18 +13,14 @@ class hadoop::common::postinstall {
       creates => "/etc/hadoop/conf.${confname}",
     }
     ->
-    exec { 'hadoop-install-alternatives':
-      command     => "${altcmd} --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.${confname} 50",
-      path        => $path,
-      refreshonly => true,
-      subscribe   => Exec['hadoop-copy-config'],
+    alternative_entry{"/etc/hadoop/conf.${confname}":
+      altlink  => '/etc/hadoop/conf',
+      altname  => 'hadoop-conf',
+      priority => 50,
     }
     ->
-    exec { 'hadoop-set-alternatives':
-      command     => "${altcmd} --set hadoop-conf /etc/hadoop/conf.${confname}",
-      path        => $path,
-      refreshonly => true,
-      subscribe   => Exec['hadoop-copy-config'],
+    alternatives{'hadoop-conf':
+      path => "/etc/hadoop/conf.${confname}",
     }
   }
 }
