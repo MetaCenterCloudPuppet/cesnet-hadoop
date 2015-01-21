@@ -252,7 +252,7 @@
 #
 # ####`hdfs_deployed` true
 #
-# Perform also creating directories in HDFS. This action requires running namenode and datanodes, so you can set this to *false* during initial installation. TODO: maybe not needed?
+# Perform also actions requiring working HDFS (namenode + enough datanodes): enabling RM HDFS state-store feature, and starting MapReduce History Server. This action requires running namenode and datanodes, so you can set this to *false* during initial installation.
 #
 # === Example
 #
