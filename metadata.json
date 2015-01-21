@@ -1,6 +1,6 @@
 {
   "name": "cesnet-hadoop",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "author": "František Dvořák <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
@@ -16,6 +16,16 @@
     {
     "operatingsystem": "Fedora",
     "operatingsystemrelease": ["21"]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
     }
   ],
   "dependencies": [
