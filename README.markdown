@@ -90,7 +90,7 @@ Be aware of:
  2) you need to enable ticket refresh and RM restarts (see *features* module parameter)
 
 * **HTTPS**:
- * prepare CA certificate keystore and machine certificate keystore in /etc/security/cacerts and /etc/security/server.keystore (location can be modified by *https_cacerts* and *https_keystore* parameters), see init.pp class for more https-related parameters
+ * prepare CA certificate keystore and machine certificate keystore in /etc/security/cacerts and /etc/security/server.keystore (location can be modified by *https\_cacerts* and *https\_keystore* parameters), see init.pp class for more https-related parameters
  * prepare /etc/security/http-auth-signature-secret file (with any content)
 
    Note: some files are copied into ~hdfs, ~yarn/, and ~mapred/ directories
@@ -640,5 +640,5 @@ On other hand this leads to some limitations as mentioned in [Setup Requirements
 ##Development
 
 * Repository: [https://github.com/MetaCenterCloudPuppet/cesnet-hadoop](https://github.com/MetaCenterCloudPuppet/cesnet-hadoop)
-* Tests: [https://github.com/MetaCenterCloudPuppet/hadoop-tests] (https://github.com/MetaCenterCloudPuppet/hadoop-tests)
+* Tests: [https://github.com/MetaCenterCloudPuppet/hadoop-tests](https://github.com/MetaCenterCloudPuppet/hadoop-tests)
 * Email: František Dvořák &lt;valtri@civ.zcu.cz&gt;
