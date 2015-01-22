@@ -205,6 +205,14 @@ Note: for long-running applications as Spark Streaming jobs you may need to work
     'hadoop.proxyuser.yarn.hosts' => RESOURCE MANAGER HOSTS,
     'hadoop.proxyuser.yarn.groups' => 'hadoop',
 
+Note 2: you can consider removing or changing property *hadoop.security.auth\_to\_local*:
+
+    properties => {
+      'hadoop.security.auth_to_local' => '::undef',
+    }
+
+Default value is valid for principal names according to Hadoop documentation at [http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SecureMode.html](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SecureMode.html) and it is needed only with cross-realm authentication.
+
 <a name="https"></a>
 ###Enable HTTPS
 

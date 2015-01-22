@@ -422,8 +422,6 @@ class hadoop (
     $sec_properties = {
       'hadoop.security.authentication' => 'kerberos',
       'hadoop.rcp.protection' => 'integrity',
-      # probably not needed:
-      # RULE:[2:$1;$2@$0](^rm;.*@<%= @realm -%>$)s/^.*$/yarn/
       'hadoop.security.auth_to_local' => "
 RULE:[2:\$1;\$2@\$0](^jhs;.*@${realm}$)s/^.*$/mapred/
 RULE:[2:\$1;\$2@\$0](^[ndjs]n;.*@${realm}$)s/^.*$/hdfs/
