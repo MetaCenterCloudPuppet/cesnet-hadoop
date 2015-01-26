@@ -20,7 +20,7 @@
 #
 define hadoop::mkdir($owner = undef, $group = undef, $mode = undef, $touchfile, $recursive = false) {
   $dir = $title
-  $env = [ 'KRB5CCNAME=FILE:/tmp/krb5cc_nn_puppet' ]
+  $env = [ "KRB5CCNAME=FILE:/tmp/krb5cc_nn_puppet_${touchfile}" ]
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
 
