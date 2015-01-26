@@ -43,7 +43,7 @@
   </property>
 <% end -%>
 
-<% mapred_properties = scope.lookupvar('hadoop::props').select { |name,value| name =~ /^mapreduce\./ and value != '::undef' } -%>
+<% mapred_properties = scope.lookupvar('hadoop::props').select { |name,value| (name =~ /^mapreduce\./ or name =~ /^yarn\.app\./) and value != '::undef' } -%>
 <% mapred_properties.keys.each do |p| -%>
 <%if scope.lookupvar('hadoop::descs')[p] -%>
   <!-- <%= scope.lookupvar('hadoop::descs')[p] %> -->
