@@ -7,6 +7,8 @@
 # * User['hdfs']
 #
 define hadoop::kinit($touchfile) {
+  include hadoop::common::hdfs::config
+
   $env = [ "KRB5CCNAME=FILE:/tmp/krb5cc_nn_puppet_${touchfile}" ]
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
@@ -27,6 +29,7 @@ define hadoop::kinit($touchfile) {
       environment => $env,
       user        => 'hdfs',
       creates     => $puppetfile,
+      require     => File['hdfs-site.xml'],
     }
   }
 }

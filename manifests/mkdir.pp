@@ -19,6 +19,8 @@
 # * User['hdfs']
 #
 define hadoop::mkdir($owner = undef, $group = undef, $mode = undef, $touchfile, $recursive = false) {
+  include hadoop::common::hdfs::config
+
   $dir = $title
   $env = [ "KRB5CCNAME=FILE:/tmp/krb5cc_nn_puppet_${touchfile}" ]
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
@@ -36,6 +38,7 @@ define hadoop::mkdir($owner = undef, $group = undef, $mode = undef, $touchfile, 
     unless      => "hdfs dfs -test -d ${dir}",
     user        => 'hdfs',
     creates     => $puppetfile,
+    require     => File['hdfs-site.xml'],
   }
 
   # ownership

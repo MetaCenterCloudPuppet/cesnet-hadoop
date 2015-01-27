@@ -380,9 +380,9 @@ Multi-home feature enables following properties:
 <a name="resources"></a>
 ###Resource Types
 
-* **kinit**
-* **kdestroy**
-* **mkdir**
+* **kinit** - Init credentials
+* **kdestroy** - Desteroy credentials
+* **mkdir** - Creates a directory on HDFS
 
 <a name="parameters"></a>
 ###Module Parameters
