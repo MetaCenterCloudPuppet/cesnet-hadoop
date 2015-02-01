@@ -6,6 +6,9 @@
   dn   = scope.lookupvar('hadoop::daemons')['datanode']
   jn   = scope.lookupvar('hadoop::daemons')['journalnode']
   zkfc = scope.lookupvar('hadoop::daemons')['hdfs-zkfc']
+
+  realm = scope.lookupvar('hadoop::realm')
+  has_security = scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty?
 -%>
 #! /bin/sh
 
@@ -45,6 +48,28 @@ while [ -n "$1" ]; do
 		<%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1&<%end%>
 		wait
 		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "<%= nn -%> $1"; service <%= nn -%> $1<%end%>
+		;;
+	refreshnodes)
+<%if scope.lookupvar('hadoop::daemon_namenode') -%>
+<%if has_security -%>
+		export KRB5CCNAME=FILE:/tmp/krb5cc_nn_refresh
+		su hdfs -p -s /bin/bash -c 'kinit -k -t /etc/security/keytab/nn.service.keytab nn/<%= @fqdn -%>@<%= realm %>'
+<% end -%>
+		su hdfs -p -s /bin/bash -c 'hdfs dfsadmin -refreshNodes'
+<%if has_security -%>
+		kdestroy
+<% end -%>
+<% end -%>
+<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>
+<%if has_security -%>
+		export KRB5CCNAME=FILE:/tmp/krb5cc_rm_refresh
+		su yarn -p -s /bin/bash -c 'kinit -k -t /etc/security/keytab/rm.service.keytab rm/<%= @fqdn -%>@<%= realm %>'
+		su yarn -p -s /bin/bash -c 'yarn rmadmin -refreshNodes'
+<% end -%>
+<%if has_security -%>
+		kdestroy
+<% end -%>
+<% end -%>
 		;;
 	*)
 		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "<%= nn -%> $1"; service <%= nn -%> $1<%end%>
