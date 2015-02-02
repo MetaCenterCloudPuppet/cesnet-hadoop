@@ -30,24 +30,52 @@ while [ -n "$1" ]; do
 		rm -rfv /var/log/hadoop-*/* 2>/dev/null || :
 		;;
 	start|restart)
-		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "<%= nn -%> $1"; service <%= nn -%> $1<%end%>
-		<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>echo "<%= rm -%> $1"; service <%= rm -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "<%= jhs -%> $1"; service <%= jhs -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "<%= nm -%> $1"; service <%= nm -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "<%= dn -%> $1"; service <%= dn -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_journalnode') -%>echo "<%= jn -%> $1"; service <%= jn -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1&<%end%>
+<%if scope.lookupvar('hadoop::daemon_namenode') -%>
+		echo "<%= nn -%> $1"; service <%= nn -%> $1
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>
+		echo "<%= rm -%> $1"; service <%= rm -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_historyserver') -%>
+		echo "<%= jhs -%> $1"; service <%= jhs -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>
+		echo "<%= nm -%> $1"; service <%= nm -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_datanode') -%>
+		echo "<%= dn -%> $1"; service <%= dn -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_journalnode') -%>
+		echo "<%= jn -%> $1"; service <%= jn -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>
+		echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1&
+<%end-%>
 		wait
 		;;
 	stop)
-		<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>echo "<%= rm -%> $1"; service <%= rm -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "<%= jhs -%> $1"; service <%= jhs -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "<%= nm -%> $1"; service <%= nm -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "<%= dn -%> $1"; service <%= dn -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_journalnode') -%>echo "<%= jn -%> $1"; service <%= jn -%> $1&<%end%>
-		<%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1&<%end%>
+<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>
+		echo "<%= rm -%> $1"; service <%= rm -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_historyserver') -%>
+		echo "<%= jhs -%> $1"; service <%= jhs -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>
+		echo "<%= nm -%> $1"; service <%= nm -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_datanode') -%>
+		echo "<%= dn -%> $1"; service <%= dn -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_journalnode') -%>
+		echo "<%= jn -%> $1"; service <%= jn -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>
+		echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1&
+<%end-%>
 		wait
-		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "<%= nn -%> $1"; service <%= nn -%> $1<%end%>
+<%if scope.lookupvar('hadoop::daemon_namenode') -%>
+		echo "<%= nn -%> $1"; service <%= nn -%> $1
+<%end-%>
 		;;
 	refreshnodes)
 <%if scope.lookupvar('hadoop::daemon_namenode') -%>
@@ -72,13 +100,27 @@ while [ -n "$1" ]; do
 <% end -%>
 		;;
 	*)
-		<%if scope.lookupvar('hadoop::daemon_namenode') -%>echo "<%= nn -%> $1"; service <%= nn -%> $1<%end%>
-		<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>echo "<%= rm -%> $1"; service <%= rm -%> $1<%end%>
-		<%if scope.lookupvar('hadoop::daemon_historyserver') -%>echo "<%= jhs -%> $1"; service <%= jhs -%> $1<%end%>
-		<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>echo "<%= nm -%> $1"; service <%= nm -%> $1<%end%>
-		<%if scope.lookupvar('hadoop::daemon_datanode') -%>echo "<%= dn -%> $1"; service <%= dn -%> $1<%end%>
-		<%if scope.lookupvar('hadoop::daemon_journalnode') -%>echo "<%= jn -%> $1"; service <%= jn -%> $1<%end%>
-		<%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1<%end%>
+<%if scope.lookupvar('hadoop::daemon_namenode') -%>
+		echo "<%= nn -%> $1"; service <%= nn -%> $1
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>
+		echo "<%= rm -%> $1"; service <%= rm -%> $1
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_historyserver') -%>
+		echo "<%= jhs -%> $1"; service <%= jhs -%> $1
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_nodemanager') -%>
+		echo "<%= nm -%> $1"; service <%= nm -%> $1
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_datanode') -%>
+		echo "<%= dn -%> $1"; service <%= dn -%> $1
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_journalnode') -%>
+		echo "<%= jn -%> $1"; service <%= jn -%> $1
+<%end-%>
+<%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>
+		echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1
+<%end-%>
 		;;
 	esac
 
