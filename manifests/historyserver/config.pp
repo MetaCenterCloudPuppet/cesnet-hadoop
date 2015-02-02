@@ -7,7 +7,7 @@ class hadoop::historyserver::config {
   contain hadoop::common::yarn::config
   contain hadoop::common::mapred::daemon
 
-  $keytab = '/etc/security/keytab/jhs.service.keytab'
+  $keytab = $hadoop::keytab_jobhistory
   $user = 'mapred'
   $file = '/tmp/krb5cc_jhs'
   $principal = "jhs/${::fqdn}@${hadoop::realm}"

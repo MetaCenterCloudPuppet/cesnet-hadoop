@@ -8,7 +8,7 @@ class hadoop::resourcemanager::config {
   contain hadoop::common::yarn::daemon
 
   if ($hadoop::realm) {
-    file { '/etc/security/keytab/rm.service.keytab':
+    file { $hadoop::keytab_resourcemanager:
       owner => 'yarn',
       group => 'yarn',
       mode  => '0400',

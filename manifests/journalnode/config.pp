@@ -8,7 +8,7 @@ class hadoop::journalnode::config {
   contain hadoop::common::hdfs::config
   contain hadoop::common::hdfs::daemon
 
-  $keytab = '/etc/security/keytab/jn.service.keytab'
+  $keytab = $hadoop::keytab_journalnode
   $user = 'hdfs'
   $file = '/tmp/krb5cc_jn'
   $principal = "jn/${::fqdn}@${hadoop::realm}"

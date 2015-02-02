@@ -18,7 +18,7 @@ class hadoop::namenode::config {
   })
 
   if $hadoop::realm {
-    file { '/etc/security/keytab/nn.service.keytab':
+    file { $hadoop::keytab_namenode:
       owner  => 'hdfs',
       group  => 'hdfs',
       mode   => '0400',
@@ -26,7 +26,7 @@ class hadoop::namenode::config {
       before => File['hdfs-site.xml'],
     }
 
-    file { '/etc/security/keytab/http.service.keytab':
+    file { $hadoop::https_keytab:
       owner  => 'hdfs',
       group  => 'hdfs',
       mode   => '0400',

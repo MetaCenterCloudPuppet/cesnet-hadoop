@@ -7,7 +7,7 @@ class hadoop::nodemanager::config {
   contain hadoop::common::yarn::config
   contain hadoop::common::yarn::daemon
 
-  $keytab = '/etc/security/keytab/nm.service.keytab'
+  $keytab = $hadoop::keytab_nodemanager
   $user = 'yarn'
   $file = '/tmp/krb5cc_nm'
   $principal = "nm/${::fqdn}@${hadoop::realm}"

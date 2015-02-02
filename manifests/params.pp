@@ -178,4 +178,12 @@ class hadoop::params {
   }
   $perform = false
   $hdfs_deployed = true
+
+  $https_keytab = '/etc/security/keytab/http.service.keytab'
+  $keytab_namenode = '/etc/security/keytab/nn.service.keytab'
+  $keytab_datanode = '/etc/security/keytab/dn.service.keytab'
+  $keytab_jobhistory = '/etc/security/keytab/jhs.service.keytab'
+  $keytab_journalnode = '/etc/security/keytab/jn.service.keytab'
+  $keytab_resourcemanager = '/etc/security/keytab/rm.service.keytab'
+  $keytab_nodemanager = '/etc/security/keytab/nm.service.keytab'
 }

@@ -81,7 +81,7 @@ while [ -n "$1" ]; do
 <%if scope.lookupvar('hadoop::daemon_namenode') -%>
 <%if has_security -%>
 		export KRB5CCNAME=FILE:/tmp/krb5cc_nn_refresh
-		su hdfs -p -s /bin/bash -c 'kinit -k -t /etc/security/keytab/nn.service.keytab nn/<%= @fqdn -%>@<%= realm %>'
+		su hdfs -p -s /bin/bash -c 'kinit -k -t <%= scope.lookupvar('hadoop::keytab_namenode') -%> nn/<%= @fqdn -%>@<%= realm %>'
 <% end -%>
 		su hdfs -p -s /bin/bash -c 'hdfs dfsadmin -refreshNodes'
 <%if has_security -%>
@@ -91,7 +91,7 @@ while [ -n "$1" ]; do
 <%if scope.lookupvar('hadoop::daemon_resourcemanager') -%>
 <%if has_security -%>
 		export KRB5CCNAME=FILE:/tmp/krb5cc_rm_refresh
-		su yarn -p -s /bin/bash -c 'kinit -k -t /etc/security/keytab/rm.service.keytab rm/<%= @fqdn -%>@<%= realm %>'
+		su yarn -p -s /bin/bash -c 'kinit -k -t <%= scope.lookupvar('hadoop::keytab_resourcemanager') -%> rm/<%= @fqdn -%>@<%= realm %>'
 		su yarn -p -s /bin/bash -c 'yarn rmadmin -refreshNodes'
 <% end -%>
 <%if has_security -%>

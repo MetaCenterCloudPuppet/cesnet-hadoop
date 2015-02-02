@@ -629,6 +629,10 @@ Certificates keystore file password.
 
 Certificates keystore key password. If not specified, https\_keystore\_password is used.
 
+####`https_keytab` '/etc/security/keytab/http.service.keytab'
+
+Keytab file for HTTPS. It will be copied for each daemon user and according permissions and properties set.
+
 ####`perform` false
 
 Launch all installation and setup here, from hadoop class.
@@ -636,6 +640,31 @@ Launch all installation and setup here, from hadoop class.
 ####`hdfs_deployed` true
 
 Perform also actions requiring working HDFS (namenode + enough datanodes): enabling RM HDFS state-store feature, and starting MapReduce History Server. This action requires running namenode and datanodes, so you can set this to *false* during initial installation.
+
+####`keytab_namenode` '/etc/security/keytab/nn.service.keytab'
+
+Keytab file for HDFS Name Node. This will set also property *dfs.namenode.keytab.file*, if not specified directly.
+
+####`keytab_datanode` '/etc/security/keytab/dn.service.keytab'
+
+Keytab file for HDFS Data Node. This will set also property *dfs.datanode.keytab.file*, if not specified directly.
+
+####`keytab_jobhistory` '/etc/security/keytab/jhs.service.keytab'
+
+Keytab file for Map Reduce Job History Server. This will set also property *mapreduce.jobhistory.keytab*, if not specified directly.
+
+####`keytab_journalnode` '/etc/security/keytab/jn.service.keytab'
+
+Keytab file for HDFS Data Node. This will set also property *dfs.journalnode.keytab.file*, if not specified directly.
+
+####`keytab_resourcemanager` '/etc/security/keytab/rm.service.keytab'
+
+Keytab file for YARN Resource Manager. This will set also property *yarn.resourcemanager.keytab*, if not specified directly.
+
+####`keytab_nodemanager` '/etc/security/keytab/nm.service.keytab'
+
+Keytab file for YARN Node Manager. This will set also property *yarn.nodemanager.keytab*, if not specified directly.
+
 
 <a name="limitations"></a>
 ##Limitations

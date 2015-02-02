@@ -6,7 +6,7 @@ class hadoop::datanode::config {
   contain hadoop::common::hdfs::config
   contain hadoop::common::hdfs::daemon
 
-  $keytab = '/etc/security/keytab/dn.service.keytab'
+  $keytab = $hadoop::keytab_datanode
   $user = 'hdfs'
   $file = '/tmp/krb5cc_dn'
   $principal = "dn/${::fqdn}@${hadoop::realm}"

@@ -246,6 +246,10 @@
 #
 # Certificates keystore key password. If not specified, https\_keystore\_password is used.
 #
+# ####`https_keytab` '/etc/security/keytab/http.service.keytab'
+#
+# Keytab file for HTTPS. It will be copied for each daemon user and according permissions and properties set.
+#
 # ####`perform` false
 #
 # Launch all installation and setup here, from hadoop class.
@@ -253,6 +257,30 @@
 # ####`hdfs_deployed` true
 #
 # Perform also actions requiring working HDFS (namenode + enough datanodes): enabling RM HDFS state-store feature, and starting MapReduce History Server. This action requires running namenode and datanodes, so you can set this to *false* during initial installation.
+#
+# ####`keytab_namenode` '/etc/security/keytab/nn.service.keytab'
+#
+# Keytab file for HDFS Name Node. This will set also property *dfs.namenode.keytab.file*, if not specified directly.
+#
+# ####`keytab_datanode` '/etc/security/keytab/dn.service.keytab'
+#
+# Keytab file for HDFS Data Node. This will set also property *dfs.datanode.keytab.file*, if not specified directly.
+#
+# ####`keytab_jobhistory` '/etc/security/keytab/jhs.service.keytab'
+#
+# Keytab file for Map Reduce Job History Server. This will set also property *mapreduce.jobhistory.keytab*, if not specified directly.
+#
+# ####`keytab_journalnode` '/etc/security/keytab/jn.service.keytab'
+#
+# Keytab file for HDFS Data Node. This will set also property *dfs.journalnode.keytab.file*, if not specified directly.
+#
+# ####`keytab_resourcemanager` '/etc/security/keytab/rm.service.keytab'
+#
+# Keytab file for YARN Resource Manager. This will set also property *yarn.resourcemanager.keytab*, if not specified directly.
+#
+# ####`keytab_nodemanager` '/etc/security/keytab/nm.service.keytab'
+#
+# Keytab file for YARN Node Manager. This will set also property *yarn.nodemanager.keytab*, if not specified directly.
 #
 # === Example
 #
@@ -337,9 +365,17 @@ class hadoop (
   $https_cacerts_password = $params::https_cacerts_password,
   $https_keystore = $params::https_keystore,
   $https_keystore_password = $params::https_keystore_password,
+  $https_keytab = $params::https_keytab,
   $https_keystore_keypassword = $params::https_keystore_keypassword,
   $perform = $params::perform,
-  $hdfs_deployed = $params::hdfs_deployed
+  $hdfs_deployed = $params::hdfs_deployed,
+
+  $keytab_namenode = $params::keytab_namenode,
+  $keytab_datanode = $params::keytab_datanode,
+  $keytab_jobhistory = $params::keytab_jobhistory,
+  $keytab_journalnode = $params::keytab_journalnode,
+  $keytab_resourcemanager = $params::keytab_resourcemanager,
+  $keytab_nodemanager = $params::keytab_nodemanager,
 ) inherits hadoop::params {
   include 'stdlib'
 
@@ -440,13 +476,19 @@ DEFAULT
       'dfs.namenode.acls.enabled' => true,
       'dfs.namenode.kerberos.principal' => "nn/_HOST@${hadoop::realm}",
       'dfs.namenode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
+      'dfs.namenode.keytab.file' => $keytab_namenode,
       'dfs.datanode.kerberos.principal' => "dn/_HOST@${hadoop::realm}",
       'dfs.datanode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
+      'dfs.datanode.keytab.file' => $keytab_datanode,
       'dfs.journalnode.kerberos.principal' => "jn/_HOST@${hadoop::realm}",
+      'dfs.journalnode.keytab.file' => $keytab_journalnode,
       'dfs.encrypt.data.transfer' => false,
       'dfs.webhdfs.enabled' => true,
       'dfs.web.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
+      'mapreduce.jobhistory.keytab' => $keytab_jobhistory,
       'mapreduce.jobhistory.principal' => "jhs/_HOST@${hadoop::realm}",
+      'yarn.resourcemanager.keytab' => $keytab_resourcemanager,
+      'yarn.nodemanager.keytab' => $keytab_nodemanager,
       'yarn.resourcemanager.principal' => "rm/_HOST@${hadoop::realm}",
       'yarn.nodemanager.principal' => "nm/_HOST@${hadoop::realm}",
       'yarn.nodemanager.container-executor.class' => 'org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor',

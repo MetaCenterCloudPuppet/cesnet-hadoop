@@ -8,7 +8,7 @@ class hadoop::common::hdfs::daemon {
       owner  => 'hdfs',
       group  => 'hdfs',
       mode   => '0640',
-      source => '/etc/security/keytab/http.service.keytab',
+      source => $hadoop::https_keytab,
     }
     file { "${hadoop::hdfs_homedir}/http-auth-signature-secret":
       owner  => 'hdfs',

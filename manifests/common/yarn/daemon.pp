@@ -8,7 +8,7 @@ class hadoop::common::yarn::daemon {
       owner  => 'yarn',
       group  => 'yarn',
       mode   => '0640',
-      source => '/etc/security/keytab/http.service.keytab',
+      source => $hadoop::https_keytab,
     }
     file { "${hadoop::yarn_homedir}/http-auth-signature-secret":
       owner  => 'yarn',

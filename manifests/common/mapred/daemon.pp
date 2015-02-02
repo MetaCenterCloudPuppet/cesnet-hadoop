@@ -8,7 +8,7 @@ class hadoop::common::mapred::daemon {
       owner  => 'mapred',
       group  => 'mapred',
       mode   => '0640',
-      source => '/etc/security/keytab/http.service.keytab',
+      source => $hadoop::https_keytab,
     }
     file { "${hadoop::mapred_homedir}/http-auth-signature-secret":
       owner  => 'mapred',

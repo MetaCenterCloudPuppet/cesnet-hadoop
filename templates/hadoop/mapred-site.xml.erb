@@ -35,14 +35,6 @@
     <value>/var/cache/hadoop-mapreduce/${user.name}/tasks</value>
   </property>
 
-<% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>
-  <!-- security -->
-  <property>
-    <name>mapreduce.jobhistory.keytab</name>
-    <value>/etc/security/keytab/jhs.service.keytab</value>
-  </property>
-<% end -%>
-
 <% mapred_properties = scope.lookupvar('hadoop::props').select { |name,value| (name =~ /^mapreduce\./ or name =~ /^yarn\.app\./) and value != '::undef' } -%>
 <% mapred_properties.keys.each do |p| -%>
 <%if scope.lookupvar('hadoop::descs')[p] -%>

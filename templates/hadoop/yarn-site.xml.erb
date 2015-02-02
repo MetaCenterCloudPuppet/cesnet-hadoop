@@ -45,18 +45,6 @@
   </property>
 -->
 
-<% if scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty? -%>
-  <!-- security -->
-  <property>
-    <name>yarn.resourcemanager.keytab</name>
-    <value>/etc/security/keytab/rm.service.keytab</value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.keytab</name>
-    <value>/etc/security/keytab/nm.service.keytab</value>
-  </property>
-<% end -%>
-
 <% yarn_properties = scope.lookupvar('hadoop::props').select { |name,value| name =~ /^yarn\./ and name !~ /^yarn\.app\./ and value != '::undef' } -%>
 <% yarn_properties.keys.each do |p| -%>
 <%if scope.lookupvar('hadoop::descs')[p] -%>

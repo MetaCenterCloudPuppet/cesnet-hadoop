@@ -24,7 +24,7 @@ define hadoop::kinit($touchfile) {
     }
     ->
     exec { "kinit-${touchfile}":
-      command     => "kinit -k -t /etc/security/keytab/nn.service.keytab nn/${::fqdn}@${hadoop::realm}",
+      command     => "kinit -k -t ${hadoop::keytab_namenode} nn/${::fqdn}@${hadoop::realm}",
       path        => $path,
       environment => $env,
       user        => 'hdfs',
