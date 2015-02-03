@@ -19,22 +19,6 @@
 
 <configuration>
 
-  <property>
-    <name>mapred.job.tracker</name>
-    <value>localhost:8021</value>
-  </property>
-
-  <property>
-    <name>mapreduce.framework.name</name>
-    <value>yarn</value>
-  </property>
-
-  <property>
-    <description>To set the value of tmp directory for map and reduce tasks.</description>
-    <name>mapreduce.task.tmp.dir</name>
-    <value>/var/cache/hadoop-mapreduce/${user.name}/tasks</value>
-  </property>
-
 <% mapred_properties = scope.lookupvar('hadoop::props').select { |name,value| (name =~ /^mapreduce\./ or name =~ /^yarn\.app\./) and value != '::undef' } -%>
 <% mapred_properties.keys.each do |p| -%>
 <%if scope.lookupvar('hadoop::descs')[p] -%>

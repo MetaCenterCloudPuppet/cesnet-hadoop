@@ -121,6 +121,7 @@ class hadoop::params {
     'dfs.datanode.address' => 'different port with security enabled (original port 50010)',
     'dfs.datanode.http.address' => 'different port with security enabled (original port 50075)',
     'dfs.webhdfs.enabled' => 'read-only Web HDFS access',
+    'mapreduce.task.tmp.dir' => 'temporary directory for map and reduce tasks',
     'mapreduce.tasktracker.outofband.heartbeat' => 'let the TaskTracker send an out-of-band heartbeat on task completion to reduce latency',
     'yarn.nodemanager.local-dirs' => 'List of directories to store localized files in.',
     'yarn.resourcemanager.bind-host' => 'bind address for RM (must be used 0.0.0.0 hack for multihome)',

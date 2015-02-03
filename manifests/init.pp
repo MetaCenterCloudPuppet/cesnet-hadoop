@@ -451,8 +451,10 @@ class hadoop (
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
     'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/${slaves_yarn}",
     'yarn.resourcemanager.nodes.exclude-path' => "${hadoop::confdir}/excludes",
+    'mapreduce.framework.name' => 'yarn',
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
     'mapreduce.jobhistory.webapps.address' => "${hs_hostname}:19888",
+    'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
   }
   if ($hadoop::realm) {
     $sec_properties = {
