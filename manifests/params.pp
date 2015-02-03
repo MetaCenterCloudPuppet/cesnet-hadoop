@@ -51,7 +51,6 @@ class hadoop::params {
         $HADOOP_MAPRED_HOME/$MAPRED_LIB_JARS_DIR/*,
         $HADOOP_YARN_HOME/$YARN_DIR/*,$HADOOP_YARN_HOME/$YARN_LIB_JARS_DIR/*
 ',
-        'mapreduce.tasktracker.outofband.heartbeat' => true,
       }
     }
     'Debian/Debian': {
@@ -98,7 +97,6 @@ class hadoop::params {
         $HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,
         $HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*
 ',
-        'mapreduce.tasktracker.outofband.heartbeat' => true,
       }
     }
     default: {
