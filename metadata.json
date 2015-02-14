@@ -1,6 +1,6 @@
 {
   "name": "cesnet-hadoop",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "author": "Frantisek Dvorak <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
@@ -12,6 +12,10 @@
     {
     "operatingsystem": "Debian",
     "operatingsystemrelease": ["7"]
+    },
+    {
+    "operatingsystem": "Ubuntu",
+    "operatingsystemrelease": ["14.04"]
     },
     {
     "operatingsystem": "Fedora",
