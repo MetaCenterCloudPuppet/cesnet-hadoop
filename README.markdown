@@ -33,8 +33,9 @@ This module installs and setups Hadoop Cluster, with all services collocated or 
 
 Supported are:
 
-* Fedora 21: native packages (tested on Hadoop 2.4.1)
-* Debian 7/wheezy: Cloudera distribution (tested on Hadoop 2.5.0)
+* Fedora 21: native packages (tested with Hadoop 2.4.1)
+* Debian 7/wheezy: Cloudera distribution (tested with Hadoop 2.5.0)
+* Ubuntu 14/trusty: Cloudera distribution (tested with Hadoop 2.5.0)
 
 There are some limitations how to use this module. You should read the documentation, especially the [Setup Requirements](#setup-requirements) section.
 
@@ -672,6 +673,10 @@ Keytab file for YARN Node Manager. This will set also property *yarn.nodemanager
 Idea in this module is to do only one thing - setup Hadoop cluster - and not limit generic usage of this module by doing other stuff. You can have your own repository with Hadoop SW, you can use this module just by *puppet apply*. You can select which Kerberos implementation or Java version to use.
 
 On other hand this leads to some limitations as mentioned in [Setup Requirements](#setup-requirements) section and you may need site-specific puppet module together with this one.
+
+Also Puppet 3.x and Ruby >= 1.9.x is required. So following systems are not supported:
+* RedHat/CentOS 6 and older
+* Ubuntu 12/precise and older
 
 <a name="development"></a>
 ##Development
