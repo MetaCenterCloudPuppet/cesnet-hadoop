@@ -38,7 +38,7 @@ class hadoop::common::hdfs::config {
     system => true,
   }
   case "${::osfamily}/${::operatingsystem}" {
-    'RedHat/Fedora': {
+    'RedHat/Fedora', 'RedHat/CentOS': {
       user { 'mapred':
         ensure     => present,
         comment    => 'Apache Hadoop MapReduce',
@@ -52,7 +52,7 @@ class hadoop::common::hdfs::config {
         require    => [Group['mapred']]
       }
     }
-    'Debian/Debian': {
+    'Debian/Debian', 'Debian/Ubuntu': {
       user { 'mapred':
         ensure     => present,
         comment    => 'Hadoop MapReduce',

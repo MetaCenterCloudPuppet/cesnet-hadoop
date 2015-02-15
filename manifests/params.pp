@@ -5,7 +5,7 @@
 #
 class hadoop::params {
   case "${::osfamily}/${::operatingsystem}" {
-    'RedHat/Fedora': {
+    'RedHat/Fedora', 'RedHat/CentOS': {
       $packages_common = [ 'hadoop-common', 'hadoop-common-native' ]
       $packages_nn = [ 'hadoop-hdfs' ]
       $packages_rm = [ 'hadoop-yarn' ]
@@ -53,7 +53,7 @@ class hadoop::params {
 ',
       }
     }
-    'Debian/Debian': {
+    'Debian/Debian', 'Debian/Ubuntu': {
       $packages_common = [ ]
       $packages_nn = [ 'hadoop-hdfs-namenode' ]
       $packages_rm = [ 'hadoop-yarn-resourcemanager' ]
