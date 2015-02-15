@@ -5,7 +5,7 @@
 #
 class hadoop::params {
   case "${::osfamily}/${::operatingsystem}" {
-    'RedHat/Fedora', 'RedHat/CentOS': {
+    'RedHat/Fedora', 'RedHat/CentOS', 'RedHat/RedHat', 'RedHat/Scientific': {
       $packages_common = [ 'hadoop-common', 'hadoop-common-native' ]
       $packages_nn = [ 'hadoop-hdfs' ]
       $packages_rm = [ 'hadoop-yarn' ]
