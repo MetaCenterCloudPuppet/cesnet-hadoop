@@ -9,7 +9,7 @@ class hadoop::journalnode {
   include 'hadoop::journalnode::config'
   include 'hadoop::journalnode::service'
 
-  if !$hadoop::https {
+  if $hadoop::realm and !$hadoop::https {
     warning('https is required for using journal nodes')
   }
 
