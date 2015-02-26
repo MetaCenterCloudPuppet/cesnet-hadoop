@@ -1,6 +1,6 @@
 # == Class hadoop::namenode::config
 #
-# This class is called from hadoop::namenode.
+# This class is called from hadoop::namenode. For second Name Node in high availability cluster, the first Name Node must be already configured.
 #
 class hadoop::namenode::config {
   include stdlib
@@ -37,10 +37,19 @@ class hadoop::namenode::config {
 
   # format only on the first namenode
   if $hadoop::hdfs_hostname == $::fqdn {
-    contain hadoop::format
+    contain hadoop::namenode::format
 
-    File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::format']
-    Class['hadoop::common::config'] -> Class['hadoop::format']
-    Class['hadoop::common::hdfs::config'] -> Class['hadoop::format']
+    File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::namenode::format']
+    Class['hadoop::common::config'] -> Class['hadoop::namenode::format']
+    Class['hadoop::common::hdfs::config'] -> Class['hadoop::namenode::format']
+  }
+
+  # bootstrap only with High Availability on the second namenode
+  if $hadoop::hdfs_hostname2 == $::fqdn {
+    contain hadoop::namenode::bootstrap
+
+    File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::namenode::bootstrap']
+    Class['hadoop::common::config'] -> Class['hadoop::namenode::bootstrap']
+    Class['hadoop::common::hdfs::config'] -> Class['hadoop::namenode::bootstrap']
   }
 }

@@ -340,7 +340,6 @@ Multi-home feature enables following properties:
  * slaves
 * config
 * create\_dirs
-* format
 * init
 * install
 * params
@@ -362,7 +361,9 @@ Multi-home feature enables following properties:
  * install
  * service
 * **namenode** - HDFS Name Node
+ * bootstrap
  * config
+ * format
  * install
  * service
 * **nodemanager** - YARN Node Manager.

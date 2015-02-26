@@ -1,10 +1,8 @@
-# == Class hadoop::format
+# == Class hadoop::namenode::format
 #
 # Format Hadoop Filesystem. When you need to re-format again, you must remove the datanode directory (and also clean all datanodes in cluster!).
 #
-# This class is called from hadoop.
-#
-class hadoop::format {
+class hadoop::namenode::format {
   if $hadoop::cluster_name {
     $format_args = "-clusterid ${hadoop::cluster_name}"
   } else {
