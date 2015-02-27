@@ -1,6 +1,6 @@
 # == Class hadoop::namenode::bootstrap
 #
-# Format Hadoop Filesystem on the second HDFS Name Node. The first Name Node needs to be already formatted.
+# Format Hadoop Filesystem on the second HDFS Name Node. The first Name Node needs to be already formatted, empty and running.
 #
 class hadoop::namenode::bootstrap {
   # 1) directory /var/lib/hadoop-hdfs/hdfs may be created by other

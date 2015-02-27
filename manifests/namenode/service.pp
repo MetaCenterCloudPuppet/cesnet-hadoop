@@ -4,10 +4,13 @@
 # It ensure the service is running.
 #
 class hadoop::namenode::service {
-  service { $hadoop::daemons['namenode']:
-    ensure    => 'running',
-    enable    => true,
-    subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
+  # don't launch secondary namenode during the first "stage"
+  if $hadoop::hdfs_hostname2 != $::fqdn or $hadoop::hdfs_deployed {
+    service { $hadoop::daemons['namenode']:
+      ensure    => 'running',
+      enable    => true,
+      subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
+    }
   }
 
   # journalnode should be launched first if it is collocated with namenode

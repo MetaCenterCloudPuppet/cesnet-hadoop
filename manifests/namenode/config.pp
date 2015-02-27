@@ -45,7 +45,7 @@ class hadoop::namenode::config {
   }
 
   # bootstrap only with High Availability on the second namenode
-  if $hadoop::hdfs_hostname2 == $::fqdn {
+  if $hadoop::hdfs_hostname2 == $::fqdn and $hadoop::hdfs_deployed {
     contain hadoop::namenode::bootstrap
 
     File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::namenode::bootstrap']
