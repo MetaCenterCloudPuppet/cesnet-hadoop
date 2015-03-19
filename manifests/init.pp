@@ -125,7 +125,7 @@
 #
 #  Enable additional features:
 #
-# * **rmstore**: resource manager recovery using state-store
+# * **rmstore**: resource manager recovery using state-store (YARN will depends on HDFS)
 #  * *hdfs*: store state on HDFS, this requires HDFS datanodes already running and /rmstore directory created ==> keep disabled on initial setup! Requires *hdfs\_deployed* to be true
 #  * *zookeeper*: store state on zookeepers; Requires *zookeeper_hostnames* specified. Warning: no authentication is used.
 #  * *true*: select automatically zookeeper or hdfs according to *zookeeper_hostnames*
@@ -133,6 +133,9 @@
 # * **krbrefresh**: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
 # * **yellowmanager**: script in /usr/local to start/stop all daemons relevant for given node
 # * **multihome**: enable properties required for multihome usage, you will need also add secondary IP addresses to *datanode_hostnames*
+# * **aggregation**: enable YARN log aggregation (recommended, YARN will depend on HDFS)
+#
+# Recommended features to enable are: **rmstore**, **aggregation** and probably **multihome**.
 #
 # ####`acl` undef
 #
@@ -449,6 +452,7 @@ class hadoop (
     'yarn.resourcemanager.hostname' => $yarn_hostname,
     'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
     'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
+    'yarn.nodemanager.log-dirs' => 'file:///var/log/hadoop-yarn/containers',
     'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/${slaves_yarn}",
     'yarn.resourcemanager.nodes.exclude-path' => "${hadoop::confdir}/excludes",
     'mapreduce.framework.name' => 'yarn',
@@ -533,6 +537,13 @@ DEFAULT
       'hadoop.security.token.service.use_ip' => false,
       'yarn.resourcemanager.bind-host' => '0.0.0.0',
       'dfs.namenode.rpc-bind-host' => '0.0.0.0',
+    }
+  }
+
+  if $hadoop::features['aggregation'] {
+    $agg_properties = {
+      'yarn.log-aggregation-enable' => true,
+      'yarn.nodemanager.remote-app-log-dir' => '/var/log/hadoop-yarn/apps',
     }
   }
 
@@ -649,7 +660,7 @@ DEFAULT
     }
   }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))

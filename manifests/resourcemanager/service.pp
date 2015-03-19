@@ -19,7 +19,7 @@ class hadoop::resourcemanager::service {
 
   # any datanode needs to be launched when state-store feature is enabled,
   # so rather always start it when colocated with resource manager
-  if $hadoop::daemon_datanode and $hadoop::features['rmstore'] {
+  if $hadoop::daemon_datanode and ($hadoop::features['rmstore'] or $hadoop::features['aggregation']) {
     include hadoop::datanode::service
     Class['hadoop::datanode::service'] -> Class['hadoop::resourcemanager::service']
   }

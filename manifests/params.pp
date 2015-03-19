@@ -124,6 +124,7 @@ class hadoop::params {
     'mapreduce.task.tmp.dir' => 'temporary directory for map and reduce tasks',
     'mapreduce.tasktracker.outofband.heartbeat' => 'let the TaskTracker send an out-of-band heartbeat on task completion to reduce latency',
     'yarn.nodemanager.local-dirs' => 'List of directories to store localized files in.',
+    'yarn.nodemanager.log-dirs' => 'Where to store container logs',
     'yarn.resourcemanager.bind-host' => 'bind address for RM (must be used 0.0.0.0 hack for multihome)',
     'yarn.resourcemanager.recovery.enabled' => 'enable resubmit old jobs on start',
     'yarn.resourcemanager.zk-acl' => 'default is world:anyone:rwcda',

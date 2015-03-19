@@ -510,7 +510,7 @@ Note: whether to use 'export' or not is system dependent (Debian 7/wheezy: yes, 
 
  Enable additional features:
 
-* **rmstore**: resource manager recovery using state-store
+* **rmstore**: resource manager recovery using state-store (YARN will depends on HDFS)
  * *hdfs*: store state on HDFS, this requires HDFS datanodes already running and /rmstore directory created ==> keep disabled on initial setup! Requires *hdfs\_deployed* to be true
  * *zookeeper*: store state on zookeepers; Requires *zookeeper_hostnames* specified. Warning: no authentication is used.
  * *true*: select automatically zookeeper or hdfs according to *zookeeper_hostnames*
@@ -518,6 +518,9 @@ Note: whether to use 'export' or not is system dependent (Debian 7/wheezy: yes, 
 * **krbrefresh**: use and refresh Kerberos credential cache (MIN HOUR MDAY MONTH WDAY); beware there is a small race-condition during refresh
 * **yellowmanager**: script in /usr/local to start/stop all daemons relevant for given node
 * **multihome**: enable properties required for multihome usage, you will need also add secondary IP addresses to *datanode_hostnames*
+* **aggregation**: enable YARN log aggregation (recommended, YARN will depends on HDFS)
+
+Recommended features to enable: **rmstore**, **aggregation** and probably **multihome**.
 
 ####`acl` undef
 
