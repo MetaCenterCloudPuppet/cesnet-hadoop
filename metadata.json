@@ -1,6 +1,6 @@
 {
   "name": "cesnet-hadoop",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "author": "Frantisek Dvorak <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
@@ -35,11 +35,11 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_range": ">= 1.0.0"
+      "version_requirement": ">= 1.0.0"
     },
     {
       "name": "adrien/alternatives",
-      "version_range": ">= 0.3.0"
+      "version_requirement": ">= 0.3.0"
     }
   ]
 }
