@@ -7,7 +7,7 @@ class hadoop::namenode::bootstrap {
   #    daemons, format command will create the namenode subdirectory
   # 2) prefix can be different and/or there can be other replicated locations
   exec { 'hdfs-bootstrap':
-    command => "hdfs namenode -bootstrapStandby && touch /var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped",
+    command => 'hdfs namenode -bootstrapStandby && touch /var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped',
     creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped',
     path    => '/bin:/usr/bin',
     user    => 'hdfs',
