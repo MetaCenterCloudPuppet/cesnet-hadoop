@@ -8,6 +8,8 @@
     * [Beginning with hadoop](#beginning-with-hadoop)
 4. [Usage - Configuration options and additional functionality](#usage)
     * [Enable Security](#security)
+     * [Long running applications](#long-run)
+     * [Auth to local mapping](#auth_to_local)
     * [Enable HTTPS](#https)
     * [Multihome Support](#multihome)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
@@ -200,19 +202,44 @@ Following parameters are used for security (see also [Module Parameters](#parame
 
 It is recommended also to enable HTTPS when security is enabled. See [Enable HTTPS](#https).
 
-Note: for long-running applications as Spark Streaming jobs you may need to workaround user's delegation tokens a maximum lifetime of 7 days by these properties in *properties* parameter:
+<a name="long-run"></a>
+#### Long running applications
+
+For long-running applications as Spark Streaming jobs you may need to workaround user's delegation tokens a maximum lifetime of 7 days by these properties in *properties* parameter:
 
     'yarn.resourcemanager.proxy-user-privileges.enabled' => true,
     'hadoop.proxyuser.yarn.hosts' => RESOURCE MANAGER HOSTS,
     'hadoop.proxyuser.yarn.groups' => 'hadoop',
 
-Note 2: you can consider removing or changing property *hadoop.security.auth\_to\_local*:
+<a name="auth_to_local"></a>
+#### Auth to local mapping
+
+You can consider changing or even removing property *hadoop.security.auth\_to\_local*:
 
     properties => {
       'hadoop.security.auth_to_local' => '::undef',
     }
 
-Default value is valid for principal names according to Hadoop documentation at [http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SecureMode.html](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SecureMode.html) and it is needed only with cross-realm authentication.
+Default value is valid for principal names according to Hadoop documentation at [http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SecureMode.html](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SecureMode.html).
+
+In the default value in cesnet-hadoop module are also mappings for the following Hadoop addons:
+
+* HBase: *hbase/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *hbase*
+* Hive: *hive/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *hive*
+* Hue: *hue/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *hue*
+* Spark: *spark/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *spark*
+* Zookeeper: *zookeeper/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *zookeeper*
+* ... and helper principals:
+ * HTTP SPNEGO: *HTTP/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *HTTP*
+ * Tomcat: *tomcat/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *tomcat*
+
+*hadoop.security.auth_to_local* is needed and can't be removed if:
+
+* Kerberos principals and local user names are different
+ * they differ in the official documenation: *nn/\_HOST* vs *hdfs*, ...
+ * they are the same in Cloudera documentation: hdfs/\_HOST vs *hdfs*, ...
+* when cross-realm authentication is needed
+* when support for more principals is needed (another Hadoop addon, ...)
 
 <a name="https"></a>
 ###Enable HTTPS
@@ -595,7 +622,7 @@ You can use use **limit** rules. For more strict settings you can define *securi
 
     authorization => {
       'rules' => 'limit',
-      'security.service.authorization.default.acl' => ' hadoop,hbase,hive,users',
+      'security.service.authorization.default.acl' => ' hadoop,hbase,hive,spark,users',
     }
 
 Note: Beware *...acl.blocked* are not used if the *....acl* counterpart is defined.
