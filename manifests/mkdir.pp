@@ -42,7 +42,7 @@ define hadoop::mkdir($owner = undef, $group = undef, $mode = undef, $touchfile, 
   }
 
   # ownership
-  if $owner or $group {
+  if $owner and $owner != '' or $group and $group != '' {
     exec { "hadoop-chown:${dir}":
       command     => "hdfs dfs -chown${chown_args} ${owner}:${group} ${dir}",
       path        => $path,
@@ -54,7 +54,7 @@ define hadoop::mkdir($owner = undef, $group = undef, $mode = undef, $touchfile, 
   }
 
   # mode
-  if $mode {
+  if $mode and $mode != '' {
     exec { "hadoop-chmod:${dir}":
       command     => "hdfs dfs -chmod ${mode} ${dir}",
       path        => $path,

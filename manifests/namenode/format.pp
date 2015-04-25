@@ -3,7 +3,7 @@
 # Format Hadoop Filesystem. When you need to re-format again, you must remove the datanode directory (and also clean all datanodes in cluster!).
 #
 class hadoop::namenode::format {
-  if $hadoop::cluster_name {
+  if $hadoop::cluster_name and $hadoop::cluster_name != '' {
     $format_args = "-clusterid ${hadoop::cluster_name}"
   } else {
     $format_args = ''
@@ -24,7 +24,7 @@ class hadoop::namenode::format {
     creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-formatted',
     path    => '/bin:/usr/bin',
     user    => 'hdfs',
-    require => File [ $hadoop::_hdfs_name_dirs ],
+    require => File[$hadoop::_hdfs_name_dirs],
   }
 
   # only when converting existing non-HA HDFS cluster

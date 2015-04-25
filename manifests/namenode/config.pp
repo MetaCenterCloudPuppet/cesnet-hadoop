@@ -17,7 +17,7 @@ class hadoop::namenode::config {
     mode   => '1755',
   })
 
-  if $hadoop::realm {
+  if $hadoop::realm and $hadoop::realm != '' {
     file { $hadoop::keytab_namenode:
       owner  => 'hdfs',
       group  => 'hdfs',

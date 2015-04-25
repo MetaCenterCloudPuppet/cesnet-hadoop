@@ -13,7 +13,7 @@ define hadoop::kinit($touchfile) {
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
 
-  if $hadoop::realm {
+  if $hadoop::realm and $hadoop::realm != '' {
     # better to destroy the ticket (it may be owned by root),
     # destroy it only when needed though
     exec { "kdestroy-old-${touchfile}":

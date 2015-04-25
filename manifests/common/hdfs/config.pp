@@ -82,7 +82,7 @@ class hadoop::common::hdfs::config {
     'RedHat' => '/sbin/nologin',
     'Debian' => '/bin/false',
   }
-  if ($hadoop::realm) {
+  if $hadoop::realm and $hadoop::realm != '' {
     user { 'rm':
       ensure     => present,
       comment    => 'Apache Hadoop Yarn',

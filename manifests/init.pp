@@ -460,7 +460,7 @@ class hadoop (
     'mapreduce.jobhistory.webapps.address' => "${hs_hostname}:19888",
     'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
   }
-  if ($hadoop::realm) {
+  if $hadoop::realm and $hadoop::realm != '' {
     $sec_properties = {
       'hadoop.security.authentication' => 'kerberos',
       'hadoop.rcp.protection' => 'integrity',
@@ -550,7 +550,7 @@ DEFAULT
   }
 
   if $hadoop::https {
-    if !$hadoop::realm {
+    if !$hadoop::realm or $hadoop::realm == '' {
       err('Kerberos feature required for https support.')
     }
     $https_properties = {

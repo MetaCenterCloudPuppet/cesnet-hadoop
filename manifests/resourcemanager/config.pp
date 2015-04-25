@@ -7,7 +7,7 @@ class hadoop::resourcemanager::config {
   contain hadoop::common::yarn::config
   contain hadoop::common::yarn::daemon
 
-  if ($hadoop::realm) {
+  if $hadoop::realm and $hadoop::realm != '' {
     file { $hadoop::keytab_resourcemanager:
       owner => 'yarn',
       group => 'yarn',

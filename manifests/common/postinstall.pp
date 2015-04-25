@@ -6,7 +6,7 @@ class hadoop::common::postinstall {
   $confname = $hadoop::alternatives
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
 
-  if $confname {
+  if $confname and $confname != '' {
     exec { 'hadoop-copy-config':
       command => "cp -a ${hadoop::confdir}/ /etc/hadoop/conf.${confname}",
       path    => $path,

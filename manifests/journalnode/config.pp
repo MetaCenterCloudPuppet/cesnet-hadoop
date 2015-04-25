@@ -24,7 +24,7 @@ class hadoop::journalnode::config {
     mode   => '1755',
   })
 
-  if $hadoop::realm {
+  if $hadoop::realm and $hadoop::realm != '' {
     file { $keytab:
       owner => 'hdfs',
       group => 'hdfs',

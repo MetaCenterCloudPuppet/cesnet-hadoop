@@ -14,7 +14,7 @@ class hadoop::nodemanager::config {
   # for templates in env/*
   $krbrefresh = $hadoop::features["krbrefresh"]
 
-  if $hadoop::realm {
+  if $hadoop::realm and $hadoop::realm != '' {
     file { $keytab:
       owner  => 'yarn',
       group  => 'yarn',
