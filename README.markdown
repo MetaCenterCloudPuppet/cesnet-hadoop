@@ -12,6 +12,7 @@
      * [Auth to local mapping](#auth_to_local)
     * [Enable HTTPS](#https)
     * [Multihome Support](#multihome)
+    * [High Availability](#ha)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Classes](#classes)
     * [Resource Types](#resources)
@@ -105,7 +106,7 @@ By default the main *hadoop* class do nothing but configuration of the hadoop pu
 
 Let's start with brief examples. Before beginning you should read the [Setup Requirements](#setup-requirements) section above.
 
-**Example 1**: The simplest setup is one-node Hadoop cluster without security, with everything on single machine:
+**Example**: The simplest setup is one-node Hadoop cluster without security, with everything on single machine:
 
     class{"hadoop":
       hdfs_hostname => $::fqdn,
@@ -144,7 +145,32 @@ Modify $::fqdn and node(s) section as needed. You can also remove the dfs.replic
 
 Multiple HDFS namespaces are not supported now (ask or send patches, if you need it :-)).
 
-**Example 2**: One-node Hadoop cluster with security (add also the node section from the single setup above):
+<a name="usage"></a>
+##Usage
+
+<a name="security"></a>
+###Enable Security
+
+Security in Hadoop is based on Kerberos. Keytab files needs to be prepared on the proper places before enabling the security.
+
+Following parameters are used for security (see also [Module Parameters](#parameters)):
+
+* *realm* (required parameter)<br />
+  Enable security and Kerberos realm to use. Empty string disables security.
+  To enable security, there are required:
+  * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
+  * configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
+  * /etc/security/keytab/dn.service.keytab (on data nodes)
+  * /etc/security/keytab/jhs.service.keytab (on job history node)
+  * /etc/security/keytab/nm.service.keytab (on node manager nodes)
+  * /etc/security/keytab/nn.service.keytab (on name nodes)
+  * /etc/security/keytab/rm.service.keytab (on resource manager node)
+
+* *authorization* (empty hash by default)
+
+It is recommended also to enable HTTPS when security is enabled. See [Enable HTTPS](#https).
+
+**Example**: One-node Hadoop cluster with security (add also the node section from the single-node setup above):
 
     class{"hadoop":
       hdfs_hostname => $::fqdn,
@@ -173,34 +199,18 @@ Multiple HDFS namespaces are not supported now (ask or send patches, if you need
 
 Modify $::fqdn and add node sections as needed for multi-node cluster.
 
+<a name="ha"></a>
+###High Availability
+
 TODO: high availability example and dependency on zookeeper
 
-<a name="usage"></a>
-##Usage
+Threre are needed also these daemons for High Availability:
 
-TODO: Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here.
+* Journal Node (3) - requires HTTPS, when Kerberos security is enabled
+* Zookeeper/Failover Controller (2) - on each Name Node
+* Zookeeper (>=3)
 
-<a name="security"></a>
-###Enable Security
-
-Security in Hadoop is based on Kerberos. Keytab files needs to be prepared on the proper places before enabling the security.
-
-Following parameters are used for security (see also [Module Parameters](#parameters):
-
-* *realm* (required parameter, empty string disables security)<br />
-  Enable security and Kerberos realm to use. Empty string disables security.
-  To enable security, there are required:
-  * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
-  * configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
-  * /etc/security/keytab/dn.service.keytab (on data nodes)
-  * /etc/security/keytab/jhs.service.keytab (on job history node)
-  * /etc/security/keytab/nm.service.keytab (on node manager nodes)
-  * /etc/security/keytab/nn.service.keytab (on name nodes)
-  * /etc/security/keytab/rm.service.keytab (on resource manager node)
-
-* *authorization* (empty hash by default)
-
-It is recommended also to enable HTTPS when security is enabled. See [Enable HTTPS](#https).
+Setup High Availability requires precise order of all steps. For example all zookeeper servers must be running before formatting zkfc (class *hadoop::zkfc::service*), or all journal nodes must running during initial formatting (class *hadoop::namenode::config*) or converting existing cluster to cluster with high availability.
 
 <a name="long-run"></a>
 #### Long running applications
@@ -319,13 +329,13 @@ Consider also checking POSIX ACL support in the system and enable *acl* in Hadoo
 <a name="multihome"></a>
 ###Multihome Support
 
-Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Properties and bind hacks to multihome support can be enabled by **multihome => true** in *features*. You will also need to add secondary IPs of datanodes to *datanode_hostnames* or *slaves*:
+Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Properties and bind hacks to multihome support can be enabled by **multihome => true** in *features*. You will also need to add secondary IPs of datanodes to *datanode_hostnames* (or *slaves*, which sets *datanode_hostnames* and *nodemanager_hostnames*):
 
     class{"hadoop":
       hdfs_hostname => $::fqdn,
       yarn_hostname => $::fqdn,
       # for multi-home
-      datanode\_hostnames => [ $::fqdn, '10.0.0.2', '192.169.0.2' ],
+      datanode_hostnames => [ $::fqdn, '10.0.0.2', '192.169.0.2' ],
       slaves => [ $::fqdn ],
       frontends => [ $:fqdn ],
       realm => '',
@@ -410,7 +420,7 @@ Multi-home feature enables following properties:
 ###Resource Types
 
 * **kinit** - Init credentials
-* **kdestroy** - Desteroy credentials
+* **kdestroy** - Destroy credentials
 * **mkdir** - Creates a directory on HDFS
 
 <a name="parameters"></a>
