@@ -1,5 +1,6 @@
 fixtures:
   repositories:
-    stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib.git"
+    stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib"
+    alternatives: "git://github.com/puppet-community/puppet-alternatives"
   symlinks:
     hadoop: "#{source_dir}"
