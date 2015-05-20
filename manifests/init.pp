@@ -559,7 +559,7 @@ DEFAULT
       'hadoop.http.authentication.token.validity' => '36000',
       'hadoop.http.authentication.signature.secret.file' => '${user.home}/http-auth-signature-secret',
       'hadoop.http.authentication.cookie.domain' => downcase($hadoop::realm),
-      'hadoop.http.authentication.simple.anonymous.allowed' => 'false',
+      'hadoop.http.authentication.simple.anonymous.allowed' => false,
       'hadoop.http.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
       'hadoop.http.authentication.kerberos.keytab' => '${user.home}/hadoop.keytab',
       'dfs.http.policy' => 'HTTPS_ONLY',
