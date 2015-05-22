@@ -7,10 +7,10 @@
 # [*(title)*]
 #   The name of the directory is in the title of the resource instance.
 #
+# [*touchfile*] (required)
 # [*owner*] = undef
 # [*group*] = undef
 # [*mode*] = undef
-# [*touchfile*] (required)
 #
 # === Requirement
 #
@@ -18,7 +18,7 @@
 # * configured local HDFS client
 # * User['hdfs']
 #
-define hadoop::mkdir($owner = undef, $group = undef, $mode = undef, $touchfile, $recursive = false) {
+define hadoop::mkdir($touchfile, $owner = undef, $group = undef, $mode = undef, $recursive = false) {
   include hadoop::common::hdfs::config
 
   $dir = $title
