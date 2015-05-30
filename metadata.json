@@ -1,25 +1,33 @@
 {
   "name": "cesnet-hadoop",
-  "version": "0.9.7",
+  "version": "1.0.0",
   "author": "Frantisek Dvorak <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
   "source": "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop",
   "project_page": "https://github.com/MetaCenterCloudPuppet",
   "issues_url": "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop/issues",
-  "tags": ["hadoop"],
+  "tags": [
+    "hadoop"
+  ],
   "operatingsystem_support": [
     {
-    "operatingsystem": "Debian",
-    "operatingsystemrelease": ["7"]
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7"
+      ]
     },
     {
-    "operatingsystem": "Ubuntu",
-    "operatingsystemrelease": ["14.04"]
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "14.04"
+      ]
     },
     {
-    "operatingsystem": "Fedora",
-    "operatingsystemrelease": ["21"]
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": [
+        "21"
+      ]
     }
   ],
   "requirements": [
