@@ -1,0 +1,27 @@
+<% if @osfamily == 'RedHat' and @operatingsystem == 'Fedora' -%>
+<% if @krbrefresh -%>
+set /files<%= @env_journalnode -%>/KRB5CCNAME FILE:<%= scope.lookupvar('file') %>
+rm /files<%= @env_journalnode -%>/KRB5CCNAME/export
+<% else -%>
+rm /files<%= @env_journalnode -%>/KRB5CCNAME
+<% end -%>
+<% else -%>
+<% if @krbrefresh -%>
+set /files<%= @env_journalnode -%>/KRB5CCNAME FILE:<%= scope.lookupvar('file') %>
+set /files<%= @env_journalnode -%>/KRB5CCNAME/export ""
+<% else -%>
+rm /files<%= @env_journalnode -%>/KRB5CCNAME
+<% end -%>
+<% if @realm and not @realm.empty? -%>
+set /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_USER hdfs
+set /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_USER/export ""
+set /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_PID_DIR /var/run/hadoop-hdfs
+set /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_PID_DIR/export ""
+set /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_LOG_DIR /var/log/hadoop-hdfs
+set /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_LOG_DIR/export ""
+<% else -%>
+rm /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_USER
+rm /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_PID_DIR
+rm /files<%= @env_journalnode -%>/HADOOP_SECURE_DN_LOG_DIR
+<% end -%>
+<% end -%>

@@ -50,18 +50,13 @@ class hadoop::nodemanager::config {
     }
   }
 
-  if $::osfamily == 'RedHat' and !$hadoop::features["krbrefresh"] {
-    $env_ensure = 'absent'
-  } else {
-    $env_ensure = 'present'
+  $env_nodemanager = $hadoop::envs['nodemanager']
+  augeas{ $env_nodemanager:
+    lens    => 'Shellvars.lns',
+    incl    => $env_nodemanager,
+    changes => template('hadoop/env/yarn-nodemanager.augeas.erb'),
   }
-  file { $hadoop::envs['nodemanager']:
-    ensure  => $env_ensure,
-    owner   => 'root',
-    group   => 'root',
-    alias   => 'nm-env',
-    content => template('hadoop/env/yarn-nodemanager.erb'),
-  }
+  #notice(template('hadoop/env/yarn-nodemanager.augeas.erb'))
 
   file { "${hadoop::confdir}/container-executor.cfg":
     owner   => 'root',

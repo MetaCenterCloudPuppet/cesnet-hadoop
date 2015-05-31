@@ -58,17 +58,11 @@ class hadoop::datanode::config {
     }
   }
 
-  if $::osfamily == 'RedHat' and !$hadoop::features["krbrefresh"] {
-    $env_ensure = 'absent'
-  } else {
-    $env_ensure = 'present'
+  $env_datanode = $hadoop::envs['datanode']
+  augeas{$env_datanode:
+    lens    => 'Shellvars.lns',
+    incl    => $env_datanode,
+    changes => template('hadoop/env/hdfs-datanode.augeas.erb'),
   }
-  file { $hadoop::envs['datanode']:
-    ensure  => $env_ensure,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    alias   => 'dn-env',
-    content => template('hadoop/env/hdfs-datanode.erb'),
-  }
+  #notice(template('hadoop/env/hdfs-datanode.augeas.erb'))
 }

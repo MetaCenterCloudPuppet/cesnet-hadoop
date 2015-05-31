@@ -50,16 +50,11 @@ class hadoop::historyserver::config {
     }
   }
 
-  if $::osfamily == 'RedHat' and !$hadoop::features["krbrefresh"] {
-    $env_ensure = 'absent'
-  } else {
-    $env_ensure = 'present'
+  $env_historyserver = $hadoop::envs['historyserver']
+  augeas{$env_historyserver:
+    lens    => 'Shellvars.lns',
+    incl    => $env_historyserver,
+    changes => template('hadoop/env/mapred-historyserver.augeas.erb'),
   }
-  file { $hadoop::envs['historyserver']:
-    ensure  => $env_ensure,
-    owner   => 'root',
-    group   => 'root',
-    alias   => 'jhs-env',
-    content => template('hadoop/env/mapred-historyserver.erb'),
-  }
+  #notice(template('hadoop/env/mapred-historyserver.augeas.erb'))
 }

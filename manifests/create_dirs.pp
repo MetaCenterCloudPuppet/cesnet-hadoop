@@ -10,7 +10,7 @@ class hadoop::create_dirs {
   $realm = $hadoop::realm
   # hadoop.security.auth_to_local not used by ResourceManager state-store
   # in Hadoop 2.4.1 in Fedora
-  if ($realm and $realm != '' and $::osfamily == 'RedHat') { $rmstore_user = 'rm' }
+  if ($realm and $realm != '' and "${::osfamily}/${::operatingsystem}" == 'RedHat/Fedora') { $rmstore_user = 'rm' }
   else { $rmstore_user = 'yarn' }
 
   hadoop::kinit { 'hdfs-kinit':

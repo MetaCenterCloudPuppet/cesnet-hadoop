@@ -59,17 +59,11 @@ class hadoop::journalnode::config {
     }
   }
 
-  if $::osfamily == 'RedHat' and !$hadoop::features["krbrefresh"] {
-    $env_ensure = 'absent'
-  } else {
-    $env_ensure = 'present'
+  $env_journalnode = $hadoop::envs['journalnode']
+  augeas{$env_journalnode:
+    lens    => 'Shellvars.lns',
+    incl    => $env_journalnode,
+    changes => template('hadoop/env/hdfs-journalnode.augeas.erb'),
   }
-  file { $hadoop::envs['journalnode']:
-    ensure  => $env_ensure,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    alias   => 'jn-env',
-    content => template('hadoop/env/hdfs-journalnode.erb'),
-  }
+  #notice(template('hadoop/env/hdfs-journalnode.augeas.erb'))
 }

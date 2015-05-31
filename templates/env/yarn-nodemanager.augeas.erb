@@ -1,0 +1,15 @@
+<% if @osfamily == 'RedHat' and @operatingsystem == 'Fedora' -%>
+<% if @krbrefresh -%>
+set /files<%= @env_nodemanager -%>/KRB5CCNAME FILE:<%= scope.lookupvar('file') %>
+rm /files<%= @env_nodemanager -%>/KRB5CCNAME/export
+<% else -%>
+rm /files<%= @env_nodemanager -%>/KRB5CCNAME
+<% end -%>
+<% else -%>
+<% if @krbrefresh -%>
+set /files<%= @env_nodemanager -%>/KRB5CCNAME FILE:<%= scope.lookupvar('file') %>
+set /files<%= @env_nodemanager -%>/KRB5CCNAME/export ""
+<% else -%>
+rm /files<%= @env_nodemanager -%>/KRB5CCNAME
+<% end -%>
+<% end -%>

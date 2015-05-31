@@ -11,26 +11,14 @@ class hadoop::common::config {
     content => template('hadoop/hadoop/core-site.xml.erb'),
   }
 
-  # common environment:
-  # - required when environments were specified
-  # - required in Debian
-  # - not needed in RedHat
-  if $hadoop::environments {
-    $ensure_env = present
-  } else {
-    $ensure_env = $::osfamily ? {
-      redhat => absent,
-      default => present,
-    }
+  $environment = $hadoop::environment
+  $env_common = $hadoop::envs['common']
+  augeas{ $env_common:
+    lens    => 'Shellvars.lns',
+    incl    => $env_common,
+    changes => template('hadoop/env/common.augeas.erb'),
   }
-  $environments = $hadoop::environments
-  file { $hadoop::envs['common']:
-    ensure  => $ensure_env,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    content => template('hadoop/env/common.erb'),
-  }
+  #notice(template('hadoop/env/common.augeas.erb'))
 
   if $hadoop::authorization {
     file { "${hadoop::confdir}/hadoop-policy.xml":

@@ -113,13 +113,11 @@
 #
 # Descriptions for the properties. Just for cuteness.
 #
-# ####`environments` undef
+# ####`environment` undef
 #
-# Environment to set for all Hadoop daemons. Recommended is to increase java heap memory, if enough memory is available:
+# Environment to set for all Hadoop daemons.
 #
-#     environments => ['export HADOOP\_HEAPSIZE=4096', 'export YARN\_HEAPSIZE=4096']
-#
-# Note: whether to use 'export' or not is system dependent (Debian 7/wheezy: yes, systemd-based distributions: no).
+#     environment => {'HADOOP_HEAPSIZE' => 4096, 'YARN_HEAPSIZE' => 4096}
 #
 # ####`features` (empty)
 #
@@ -210,7 +208,7 @@
 #
 #     authorization => {
 #       'rules' => 'limit',
-#       'security.service.authorization.default.acl' => ' hadoop,hbase,hive,users',
+#       'security.service.authorization.default.acl' => ' hadoop,hbase,hive,spark,users',
 #     }
 #
 # Note: Beware *...acl.blocked* are not used if the *....acl* counterpart is defined.
@@ -358,7 +356,7 @@ class hadoop (
   $hdfs_journal_dirs = undef,
   $properties = undef,
   $descriptions = undef,
-  $environments = undef,
+  $environment = undef,
   $features = $params::features,
   $acl = undef,
   $alternatives = $params::alternatives,
