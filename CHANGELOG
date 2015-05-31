@@ -1,1 +1,16 @@
+#Changelog
+
 See https://github.com/MetaCenterCloudPuppet/cesnet-hadoop/commits/master.
+
+#Incompatible changes
+
+2.0.0:
+
+* **environments** parameter:
+ * name changed: environments -> environment
+ * type changed: array -> hash
+
+1.0.0:
+
+* **mkdir** resource definition:
+ * parameters ordering changed
