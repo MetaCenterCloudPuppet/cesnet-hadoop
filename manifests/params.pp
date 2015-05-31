@@ -104,9 +104,9 @@ class hadoop::params {
     }
   }
 
-  $hdfs_hostname = 'localhost'
-  $yarn_hostname = 'localhost'
-  $slaves = [ 'localhost' ]
+  $hdfs_hostname = $::fqdn
+  $yarn_hostname = $::fqdn
+  $slaves = [ $::fqdn ]
 
   $cluster_name = 'cluster'
 

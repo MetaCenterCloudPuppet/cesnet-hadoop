@@ -4,11 +4,11 @@
 #
 # === Parameters
 #
-# ####`hdfs_hostname` 'localhost'
+# ####`hdfs_hostname` $::fqdn
 #
 # Hadoop Filesystem Name Node machine.
 #
-# ####`hdfs_hostname2` 'localhost'
+# ####`hdfs_hostname2` undef
 #
 # Another Hadoop Filesystem Name Node machine. used for High Availability. This parameter will activate the HDFS HA feature. See [http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html).
 #
@@ -18,17 +18,17 @@
 #
 # Zookeepers are required for automatic transitions.
 #
-# ####`yarn_hostname` 'localhost'
+# ####`yarn_hostname` $::fqdn
 #
 # Yarn machine (with Resource Manager and Job History services).
 #
-# ####`yarn_hostname2` 'localhost'
+# ####`yarn_hostname2` undef
 #
 # YARN resourcemanager second hostname for High Availability. This parameter will activate the YARN HA feature. See [http://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html](http://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html).
 #
 # Zookeepers are required.
 #
-# ####`slaves` 'localhost'
+# ####`slaves` [$::fqdn]
 #
 # Array of slave node hostnames.
 #
