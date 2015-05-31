@@ -7,7 +7,7 @@ $test_os=[{
     'operatingsystem' => 'Debian',
     'operatingsystemrelease' => ['7']
   }, {
-    'osfamily' => 'Redhat',
+    'osfamily' => 'RedHat',
     'operatingsystem' => 'Fedora',
     'operatingsystemrelease' => ['21']
   }, {
