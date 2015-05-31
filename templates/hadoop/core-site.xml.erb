@@ -29,15 +29,25 @@
     <value>*</value>
   </property>
 
-<% core_properties = scope.lookupvar('hadoop::props').select { |name,value| not (name =~ /^hadoop\.hdfs\.|^dfs\./) and not (name =~ /^mapreduce\./) and not (name =~ /^yarn\./) and value != '::undef' } -%>
-<% core_properties.keys.each do |p| -%>
-<%if scope.lookupvar('hadoop::descs')[p] -%>
+<% props = scope.lookupvar('hadoop::props') -%>
+<%# sort the properties list for ruby <= 1.8 #-%>
+<% rv=RUBY_VERSION.split('.') -%>
+<% if rv[0] <= '1' and rv[1] <= '8' -%>
+<% props_keys = props.keys.sort -%>
+<% else -%>
+<% props_keys = props.keys -%>
+<% end -%>
+<% props_keys.each do |p| -%>
+<% value = props[p] -%>
+<% if not (p =~ /^hadoop\.hdfs\.|^dfs\./) and not (p =~ /^mapreduce\./) and not (p =~ /^yarn\./) and value != '::undef' -%>
+<% if scope.lookupvar('hadoop::descs')[p] -%>
   <!-- <%= scope.lookupvar('hadoop::descs')[p] %> -->
 <% end -%>
   <property>
     <name><%= p -%></name>
-    <value><%= scope.lookupvar('hadoop::props')[p] -%></value>
+    <value><%= value -%></value>
   </property>
+<% end -%>
 <% end -%>
 
 </configuration>

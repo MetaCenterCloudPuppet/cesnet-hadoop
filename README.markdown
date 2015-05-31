@@ -717,11 +717,6 @@ On other hand this leads to some limitations as mentioned in [Setup Requirements
 
 Initial installation of high availability is not well supported in this module, as it requires fine orchestration and synchronization between nodes. It is better to install cluster without HA features first, then copy HDFS Name Node data to secondary Name Node, then enable HA features and launch *hdfs namenode -initializeSharedEdits*.
 
-Also Puppet 3.x and Ruby >= 1.9.x is required. So following systems are not supported:
-
-* RedHat/CentOS 6 and older
-* Ubuntu 12/precise and older
-
 <a name="development"></a>
 ##Development
 
