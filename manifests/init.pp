@@ -396,36 +396,53 @@ class hadoop (
   if !$hdfs_journal_dirs { $_hdfs_journal_dirs = $hadoop::hdfs_name_dirs }
 
   if $::fqdn == $hdfs_hostname or $::fqdn == $hdfs_hostname2 {
-    $daemon_namenode = 1
-    $mapred_user = 1
+    $daemon_namenode = true
+    $mapred_user = true
+  } else {
+    $daemon_namenode = false
+    $mapred_user = false
   }
 
   if $::fqdn == $yarn_hostname or $::fqdn == $yarn_hostname2{
-    $daemon_resourcemanager = 1
+    $daemon_resourcemanager = true
+  } else {
+    $daemon_resourcemanager = false
   }
 
   if $::fqdn == $hs_hostname {
-    $daemon_historyserver = 1
+    $daemon_historyserver = true
+  } else {
+    $daemon_historyserver = false
   }
 
   if member($_nodemanager_hostnames, $::fqdn) {
-    $daemon_nodemanager = 1
+    $daemon_nodemanager = true
+  } else {
+    $daemon_nodemanager = false
   }
 
   if member($_datanode_hostnames, $::fqdn) {
-    $daemon_datanode = 1
+    $daemon_datanode = true
+  } else {
+    $daemon_datanode = false
   }
 
   if $journalnode_hostnames and member($journalnode_hostnames, $::fqdn) {
-    $daemon_journalnode = 1
+    $daemon_journalnode = true
+  } else {
+    $daemon_journalnode = false
   }
 
   if $zookeeper_hostnames and $daemon_namenode {
-    $daemon_hdfs_zkfc = 1
+    $daemon_hdfs_zkfc = true
+  } else {
+    $daemon_hdfs_zkfc = false
   }
 
   if member($frontend_hostnames, $::fqdn) {
-    $frontend = 1
+    $frontend = true
+  } else {
+    $frontend = false
   }
 
   if $zookeeper_hostnames {
@@ -500,6 +517,8 @@ DEFAULT
       'yarn.nodemanager.container-executor.class' => 'org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor',
       'yarn.nodemanager.linux-container-executor.group' => 'hadoop',
     }
+  } else {
+    $sec_properties = undef
   }
   if $hadoop::authorization {
     $auth_properties = {
@@ -529,7 +548,11 @@ DEFAULT
         'yarn.resourcemanager.recovery.enabled' => true,
         'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore',
       }
+    } else {
+        $rm_ss_properties = undef
     }
+  } else {
+    $rm_ss_properties = undef
   }
 
   if $hadoop::features['multihome'] {
@@ -538,6 +561,8 @@ DEFAULT
       'yarn.resourcemanager.bind-host' => '0.0.0.0',
       'dfs.namenode.rpc-bind-host' => '0.0.0.0',
     }
+  } else {
+    $mh_properties = undef
   }
 
   if $hadoop::features['aggregation'] {
@@ -545,6 +570,8 @@ DEFAULT
       'yarn.log-aggregation-enable' => true,
       'yarn.nodemanager.remote-app-log-dir' => '/var/log/hadoop-yarn/apps',
     }
+  } else {
+    $agg_properties = undef
   }
 
   if $hadoop::https {
@@ -596,6 +623,8 @@ DEFAULT
     }
 
     $ha_hdfs_properties = merge($ha_base_properties, $ha_https_properties)
+  } else {
+    $ha_hdfs_properties = undef
   }
 
   # High Availability of YARN
@@ -607,6 +636,8 @@ DEFAULT
       'yarn.resourcemanager.hostname.rm1' => $yarn_hostname,
       'yarn.resourcemanager.hostname.rm2' => $yarn_hostname2,
     }
+  } else {
+    $ha_yarn_properties = undef
   }
   $ha_properties = merge($ha_hdfs_properties, $ha_yarn_properties)
 
@@ -616,6 +647,8 @@ DEFAULT
       'dfs.ha.automatic-failover.enabled' => true,
       'ha.zookeeper.quorum' => $zkquorum,
     }
+  } else {
+    $zoo_hdfs_properties = undef
   }
 
   if $zookeeper_hostnames and ($yarn_hostname2 or $features['rmstore'] and $features['rmstore'] != 'hdfs') {
@@ -625,6 +658,8 @@ DEFAULT
       'yarn.resourcemanager.zk-acl' => 'world:anyone:rwcda',
       'yarn.resourcemanager.zk-address' => $zkquorum,
     }
+  } else {
+    $zoo_yarn_properties = undef
   }
   $zoo_properties = merge($zoo_hdfs_properties, $zoo_yarn_properties)
 
@@ -658,6 +693,8 @@ DEFAULT
         $preset_authorization = {}
       }
     }
+  } else {
+    $preset_authorization = {}
   }
 
   $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $https_properties, $ha_properties, $zoo_properties, $properties)

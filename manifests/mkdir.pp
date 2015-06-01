@@ -28,6 +28,8 @@ define hadoop::mkdir($touchfile, $owner = undef, $group = undef, $mode = undef, 
 
   if ($recursive) {
     $chown_args=' -R'
+  } else {
+    $chown_args=''
   }
 
   # directory
