@@ -37,8 +37,8 @@ class hadoop::common::hdfs::config {
     ensure => present,
     system => true,
   }
-  case $::osfamily {
-    'RedHat': {
+  case "${::osfamily}/${::operatingsystem}" {
+    'RedHat/Fedora': {
       user { 'mapred':
         ensure     => present,
         comment    => 'Apache Hadoop MapReduce',
@@ -52,7 +52,7 @@ class hadoop::common::hdfs::config {
         require    => [Group['mapred']]
       }
     }
-    'Debian': {
+    'Debian/Debian', 'Debian/Ubuntu', 'RedHat/CentOS', 'RedHat/RedHat', 'RedHat/Scientific': {
       user { 'mapred':
         ensure     => present,
         comment    => 'Hadoop MapReduce',
@@ -78,9 +78,9 @@ class hadoop::common::hdfs::config {
   # org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore
   # ignores hadoop.security.auth_to_local
   #
-  $rm_shell = $::osfamily ? {
-    'RedHat' => '/sbin/nologin',
-    'Debian' => '/bin/false',
+  $rm_shell = "${::osfamily}-${::operatingsystem}" ? {
+    /RedHat-Fedora/ => '/sbin/nologin',
+    /Debian|RedHat/ => '/bin/false',
   }
   if $hadoop::realm and $hadoop::realm != '' {
     user { 'rm':

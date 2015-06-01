@@ -39,6 +39,7 @@ Supported are:
 * Fedora 21: native packages (tested with Hadoop 2.4.1)
 * Debian 7/wheezy: Cloudera distribution (tested with Hadoop 2.5.0)
 * Ubuntu 14/trusty: Cloudera distribution (tested with Hadoop 2.5.0)
+* RHEL 6, CentOS 6, Scientific Linux 6: Cloudera distribution (tested with Hadoop 2.6.0)
 
 There are some limitations how to use this module. You should read the documentation, especially the [Setup Requirements](#setup-requirements) section.
 
