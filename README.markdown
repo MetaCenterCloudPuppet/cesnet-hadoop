@@ -673,13 +673,17 @@ Certificates keystore key password. If not specified, https\_keystore\_password 
 
 Keytab file for HTTPS. It will be copied for each daemon user and according permissions and properties set.
 
-####`perform` false
-
-Launch all installation and setup here, from hadoop class.
-
 ####`hdfs_deployed` true
 
 Perform also actions requiring working HDFS (namenode + enough datanodes): enabling RM HDFS state-store feature, and starting MapReduce History Server. This action requires running namenode and datanodes, so you can set this to *false* during initial installation.
+
+####`min_uid` (RHEL 500, default 1000)
+
+Minimal permitted UID of Hadoop users. Used in Linux containers, when security is enables.
+
+####`perform` false
+
+Launch all installation and setup here, from hadoop class.
 
 ####`keytab_namenode` '/etc/security/keytab/nn.service.keytab'
 

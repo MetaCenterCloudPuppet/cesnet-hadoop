@@ -151,6 +151,11 @@ class hadoop::params {
     /RedHat-Fedora/ => '/var/cache/hadoop-mapreduce',
     /Debian|RedHat/ => '/var/lib/hadoop-mapreduce',
   }
+  $min_uid = "${::osfamily}-${::operatingsystem}" ? {
+    /RedHat-Fedora/ => 1000,
+    /RedHat/        => 500,
+    default         => 1000,
+  }
 
   # other properties added to init.pp
   case "${::osfamily}-${::operatingsystem}" {
