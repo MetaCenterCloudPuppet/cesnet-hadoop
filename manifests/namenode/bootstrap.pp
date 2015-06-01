@@ -11,6 +11,6 @@ class hadoop::namenode::bootstrap {
     creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped',
     path    => '/bin:/usr/bin',
     user    => 'hdfs',
-    require => File [ $hadoop::_hdfs_name_dirs ],
+    require => File[$hadoop::_hdfs_name_dirs],
   }
 }
