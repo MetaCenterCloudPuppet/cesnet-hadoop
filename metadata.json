@@ -12,8 +12,8 @@
   ],
   "operatingsystem_support": [
     {
-    "operatingsystem": "CentOS",
-    "operatingsystemrelease": ["6"]
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": ["6"]
     },
     {
       "operatingsystem": "Debian",
@@ -28,8 +28,12 @@
       ]
     },
     {
-    "operatingsystem": "RedHat",
-    "operatingsystemrelease": ["6"]
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": ["6"]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": ["6"]
     },
     {
       "operatingsystem": "Ubuntu",

@@ -4,8 +4,8 @@
 # It sets variables according to platform
 #
 class hadoop::params {
-  case "${::osfamily}/${::operatingsystem}" {
-    'RedHat/Fedora': {
+  case "${::osfamily}-${::operatingsystem}" {
+    /RedHat-Fedora/: {
       $packages_common = [ 'hadoop-common', 'hadoop-common-native' ]
       $packages_nn = [ 'hadoop-hdfs' ]
       $packages_rm = [ 'hadoop-yarn' ]
@@ -40,7 +40,7 @@ class hadoop::params {
       # depends on result of: https://bugzilla.redhat.com/show_bug.cgi?id=1163892
       $yarn_group = 'hadoop'
     }
-    'Debian/Debian', 'Debian/Ubuntu', 'RedHat/CentOS', 'RedHat/RedHat', 'RedHat/Scientific': {
+    /Debian|RedHat/: {
       $packages_common = [ ]
       $packages_nn = [ 'hadoop-hdfs-namenode' ]
       $packages_rm = [ 'hadoop-yarn-resourcemanager' ]
