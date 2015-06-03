@@ -34,7 +34,6 @@ class hadoop::params {
         'hdfs-zkfc' => '/etc/sysconfig/hadoop-zkfc',
       }
 
-      $alternatives = undef
       $confdir = '/etc/hadoop'
       # container group, official recommendation is 'hadoop'
       # depends on result of: https://bugzilla.redhat.com/show_bug.cgi?id=1163892
@@ -69,7 +68,6 @@ class hadoop::params {
         'hdfs-zkfc' => '/etc/default/hadoop-hdfs-zkfc',
       }
 
-      $alternatives = 'cluster'
       $confdir = '/etc/hadoop/conf'
       # container group
       $yarn_group = 'yarn'
@@ -77,6 +75,13 @@ class hadoop::params {
     default: {
       fail("${::osfamily} (${::operatingsystem}) not supported")
     }
+  }
+
+  $alternatives = "${::osfamily}-${::operatingsystem}" ? {
+    /RedHat-Fedora/ => undef,
+    # https://github.com/puppet-community/puppet-alternatives/issues/18
+    /RedHat/        => '',
+    /Debian/        => 'cluster',
   }
 
   $hdfs_hostname = $::fqdn
