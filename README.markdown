@@ -781,9 +781,9 @@ Certificates keystore key password. If not specified, https\_keystore\_password 
 
 Keytab file for HTTPS. It will be copied for each daemon user and according permissions and properties set.
 
-####`min_uid` (RHEL 500, default 1000)
+####`min_uid` (autodetect)
 
-Minimal permitted UID of Hadoop users. Used in Linux containers, when security is enables.
+Minimal permitted UID of Hadoop users. Used in Linux containers, when security is enabled.
 
 ####`perform` false
 

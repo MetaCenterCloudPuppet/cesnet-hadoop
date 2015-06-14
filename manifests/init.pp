@@ -251,9 +251,9 @@
 #
 # Keytab file for HTTPS. It will be copied for each daemon user and according permissions and properties set.
 #
-# ####`min_uid` (RHEL 500, default 1000)
+# ####`min_uid` (autodetect)
 #
-# Minimal permitted UID of Hadoop users. Used in Linux containers, when security is enables.
+# Minimal permitted UID of Hadoop users. Used in Linux containers, when security is enabled.
 #
 # ####`perform` false
 #
@@ -376,7 +376,7 @@ class hadoop (
   $https_keystore_password = $params::https_keystore_password,
   $https_keytab = $params::https_keytab,
   $https_keystore_keypassword = $params::https_keystore_keypassword,
-  $min_uid = $params::min_uid,
+  $min_uid = $params::uid_min,
   $perform = $params::perform,
 
   $hdfs_deployed = $params::hdfs_deployed,
