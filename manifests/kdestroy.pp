@@ -11,22 +11,24 @@ define hadoop::kdestroy($touchfile, $touch) {
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
 
-  exec { "kdestroy-${touchfile}":
-    command     => 'kdestroy',
-    path        => $path,
-    environment => $env,
-    onlyif      => "test -n \"${hadoop::realm}\"",
-    user        => 'hdfs',
-    creates     => $puppetfile,
-  }
-
-  if $touch {
-    exec { "hadoop-touch-${touchfile}":
-      command     => "touch ${puppetfile}",
+  if $hadoop::zookeeper_deployed {
+    exec { "kdestroy-${touchfile}":
+      command     => 'kdestroy',
       path        => $path,
       environment => $env,
+      onlyif      => "test -n \"${hadoop::realm}\"",
       user        => 'hdfs',
       creates     => $puppetfile,
+    }
+
+    if $touch {
+      exec { "hadoop-touch-${touchfile}":
+        command     => "touch ${puppetfile}",
+        path        => $path,
+        environment => $env,
+        user        => 'hdfs',
+        creates     => $puppetfile,
+      }
     }
   }
 }

@@ -196,6 +196,7 @@ class hadoop::params {
 
   $perform = false
   $hdfs_deployed = true
+  $zookeeper_deployed = true
 
   $https_keytab = '/etc/security/keytab/http.service.keytab'
   $keytab_namenode = '/etc/security/keytab/nn.service.keytab'

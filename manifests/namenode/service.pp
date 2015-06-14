@@ -4,12 +4,18 @@
 # It ensure the service is running.
 #
 class hadoop::namenode::service {
-  # don't launch secondary namenode during the first "stage"
-  if $hadoop::hdfs_hostname2 != $::fqdn or $hadoop::hdfs_deployed {
+  # don't launch namenode(s) during the first "stage" (requires formatting
+  # which requires journal nodes)
+  if $hadoop::zookeeper_deployed {
     service { $hadoop::daemons['namenode']:
       ensure    => 'running',
       enable    => true,
       subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
+    }
+  } else {
+    service { $hadoop::daemons['namenode']:
+      ensure => 'stopped',
+      enable => true,
     }
   }
 
@@ -21,7 +27,7 @@ class hadoop::namenode::service {
   }
 
   # create dirs only on the first namenode
-  if $hadoop::hdfs_hostname == $::fqdn {
+  if $hadoop::hdfs_hostname == $::fqdn and $hadoop::zookeeper_deployed {
     contain hadoop::create_dirs
 
     Service[$hadoop::daemons['namenode']] -> Class['hadoop::create_dirs']

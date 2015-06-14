@@ -20,5 +20,10 @@ class hadoop::historyserver::service {
       include hadoop::namenode::service
       Class['hadoop::namenode::service'] -> Class['hadoop::historyserver::service']
     }
+  } else {
+    service { $hadoop::daemons['historyserver']:
+      ensure => 'stopped',
+      enable => true,
+    }
   }
 }

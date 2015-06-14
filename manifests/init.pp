@@ -251,10 +251,6 @@
 #
 # Keytab file for HTTPS. It will be copied for each daemon user and according permissions and properties set.
 #
-# ####`hdfs_deployed` true
-#
-# Perform also actions requiring working HDFS (namenode + enough datanodes): enabling RM HDFS state-store feature, and starting MapReduce History Server. This action requires running namenode and datanodes, so you can set this to *false* during initial installation.
-#
 # ####`min_uid` (RHEL 500, default 1000)
 #
 # Minimal permitted UID of Hadoop users. Used in Linux containers, when security is enables.
@@ -262,6 +258,14 @@
 # ####`perform` false
 #
 # Launch all installation and setup here, from hadoop class.
+#
+# ####`hdfs_deployed` true
+#
+# Perform also actions requiring working HDFS (namenode + enough datanodes): enabling RM HDFS state-store feature (if enabled), and starting MapReduce History Server. This action requires running namenode and datanodes, so you can set this to *false* during initial installation.
+#
+# ####`zookeeper_deployed` true
+#
+# Perform also actions requiring working zookeeper and journal nodes: when enabled, launch ZKFC daemons and secondary namenode. You can set this to *false* during initial installation when High Availability is enabled.
 #
 # ####`keytab_namenode` '/etc/security/keytab/nn.service.keytab'
 #
@@ -372,9 +376,11 @@ class hadoop (
   $https_keystore_password = $params::https_keystore_password,
   $https_keytab = $params::https_keytab,
   $https_keystore_keypassword = $params::https_keystore_keypassword,
-  $hdfs_deployed = $params::hdfs_deployed,
   $min_uid = $params::min_uid,
   $perform = $params::perform,
+
+  $hdfs_deployed = $params::hdfs_deployed,
+  $zookeeper_deployed = $params::zookeeper_deployed,
 
   $keytab_namenode = $params::keytab_namenode,
   $keytab_datanode = $params::keytab_datanode,

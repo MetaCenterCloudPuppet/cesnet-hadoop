@@ -13,6 +13,8 @@
     * [Enable HTTPS](#https)
     * [Multihome Support](#multihome)
     * [High Availability](#ha)
+     * [Fresh installation](#ha-fresh)
+     * [Converting non-HA cluster](#ha-convert)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Classes](#classes)
     * [Resource Types](#resources)
@@ -23,7 +25,7 @@
 <a name="overview"></a>
 ##Overview
 
-Management of Hadoop Cluster with security based on Kerberos and with High Availability. Puppet 3.x is required. Supported and tested are Fedora (native Hadoop) and Debian (Cloudera distribution).
+Management of Hadoop Cluster with security based on Kerberos and with High Availability. Puppet 3.x is required. Supported and tested are Fedora (native Hadoop), Debian (Cloudera distribution), and CentOS (Cloudera distribution).
 
 <a name="module-description"></a>
 ##Module Description
@@ -33,13 +35,14 @@ This module installs and setups Hadoop Cluster, with all services collocated or 
 * Security based on Kerberos
 * HTTPS
 * High availability for HDFS Name Node and YARN Resource Manager (requires zookeeper)
+* YARN Resource Manager state-store
 
 Supported are:
 
-* Fedora 21: native packages (tested with Hadoop 2.4.1)
-* Debian 7/wheezy: Cloudera distribution (tested with Hadoop 2.5.0)
-* Ubuntu 14/trusty: Cloudera distribution (tested with Hadoop 2.5.0)
-* RHEL 6, CentOS 6, Scientific Linux 6: Cloudera distribution (tested with Hadoop 2.6.0)
+* **Fedora 21**: native packages (tested with Hadoop 2.4.1)
+* **Debian 7/wheezy**: Cloudera distribution (tested with CDH 5.3.1/5.4.1, Hadoop 2.5.0/2.6.0)
+* **Ubuntu 14/trusty**: Cloudera distribution (tested with CDH 5.3.1, Hadoop 2.5.0)
+* **RHEL 6, CentOS 6, Scientific Linux 6**: Cloudera distribution (tested with CDH 5.4.1, Hadoop 2.6.0)
 
 There are some limitations how to use this module. You should read the documentation, especially the [Setup Requirements](#setup-requirements) section.
 
@@ -78,7 +81,7 @@ Be aware of:
 * **Hadoop repositories**
  * neither Cloudera nor Hortonworks repositories are configured in this module (for Cloudera you can find list and key files here: [http://archive.cloudera.com/cdh5/debian/wheezy/amd64/cdh/](http://archive.cloudera.com/cdh5/debian/wheezy/amd64/cdh/), Fedora has Hadoop as part of distribution, ...)
  * *java* is not installed by this module (*openjdk-7-jre-headless* is OK for Debian 7/wheezy)
- * for security the package providing kinit is also needed (Debian: *krb5-util*/*heimdal-clients*, Fedora: *krb5-workstation*)
+ * for security the package providing kinit is also needed (Debian: *krb5-util* or *heimdal-clients*, RedHat/Fedora: *krb5-workstation*)
 
 * **One-node Hadoop cluster** (may be collocated on one machine): Hadoop replicates by default all data to at least to 3 data nodes. For one-node Hadoop cluster use property *dfs.replication=1* in *properties* parameter
 
@@ -95,7 +98,7 @@ Be aware of:
  2) you need to enable ticket refresh and RM restarts (see *features* module parameter)
 
 * **HTTPS**:
- * prepare CA certificate keystore and machine certificate keystore in /etc/security/cacerts and /etc/security/server.keystore (location can be modified by *https\_cacerts* and *https\_keystore* parameters), see init.pp class for more https-related parameters
+ * prepare CA certificate keystore and machine certificate keystore in /etc/security/cacerts and /etc/security/server.keystore (location can be modified by *https\_cacerts* and *https\_keystore* parameters), see [Enable HTTPS](#https) section
  * prepare /etc/security/http-auth-signature-secret file (with any content)
 
    Note: some files are copied into ~hdfs, ~yarn/, and ~mapred/ directories
@@ -203,15 +206,119 @@ Modify $::fqdn and add node sections as needed for multi-node cluster.
 <a name="ha"></a>
 ###High Availability
 
-TODO: high availability example and dependency on zookeeper
-
 Threre are needed also these daemons for High Availability:
 
-* Journal Node (3) - requires HTTPS, when Kerberos security is enabled
+* Secondary Name Node (1) - there will be two Name Node servers
+* Journal Node (>=3) - requires HTTPS, when Kerberos security is enabled
 * Zookeeper/Failover Controller (2) - on each Name Node
 * Zookeeper (>=3)
 
-Setup High Availability requires precise order of all steps. For example all zookeeper servers must be running before formatting zkfc (class *hadoop::zkfc::service*), or all journal nodes must running during initial formatting (class *hadoop::namenode::config*) or converting existing cluster to cluster with high availability.
+<a name="ha-fresh"></a>
+#### Fresh installation
+
+Setup High Availability requires precise order of all steps. For example all zookeeper servers must be running before formatting zkfc (class *hadoop::zkfc::service*), or all journal nodes must running during initial formatting (class *hadoop::namenode::config*) or when converting existing cluster to cluster with high availability.
+
+There are helper parameters to separate overall cluster setup to more stages:
+
+1. *zookeeper\_deployed*=**false**, *hdfs\_deployed=***false**: zookeper quorum and journal nodes quorum
+2. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***false**: HDFS format and bootstrap (primary and secondary NN), setup and launch ZKFC and NN daemons
+3. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***true**: enable History Server and RM state-store feature, if enabled
+
+These parameters are not required, the setup should converge when setup is repeated. They may help with debuging problems though, because less things will fail if the setup is separated to several stages over the whole cluster.
+
+**Example**:
+
+    $master1_hostname = 'hadoop-master1.example.com'
+    $master2_hostname = 'hadoop-master2.example.com'
+    $slaves           = ['hadoop1.example.com', 'hadoop2.example.com', ...]
+    $frontends        = ['hadoop.example.com']
+    $quorum_hostnames = [$master1_hostname, $master2_hostname, 'master3.example.com']
+    $cluster_name     = 'example'
+
+    $hdfs_deployed      = true
+    $zookeeper_deployed = true
+
+    class{'hadoop':
+      hdfs_hostname           => $master1_hostname,
+      hdfs_hostname2          => $master2_hostname,
+      yarn_hostname           => $master1_hostname,
+      yarn_hostname2          => $master2_hostname,
+      historyserer_hostnamr   => $master1_hostname,
+      slaves                  => $slaves,
+      frontends               => $frontends,
+      journalnode_hostnames   => $quorum_hostnames,
+      zookeeper_hostnames     => $quorum_hostnames,
+      cluster_name            => $cluster_name,
+      realm                   => '',
+
+      hdfs_deployed           => $hdfs_deployed,
+      zookeeper_deployed      => $zookeeper_deployed,
+    }
+
+    node 'master1.example.com' {
+      include hadoop::namenode
+      include hadoop::resourcemanager
+      include hadoop::historyserver
+      include hadoop::zkfc
+      include hadoop::journalnode
+
+      class{'zookeeper':
+        hostnames => $quorum_hostnames,
+        realm     => '',
+      }
+    }
+
+    node 'master2.example.com' {
+      include hadoop::namenode
+      include hadoop::resourcemanager
+      include hadoop::zkfc
+      include hadoop::journalnode
+
+      class{'zookeeper':
+        hostnames => $quorum_hostnames,
+        realm     => '',
+      }
+    }
+
+    node 'master3.example.com' {
+      include hadoop::journalnode
+
+      class{'zookeeper':
+        hostnames => $quorum_hostnames,
+        realm     => '',
+      }
+    }
+
+    node 'frontend.example.com' {
+      include hadoop::frontend
+      include hadoop::journalnode
+
+      class{'zookeeper':
+        hostnames => $quorum_hostnames,
+        realm     => '',
+      }
+    }
+
+    node /hadoop\d+.example.com/ {
+      include hadoop::datanode
+      include hadoop::nodemanager
+    }
+
+Note: Journalnode and Zookeeper are not resource intensive daemons and can be collocated with other daemons. In this example the content of *master3.example.com* node can be moved to some slave node or the frontend.
+
+<a name="ha-convert"></a>
+#### Converting non-HA cluster
+
+You can use the example above. But you will need to let skip bootstrap **on secondary Name Node before setup**:
+
+    touch /var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped
+
+And activate HA **on the secondary Name Node after setup** (under *hdfs* user):
+
+    # when kerberos is enabled:
+    #kinit -k -t /etc/security/keytab/nn.ervice.keytab nn/`hostname -f`
+    #
+    hdfs namenode -initializeSharedEdits
 
 <a name="long-run"></a>
 #### Long running applications
@@ -674,10 +781,6 @@ Certificates keystore key password. If not specified, https\_keystore\_password 
 
 Keytab file for HTTPS. It will be copied for each daemon user and according permissions and properties set.
 
-####`hdfs_deployed` true
-
-Perform also actions requiring working HDFS (namenode + enough datanodes): enabling RM HDFS state-store feature, and starting MapReduce History Server. This action requires running namenode and datanodes, so you can set this to *false* during initial installation.
-
 ####`min_uid` (RHEL 500, default 1000)
 
 Minimal permitted UID of Hadoop users. Used in Linux containers, when security is enables.
@@ -685,6 +788,14 @@ Minimal permitted UID of Hadoop users. Used in Linux containers, when security i
 ####`perform` false
 
 Launch all installation and setup here, from hadoop class.
+
+####`hdfs_deployed` true
+
+Perform also actions requiring working HDFS (namenode + enough datanodes): enabling RM HDFS state-store feature (if enabled), and starting MapReduce History Server. This action requires running namenode and datanodes, so you can set this to *false* during initial installation.
+
+####`zookeeper_deployed` true
+
+Perform also actions requiring working zookeeper and journal nodes: when enabled, launch ZKFC daemons and secondary namenode. You can set this to *false* during initial installation when High Availability is enabled.
 
 ####`keytab_namenode` '/etc/security/keytab/nn.service.keytab'
 
@@ -717,8 +828,6 @@ Keytab file for YARN Node Manager. This will set also property *yarn.nodemanager
 Idea in this module is to do only one thing - setup Hadoop cluster - and not limit generic usage of this module by doing other stuff. You can have your own repository with Hadoop SW, you can use this module just by *puppet apply*. You can select which Kerberos implementation or Java version to use.
 
 On other hand this leads to some limitations as mentioned in [Setup Requirements](#setup-requirements) section and you may need site-specific puppet module together with this one.
-
-Initial installation of high availability is not well supported in this module, as it requires fine orchestration and synchronization between nodes. It is better to install cluster without HA features first, then copy HDFS Name Node data to secondary Name Node, then enable HA features and launch *hdfs namenode -initializeSharedEdits*.
 
 <a name="development"></a>
 ##Development

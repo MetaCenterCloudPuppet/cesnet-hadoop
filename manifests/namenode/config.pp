@@ -36,7 +36,8 @@ class hadoop::namenode::config {
   }
 
   # format only on the first namenode
-  if $hadoop::hdfs_hostname == $::fqdn {
+  # (requires running all journal nodes in HA)
+  if $hadoop::hdfs_hostname == $::fqdn and $hadoop::zookeeper_deployed {
     contain hadoop::namenode::format
 
     File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::namenode::format']
@@ -44,12 +45,13 @@ class hadoop::namenode::config {
     Class['hadoop::common::hdfs::config'] -> Class['hadoop::namenode::format']
   }
 
-#  # bootstrap only with High Availability on the second namenode
-#  if $hadoop::hdfs_hostname2 == $::fqdn and $hadoop::hdfs_deployed {
-#    contain hadoop::namenode::bootstrap
-#
-#    File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::namenode::bootstrap']
-#    Class['hadoop::common::config'] -> Class['hadoop::namenode::bootstrap']
-#    Class['hadoop::common::hdfs::config'] -> Class['hadoop::namenode::bootstrap']
-#  }
+  # bootstrap only with High Availability on the second namenode
+  # (bootstrap requires formatted primary namenode; just wait for it there)
+  if $hadoop::hdfs_hostname2 == $::fqdn and $hadoop::zookeeper_deployed {
+    contain hadoop::namenode::bootstrap
+
+    File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::namenode::bootstrap']
+    Class['hadoop::common::config'] -> Class['hadoop::namenode::bootstrap']
+    Class['hadoop::common::hdfs::config'] -> Class['hadoop::namenode::bootstrap']
+  }
 }
