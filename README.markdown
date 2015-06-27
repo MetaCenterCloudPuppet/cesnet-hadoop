@@ -19,6 +19,7 @@
     * [High Availability](#ha)
      * [Fresh installation](#ha-fresh)
      * [Converting non-HA cluster](#ha-convert)
+    * [Upgrade](#upgrade)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Classes](#classes)
     * [Resource Types](#resources)
@@ -207,123 +208,6 @@ It is recommended also to enable HTTPS when security is enabled. See [Enable HTT
 
 Modify $::fqdn and add node sections as needed for multi-node cluster.
 
-<a name="ha"></a>
-###High Availability
-
-Threre are needed also these daemons for High Availability:
-
-* Secondary Name Node (1) - there will be two Name Node servers
-* Journal Node (>=3) - requires HTTPS, when Kerberos security is enabled
-* Zookeeper/Failover Controller (2) - on each Name Node
-* Zookeeper (>=3)
-
-<a name="ha-fresh"></a>
-#### Fresh installation
-
-Setup High Availability requires precise order of all steps. For example all zookeeper servers must be running before formatting zkfc (class *hadoop::zkfc::service*), or all journal nodes must running during initial formatting (class *hadoop::namenode::config*) or when converting existing cluster to cluster with high availability.
-
-There are helper parameters to separate overall cluster setup to more stages:
-
-1. *zookeeper\_deployed*=**false**, *hdfs\_deployed=***false**: zookeper quorum and journal nodes quorum
-2. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***false**: HDFS format and bootstrap (primary and secondary NN), setup and launch ZKFC and NN daemons
-3. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***true**: enable History Server and RM state-store feature, if enabled
-
-These parameters are not required, the setup should converge when setup is repeated. They may help with debuging problems though, because less things will fail if the setup is separated to several stages over the whole cluster.
-
-**Example**:
-
-    $master1_hostname = 'hadoop-master1.example.com'
-    $master2_hostname = 'hadoop-master2.example.com'
-    $slaves           = ['hadoop1.example.com', 'hadoop2.example.com', ...]
-    $frontends        = ['hadoop.example.com']
-    $quorum_hostnames = [$master1_hostname, $master2_hostname, 'master3.example.com']
-    $cluster_name     = 'example'
-
-    $hdfs_deployed      = true
-    $zookeeper_deployed = true
-
-    class{'hadoop':
-      hdfs_hostname           => $master1_hostname,
-      hdfs_hostname2          => $master2_hostname,
-      yarn_hostname           => $master1_hostname,
-      yarn_hostname2          => $master2_hostname,
-      historyserer_hostnamr   => $master1_hostname,
-      slaves                  => $slaves,
-      frontends               => $frontends,
-      journalnode_hostnames   => $quorum_hostnames,
-      zookeeper_hostnames     => $quorum_hostnames,
-      cluster_name            => $cluster_name,
-      realm                   => '',
-
-      hdfs_deployed           => $hdfs_deployed,
-      zookeeper_deployed      => $zookeeper_deployed,
-    }
-
-    node 'master1.example.com' {
-      include hadoop::namenode
-      include hadoop::resourcemanager
-      include hadoop::historyserver
-      include hadoop::zkfc
-      include hadoop::journalnode
-
-      class{'zookeeper':
-        hostnames => $quorum_hostnames,
-        realm     => '',
-      }
-    }
-
-    node 'master2.example.com' {
-      include hadoop::namenode
-      include hadoop::resourcemanager
-      include hadoop::zkfc
-      include hadoop::journalnode
-
-      class{'zookeeper':
-        hostnames => $quorum_hostnames,
-        realm     => '',
-      }
-    }
-
-    node 'master3.example.com' {
-      include hadoop::journalnode
-
-      class{'zookeeper':
-        hostnames => $quorum_hostnames,
-        realm     => '',
-      }
-    }
-
-    node 'frontend.example.com' {
-      include hadoop::frontend
-      include hadoop::journalnode
-
-      class{'zookeeper':
-        hostnames => $quorum_hostnames,
-        realm     => '',
-      }
-    }
-
-    node /hadoop\d+.example.com/ {
-      include hadoop::datanode
-      include hadoop::nodemanager
-    }
-
-Note: Journalnode and Zookeeper are not resource intensive daemons and can be collocated with other daemons. In this example the content of *master3.example.com* node can be moved to some slave node or the frontend.
-
-<a name="ha-convert"></a>
-#### Converting non-HA cluster
-
-You can use the example above. But you will need to let skip bootstrap **on secondary Name Node before setup**:
-
-    touch /var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped
-
-And activate HA **on the secondary Name Node after setup** (under *hdfs* user):
-
-    # when kerberos is enabled:
-    #kinit -k -t /etc/security/keytab/nn.ervice.keytab nn/`hostname -f`
-    #
-    hdfs namenode -initializeSharedEdits
-
 <a name="long-run"></a>
 #### Long running applications
 
@@ -466,6 +350,140 @@ Multi-home feature enables following properties:
 * 'yarn.resourcemanager.bind-host' => '0.0.0.0'
 * 'dfs.namenode.rpc-bind-host' => '0.0.0.0'
 
+<a name="ha"></a>
+###High Availability
+
+Threre are needed also these daemons for High Availability:
+
+* Secondary Name Node (1) - there will be two Name Node servers
+* Journal Node (>=3) - requires HTTPS, when Kerberos security is enabled
+* Zookeeper/Failover Controller (2) - on each Name Node
+* Zookeeper (>=3)
+
+<a name="ha-fresh"></a>
+#### Fresh installation
+
+Setup High Availability requires precise order of all steps. For example all zookeeper servers must be running before formatting zkfc (class *hadoop::zkfc::service*), or all journal nodes must running during initial formatting (class *hadoop::namenode::config*) or when converting existing cluster to cluster with high availability.
+
+There are helper parameters to separate overall cluster setup to more stages:
+
+1. *zookeeper\_deployed*=**false**, *hdfs\_deployed=***false**: zookeper quorum and journal nodes quorum
+2. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***false**: HDFS format and bootstrap (primary and secondary NN), setup and launch ZKFC and NN daemons
+3. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***true**: enable History Server and RM state-store feature, if enabled
+
+These parameters are not required, the setup should converge when setup is repeated. They may help with debuging problems though, because less things will fail if the setup is separated to several stages over the whole cluster.
+
+**Example**:
+
+    $master1_hostname = 'hadoop-master1.example.com'
+    $master2_hostname = 'hadoop-master2.example.com'
+    $slaves           = ['hadoop1.example.com', 'hadoop2.example.com', ...]
+    $frontends        = ['hadoop.example.com']
+    $quorum_hostnames = [$master1_hostname, $master2_hostname, 'master3.example.com']
+    $cluster_name     = 'example'
+
+    $hdfs_deployed      = true
+    $zookeeper_deployed = true
+
+    class{'hadoop':
+      hdfs_hostname           => $master1_hostname,
+      hdfs_hostname2          => $master2_hostname,
+      yarn_hostname           => $master1_hostname,
+      yarn_hostname2          => $master2_hostname,
+      historyserer_hostnamr   => $master1_hostname,
+      slaves                  => $slaves,
+      frontends               => $frontends,
+      journalnode_hostnames   => $quorum_hostnames,
+      zookeeper_hostnames     => $quorum_hostnames,
+      cluster_name            => $cluster_name,
+      realm                   => '',
+
+      hdfs_deployed           => $hdfs_deployed,
+      zookeeper_deployed      => $zookeeper_deployed,
+    }
+
+    node 'master1.example.com' {
+      include hadoop::namenode
+      include hadoop::resourcemanager
+      include hadoop::historyserver
+      include hadoop::zkfc
+      include hadoop::journalnode
+
+      class{'zookeeper':
+        hostnames => $quorum_hostnames,
+        realm     => '',
+      }
+    }
+
+    node 'master2.example.com' {
+      include hadoop::namenode
+      include hadoop::resourcemanager
+      include hadoop::zkfc
+      include hadoop::journalnode
+
+      class{'zookeeper':
+        hostnames => $quorum_hostnames,
+        realm     => '',
+      }
+    }
+
+    node 'master3.example.com' {
+      include hadoop::journalnode
+
+      class{'zookeeper':
+        hostnames => $quorum_hostnames,
+        realm     => '',
+      }
+    }
+
+    node 'frontend.example.com' {
+      include hadoop::frontend
+      include hadoop::journalnode
+
+      class{'zookeeper':
+        hostnames => $quorum_hostnames,
+        realm     => '',
+      }
+    }
+
+    node /hadoop\d+.example.com/ {
+      include hadoop::datanode
+      include hadoop::nodemanager
+    }
+
+Note: Journalnode and Zookeeper are not resource intensive daemons and can be collocated with other daemons. In this example the content of *master3.example.com* node can be moved to some slave node or the frontend.
+
+<a name="ha-convert"></a>
+#### Converting non-HA cluster
+
+You can use the example above. But you will need to let skip bootstrap **on secondary Name Node before setup**:
+
+    touch /var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped
+
+And activate HA **on the secondary Name Node after setup** (under *hdfs* user):
+
+    # when kerberos is enabled:
+    #kinit -k -t /etc/security/keytab/nn.ervice.keytab nn/`hostname -f`
+    #
+    hdfs namenode -initializeSharedEdits
+
+<a name="upgrade"></a>
+### Upgrade
+
+The best way is to refresh configrations from the new original (=remove the old) and relaunch puppet on top of it.
+
+For example:
+
+    alternative='cluster'
+    d='hadoop'
+    mv /etc/{d}$/conf.${alternative} /etc/${d}/conf.cdhXXX
+    update-alternatives --auto ${d}-conf
+
+    # upgrade
+    ...
+
+    puppet agent --test
+    #or: puppet apply ...
 
 <a name="reference"></a>
 ##Reference
