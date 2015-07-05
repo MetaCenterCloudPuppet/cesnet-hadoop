@@ -30,6 +30,34 @@ class hadoop::common::hdfs::config {
     require => [ Exec['touch-excludes'], File[$file_slaves] ],
   }
 
+  if $hadoop::ha_credentials {
+    file { "${hadoop::confdir}/zk-auth.txt":
+      owner   => 'hdfs',
+      group   => 'hdfs',
+      mode    => '0600',
+      alias   => 'zk-auth.txt',
+      content => template('hadoop/hadoop/zk-auth.txt.erb'),
+    }
+  } else {
+    file { "${hadoop::confdir}/zk-auth.txt":
+      ensure => absent,
+    }
+  }
+
+  if $hadoop::ha_digest {
+    file { "${hadoop::confdir}/zk-acl.txt":
+      owner   => 'hdfs',
+      group   => 'hdfs',
+      mode    => '0600',
+      alias   => 'zk-acl.txt',
+      content => template('hadoop/hadoop/zk-acl.txt.erb'),
+    }
+  } else {
+    file { "${hadoop::confdir}/zk-acl.txt":
+      ensure => absent,
+    }
+  }
+
   # mapred user is required on name node,
   # it is created by hadoop-yarn package too, but we don't need yarn package with
   # all dependencies just for creating this user

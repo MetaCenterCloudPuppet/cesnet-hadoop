@@ -10,13 +10,15 @@
 #
 # ####`hdfs_hostname2` undef
 #
-# Another Hadoop Filesystem Name Node machine. used for High Availability. This parameter will activate the HDFS HA feature. See [http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html).
+# Another Hadoop Filesystem Name Node machine. Used for High Availability. This parameter will activate the HDFS HA feature. See [http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html](http://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html).
 #
 # If you're converting existing Hadoop cluster without HA to cluster with HA, you need to initialize journalnodes yet:
 #
 #     hdfs namenode -initializeSharedEdits
 #
 # Zookeepers are required for automatic transitions.
+#
+# If Hadoop cluster is secured, it is recommended also secure Zookeeper. See *ha_credentials* and *ha_digest* parameters.
 #
 # ####`yarn_hostname` $::fqdn
 #
@@ -76,6 +78,18 @@
 # Array of Zookeeper machines. Used in HDFS namenode HA for automatic failover and YARN resourcemanager state-store feature.
 #
 # Without zookeepers the manual failover is needed: the namenodes are always started in standby mode and one would need to be activated manually.
+#
+# ####`ha_credentials` undef
+#
+# With enabled high availability of HDFS in secured cluster it is recommended to secure also zookeeper. The value is in the form *USER:PASSWORD*.
+#
+# Set this to something like: **hdfs-zkfcs:PASSWORD**.
+#
+# ####`ha_digest` undef
+#
+# Digest version of *ha_credentials*. You can generate it this way:
+#
+#      java -cp $ZK_HOME/lib/*:$ZK_HOME/zookeeper-*.jar org.apache.zookeeper.server.auth.DigestAuthenticationProvider hdfs-zkfcs:PASSWORD
 #
 # ####`hdfs_name_dirs` (["/var/lib/hadoop-hdfs"], or ["/var/lib/hadoop-hdfs/cache"])
 #
@@ -358,6 +372,8 @@ class hadoop (
   $journalnode_hostnames = undef,
   $zookeeper_hostnames = undef,
 
+  $ha_credentials = undef,
+  $ha_digest = undef,
   $hdfs_name_dirs = $params::hdfs_name_dirs,
   $hdfs_data_dirs = $params::hdfs_data_dirs,
   $hdfs_secondary_dirs = undef,
@@ -610,6 +626,11 @@ DEFAULT
 
   # High Availability of HDFS
   if $hdfs_hostname2 {
+    if !$hadoop::realm or $hadoop::realm == '' {
+      if !$hadoop::ha_credentials or !$hadoop::ha_digest {
+        warning('ha_credentials and ha_digest parameters are recommended in secured HA cluster')
+      }
+    }
     if ! $journalnode_hostnames {
       notice('only QJM HA implemented, journalnodes required for HDFS HA')
     }
@@ -633,7 +654,16 @@ DEFAULT
       'fs.defaultFS' => "hdfs://${hadoop::cluster_name}",
     }
 
-    $ha_hdfs_properties = merge($ha_base_properties, $ha_https_properties)
+    if $hadoop::ha_credentials and $hadoop::ha_diest {
+      $ha_credentials_properties = {
+        'ha.zookeeper.auth' => "@${hadoop::confdir}/zk-auth.txt",
+        'ha.zookeeper.acl' => "@${hadoop::confdir}/zk-acl.txt",
+      }
+    } else {
+      $ha_credentials_properties = undef
+    }
+
+    $ha_hdfs_properties = merge($ha_base_properties, $ha_https_properties, $ha_credentials_properties)
   } else {
     $ha_hdfs_properties = undef
   }
