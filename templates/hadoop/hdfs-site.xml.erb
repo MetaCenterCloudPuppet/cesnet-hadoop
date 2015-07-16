@@ -20,10 +20,6 @@
 <configuration>
 
   <property>
-     <name>hadoop.tmp.dir</name>
-     <value>/var/lib/hadoop-hdfs/${user.name}</value>
-  </property>
-  <property>
      <name>dfs.namenode.name.dir</name>
      <value><%= suffix = scope.lookupvar('hadoop::hdfs_namenode_suffix'); scope.lookupvar('hadoop::_hdfs_name_dirs').map{ |dir| "file://#{dir}/#{suffix}" }.join(',') -%></value>
   </property>
