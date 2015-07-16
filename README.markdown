@@ -701,6 +701,13 @@ Environment to set for all Hadoop daemons.
 
 Recommended features to enable are: **rmstore**, **aggregation** and probably **multihome**.
 
+####`compress_enable` true
+
+Enable compression of intermediate files by snappy codec. This will set following properties:
+
+* *mapred.compress.map.output*: true
+* *mapred.map.output.compression.codec*: "org.apache.hadoop.io.compress.SnappyCodec"
+
 ####`acl` undef
 
 Set to true, if setfacl command is available and /etc/hadoop is on filesystem supporting POSIX ACL.

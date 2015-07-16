@@ -101,6 +101,8 @@ class hadoop::params {
     'dfs.datanode.address' => 'different port with security enabled (original port 50010)',
     'dfs.datanode.http.address' => 'different port with security enabled (original port 50075)',
     'dfs.webhdfs.enabled' => 'read-only Web HDFS access',
+    'mapreduce.map.output.compress' => 'compression of intermediate files',
+    'mapreduce.map.output.compress.codec' => 'compression codec of intermediate files',
     'mapreduce.task.tmp.dir' => 'temporary directory for map and reduce tasks',
     'mapreduce.tasktracker.outofband.heartbeat' => 'let the TaskTracker send an out-of-band heartbeat on task completion to reduce latency',
     'yarn.nodemanager.local-dirs' => 'List of directories to store localized files in.',

@@ -149,6 +149,13 @@
 #
 # Recommended features to enable are: **rmstore**, **aggregation** and probably **multihome**.
 #
+# ####`compress_enable` true
+#
+# Enable compression of intermediate files by snappy codec. This will set following properties:
+#
+# * *mapred.compress.map.output*: true
+# * *mapred.map.output.compression.codec*: "org.apache.hadoop.io.compress.SnappyCodec"
+#
 # ####`acl` undef
 #
 # Set to true, if setfacl command is available and /etc/hadoop is on filesystem supporting POSIX ACL.
@@ -382,6 +389,7 @@ class hadoop (
   $descriptions = undef,
   $environment = undef,
   $features = $params::features,
+  $compress_enable = true,
   $acl = undef,
   $alternatives = $params::alternatives,
   $authorization = undef,
@@ -601,6 +609,15 @@ DEFAULT
     $agg_properties = undef
   }
 
+  if $hadoop::compress_enable {
+    $compress_properties = {
+      'mapreduce.map.output.compress' => true,
+      'mapreduce.map.output.compress.codec' => 'org.apache.hadoop.io.compress.SnappyCodec',
+    }
+  } else {
+    $compress_properties = undef
+  }
+
   if $hadoop::https {
     if !$hadoop::realm or $hadoop::realm == '' {
       err('Kerberos feature required for https support.')
@@ -738,7 +755,7 @@ DEFAULT
     $preset_authorization = {}
   }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))
