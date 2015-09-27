@@ -6,6 +6,7 @@
   dn   = scope.lookupvar('hadoop::daemons')['datanode']
   jn   = scope.lookupvar('hadoop::daemons')['journalnode']
   zkfc = scope.lookupvar('hadoop::daemons')['hdfs-zkfc']
+  nfs  = scope.lookupvar('hadoop::daemons')['nfs']
 
   realm = scope.lookupvar('hadoop::realm')
   has_security = scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty?
@@ -51,6 +52,9 @@ while [ -n "$1" ]; do
 <%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>
 		echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1&
 <%end-%>
+<%if scope.lookupvar('hadoop::nfs') -%>
+		echo "<%= nfs -%> $1"; service <%= nfs -%> $1&
+<%end-%>
 		wait
 		;;
 	stop)
@@ -71,6 +75,9 @@ while [ -n "$1" ]; do
 <%end-%>
 <%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>
 		echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1&
+<%end-%>
+<%if scope.lookupvar('hadoop::nfs') -%>
+		echo "<%= nfs -%> $1"; service <%= nfs -%> $1&
 <%end-%>
 		wait
 <%if scope.lookupvar('hadoop::daemon_namenode') -%>
@@ -120,6 +127,9 @@ while [ -n "$1" ]; do
 <%end-%>
 <%if scope.lookupvar('hadoop::daemon_hdfs_zkfc') -%>
 		echo "<%= zkfc -%> $1"; service <%= zkfc -%> $1
+<%end-%>
+<%if scope.lookupvar('hadoop::nfs') -%>
+		echo "<%= nfs -%> $1"; service <%= nfs -%> $1
 <%end-%>
 		;;
 	esac

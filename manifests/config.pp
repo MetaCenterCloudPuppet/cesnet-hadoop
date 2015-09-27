@@ -26,4 +26,6 @@ class hadoop::config {
   }
 
   if $hadoop::frontend { contain hadoop::frontend::config }
+
+  if $hadoop::nfs { contain hadoop::nfs::config }
 }

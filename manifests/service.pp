@@ -10,4 +10,5 @@ class hadoop::service {
   if $hadoop::daemon_nodemanager { contain hadoop::nodemanager::service }
   if $hadoop::daemon_datanode { contain hadoop::datanode::service }
   if $hadoop::frontend { contain hadoop::frontend::service }
+  if $hadoop::nfs { contain hadoop::nfs::service }
 }

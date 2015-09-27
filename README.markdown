@@ -19,6 +19,7 @@
     * [High Availability](#ha)
      * [Fresh installation](#ha-fresh)
      * [Converting non-HA cluster](#ha-convert)
+    * [HDFS NFS Gateway](#nfs)
     * [Upgrade](#upgrade)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Classes](#classes)
@@ -174,6 +175,7 @@ Following parameters are used for security (see also [Module Parameters](#parame
   * /etc/security/keytab/nm.service.keytab (on node manager nodes)
   * /etc/security/keytab/nn.service.keytab (on name nodes)
   * /etc/security/keytab/rm.service.keytab (on resource manager node)
+  * /etc/security/keytab/nfs.service.keytab (on nfs gateway node)
 
 * *authorization* (empty hash by default)
 
@@ -242,7 +244,7 @@ In the default value in cesnet-hadoop module are also mappings for the following
 *hadoop.security.auth_to_local* is needed and can't be removed if:
 
 * Kerberos principals and local user names are different
- * they differ in the official documenation: *nn/\_HOST* vs *hdfs*, ...
+ * they differ in the official documentation: *nn/\_HOST* vs *hdfs*, ...
  * they are the same in Cloudera documentation: hdfs/\_HOST vs *hdfs*, ...
 * when cross-realm authentication is needed
 * when support for more principals is needed (another Hadoop addon, ...)
@@ -319,7 +321,7 @@ The following hadoop class parameters are used for HTTPS (see also [Module Param
 * *https_keystore_keypassword* (undef)
   Certificates keystore key password. If not specified, *https_keystore_password* is used.
 
-Consider also checking POSIX ACL support in the system and enable *acl* in Hadoop module. It's usefull for more pedantic rights on ssl-\*.xml files, which needs to be read by Hadoop additions (like HBase).
+Consider also checking POSIX ACL support in the system and enable *acl* in Hadoop module. It's useful for more pedantic rights on ssl-\*.xml files, which needs to be read by Hadoop additions (like HBase).
 
 
 <a name="multihome"></a>
@@ -353,7 +355,7 @@ Multi-home feature enables following properties:
 <a name="ha"></a>
 ###High Availability
 
-Threre are needed also these daemons for High Availability:
+There are needed also these daemons for High Availability:
 
 * Secondary Name Node (1) - there will be two Name Node servers
 * Journal Node (>=3) - requires HTTPS, when Kerberos security is enabled
@@ -367,11 +369,11 @@ Setup High Availability requires precise order of all steps. For example all zoo
 
 There are helper parameters to separate overall cluster setup to more stages:
 
-1. *zookeeper\_deployed*=**false**, *hdfs\_deployed=***false**: zookeper quorum and journal nodes quorum
+1. *zookeeper\_deployed*=**false**, *hdfs\_deployed=***false**: zookeeper quorum and journal nodes quorum
 2. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***false**: HDFS format and bootstrap (primary and secondary NN), setup and launch ZKFC and NN daemons
 3. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***true**: enable History Server and RM state-store feature, if enabled
 
-These parameters are not required, the setup should converge when setup is repeated. They may help with debuging problems though, because less things will fail if the setup is separated to several stages over the whole cluster.
+These parameters are not required, the setup should converge when setup is repeated. They may help with debugging problems though, because less things will fail if the setup is separated to several stages over the whole cluster.
 
 **Example**:
 
@@ -467,10 +469,86 @@ And activate HA **on the secondary Name Node after setup** (under *hdfs* user):
     #
     hdfs namenode -initializeSharedEdits
 
+<a name="nfs"></a>
+#### HDFS NFS Gateway
+
+HDFS NFS Gateway provides limited support for direct access to HDFS. Beware, the NFS is still problematic and unstable (tested with Hadoop 2.6.0/Cloudera 5.4.7).
+
+The class *hadoop::nfs* will setup the daemon and mount locally HDFS to /hdfs. The resource *hadoop::nfs::mount* is used to perform the mounting. If mounting remotely, don't forget to add authorization access to the remote HDFS NFS server.
+
+HDFS NFS Gateway doesn't support any authentication, so we recommend to filter clients at least by hostnames/IPs. By default only local machine is allowed to mount the NFS (*nfs_exports* parameter).
+
+Useful properties:
+
+* *nfs.superuser*: super-user name (not configured by default)
+* *nfs.metrics.percentiles.intervals*: **100** will enable latency histogram in Nfs3Metrics
+* *nfs.port.monitoring.disabled*: **true** to allow mounting from unprivileged users
+
+Useful environments:
+
+* *HADOOP\_NFS3\_OPTS*: JVM settings (heap, GC, ...)
+
+**Example 1**: local HDFS NFS Gateway
+
+    class{"hadoop":
+       ...
+       #nfs_dumpdir => '/mnt/scratch/.hdfs-nfs',
+       nfs_hostnames => ['hadoop-frontend.example.com'],
+    }
+
+    node 'hadoop-frontend.example.com' {
+      include hadoop::nfs
+    }
+
+**Example 2**: remote HDFS NFS Gateway
+
+    class{"hadoop":
+       ...
+       nfs_hostnames => ['hadoop-frontend.example.com', 'external-host.example.com'],
+       #nfs_dumpdir => '/mnt/scratch/.hdfs-nfs',
+       nfs_exports => "${::fqdn} rw; external-host.example.com rw",
+    }
+
+    node 'hadoop-frontend.example.com' {
+      include hadoop::nfs
+    }
+
+    node 'external-host.example.com' {
+      hadoop::nfs::mount { '/mnt/hadoop':
+        nfs_hostname => 'hadoop-frontend.example.com',
+      }
+    }
+
+##### Security
+
+The keytab file */etc/security/keytab/hdfs.service.keytab* is required. It must contain system user for HDFS NFS Gateway (used also as Hadoop proxy user), which is 'hdfs'. Principals needed:
+
+* host/&lt;HOSTNAME&gt;@&lt;REALM&gt;
+* hdfs/&lt;HOSTNAME&gt;@&lt;REALM&gt;
+
+##### Authorization
+
+*root* user must be authorized for client access to able to mount. By default it is not needed (authorization is '\*'). See *authorization* parameter.
+
+Example of changing HADOOP default ACL to more strict settings:
+
+     authorization => {
+       'rules' => 'limit',
+       'security.client.protocol.acl' => 'root hadoop,hbase,hive,spark,users'
+       'security.service.authorization.default.acl' => ' hadoop,hbase,hive,spark,users',
+     }
+
+##### Quick check
+
+    nfs_hostname=`hostname -f`
+
+    rpcinfo -p ${nfs_hostname}
+    showmount -e ${nfs_hostname}
+
 <a name="upgrade"></a>
 ### Upgrade
 
-The best way is to refresh configrations from the new original (=remove the old) and relaunch puppet on top of it.
+The best way is to refresh configurations from the new original (=remove the old) and relaunch puppet on top of it.
 
 For example:
 
@@ -533,7 +611,11 @@ For example:
  * format
  * install
  * service
-* **nodemanager** - YARN Node Manager.
+* **nfs** - HDFS NFS Gateway
+ * config
+ * install
+ * service
+* **nodemanager** - YARN Node Manager
  * config
  * install
  * service
@@ -552,6 +634,7 @@ For example:
 * **kinit** - Init credentials
 * **kdestroy** - Destroy credentials
 * **mkdir** - Creates a directory on HDFS
+* **nfs::mount** - Mount NFS provided by the HDFS NFS gateway
 
 <a name="parameters"></a>
 ###Module Parameters
@@ -606,12 +689,13 @@ Name of the cluster. Used during initial formatting of HDFS. For non-HA configur
   * /etc/security/keytab/nm.service.keytab (on node manager nodes)
   * /etc/security/keytab/nn.service.keytab (on name nodes)
   * /etc/security/keytab/rm.service.keytab (on resource manager node)
+  * /etc/security/keytab/hdfs.service.keytab (on nfs gateway node)
 
-It is used also as cookie domain (lowercased), if https is enabled. This may be overrided by http.authentication.cookie.domain in *properties*.
+It is automatically set cookie domain (to lowercased *realm(), if https is enabled. This may be overrided by http.authentication.cookie.domain in *properties*.
 
 ####`historyserver_hostname` undef
 
-History Server machine. Used *yarn_hostname* by default.
+History Server machine. Used *yarn\_hostname* by default.
 
 ####`nodemanager_hostnames` undef
 
@@ -624,6 +708,10 @@ Array of Data Node machines. Used *slaves* by default.
 ####`journalnode_hostnames` undef
 
 Array of HDFS Journal Node machines. Used in HDFS namenode HA.
+
+####`nfs_hostnames` []
+
+Array of HDFS NFS Gateway hostnames. No gateways are configured by default.
 
 ####`zookeeper_hostnames` undef
 
@@ -828,6 +916,22 @@ Keytab file for HTTPS. It will be copied for each daemon user and according perm
 
 Minimal permitted UID of Hadoop users. Used in Linux containers, when security is enabled.
 
+####`nfs_dumpdir` '/tmp/.hdfs-nfs'
+
+Directory used to temporarily save out-of-order writes before writing to HDFS. Enough space is needed (>= 1 GB).
+
+####`nfs_exports` "${::fqdn} rw"
+
+NFS host access privileges. As HDFS NFS Gateway doesn't have any authentization, we recommend to limit access according to IP/hostnames. Java regular expressions are used, entrieas are separated by ';'. Example: '192.168.0.0/22 rw ; \\w*\\.example\\.com ; host1.test.org ro'.
+
+####`nfs_mount` '/hdfs'
+
+Default directory to mount HDFS NFS Gateway. HDFS NFS Gateway is automatically mounted locally, but this can be disabled using empty string. Mounts are handled by **hadoop::nfs::mount** resource.
+
+####`nfs_mount_options` undef
+
+Additional NFS mount options.
+
 ####`perform` false
 
 Launch all installation and setup here, from hadoop class.
@@ -863,6 +967,10 @@ Keytab file for YARN Resource Manager. This will set also property *yarn.resourc
 ####`keytab_nodemanager` '/etc/security/keytab/nm.service.keytab'
 
 Keytab file for YARN Node Manager. This will set also property *yarn.nodemanager.keytab*, if not specified directly.
+
+####`keytab_nfs` '/etc/security/keytab/hdfs.service.keytab'
+
+Keytab file for HDFS NFS Gateway. This will set also property *nfs.keytab.file*, if not specified directly.
 
 
 <a name="limitations"></a>

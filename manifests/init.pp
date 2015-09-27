@@ -377,6 +377,7 @@ class hadoop (
   $nodemanager_hostnames = undef,
   $datanode_hostnames = undef,
   $journalnode_hostnames = undef,
+  $nfs_hostnames = [],
   $zookeeper_hostnames = undef,
 
   $ha_credentials = undef,
@@ -401,6 +402,12 @@ class hadoop (
   $https_keytab = $params::https_keytab,
   $https_keystore_keypassword = $params::https_keystore_keypassword,
   $min_uid = $params::uid_min,
+  $nfs_dumpdir = $params::nfs_dumpdir,
+  $nfs_exports = "${::fqdn} rw",
+  $nfs_mount = $params::nfs_mount,
+  $nfs_mount_options = undef,
+  $nfs_proxy_user = undef,
+  $nfs_system_user = $params::nfs_system_user,
   $perform = $params::perform,
 
   $hdfs_deployed = $params::hdfs_deployed,
@@ -412,6 +419,7 @@ class hadoop (
   $keytab_journalnode = $params::keytab_journalnode,
   $keytab_resourcemanager = $params::keytab_resourcemanager,
   $keytab_nodemanager = $params::keytab_nodemanager,
+  $keytab_nfs = $params::keytab_nfs,
 ) inherits hadoop::params {
   include 'stdlib'
 
@@ -429,6 +437,14 @@ class hadoop (
   $_hdfs_data_dirs = $hdfs_data_dirs
   if !$hdfs_secondary_dirs { $_hdfs_secondary_dirs = $hadoop::hdfs_name_dirs }
   if !$hdfs_journal_dirs { $_hdfs_journal_dirs = $hadoop::hdfs_name_dirs }
+
+  if !$nfs_proxy_user {
+    if $hadoop::realm and $hadoop::realm != '' {
+      $_nfs_proxy_user = 'nfs'
+    } else {
+      $_nfs_proxy_user = $nfs_system_user
+    }
+  }
 
   if $::fqdn == $hdfs_hostname or $::fqdn == $hdfs_hostname2 {
     $daemon_namenode = true
@@ -483,6 +499,11 @@ class hadoop (
   if $zookeeper_hostnames {
     $zkquorum0 = join($zookeeper_hostnames, ':2181,')
     $zkquorum = "${zkquorum0}:2181"
+  }
+  if member($nfs_hostnames, $::fqdn) {
+    $nfs = true
+  } else {
+    $nfs = false
   }
 
   if $datanode_hostnames {
@@ -721,6 +742,27 @@ DEFAULT
   }
   $zoo_properties = merge($zoo_hdfs_properties, $zoo_yarn_properties)
 
+  if $hadoop::nfs_hostnames and $hadoop::nfs_hostnames != undef and !empty($hadoop::nfs_hostnames) {
+    $nfs_base_properties = {
+      "hadoop.proxyuser.${_nfs_proxy_user}.groups" => '*',
+      "hadoop.proxyuser.${_nfs_proxy_user}.hosts" => '*',
+      'dfs.namenode.accesstime.precision' => '3600000',
+      'nfs.dump.dir' => $hadoop::nfs_dumpdir,
+      'nfs.exports.allowed.hosts' => $hadoop::nfs_exports,
+    }
+    if $hadoop::realm and $hadoop::realm != '' {
+      $nfs_sec_properties = {
+        'nfs.keytab.file' => $hadoop::keytab_nfs,
+        'nfs.kerberos.principal' => "${hadoop::_nfs_proxy_user}/_HOST@${hadoop::realm}",
+      }
+    } else {
+      $nfs_sec_properties = undef
+    }
+    $nfs_properties = merge($nfs_base_properties, $nfs_sec_properties)
+  } else {
+    $nfs_properties = undef
+  }
+
   if $authorization {
     case $authorization['rules'] {
       'limit', true: {
@@ -755,7 +797,7 @@ DEFAULT
     $preset_authorization = {}
   }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $ha_properties, $zoo_properties, $properties)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))

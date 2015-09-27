@@ -9,4 +9,5 @@ class hadoop::install {
   if $hadoop::daemon_datanode { contain hadoop::datanode::install }
   if $hadoop::daemon_nodemanager { contain hadoop::nodemanager::install }
   if $hadoop::frontend { contain hadoop::frontend::install }
+  if $hadoop::nfs { contain hadoop::nfs::install }
 }

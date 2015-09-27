@@ -46,7 +46,7 @@
 <% end -%>
 <% props_keys.each do |p| -%>
 <% value = scope.lookupvar('hadoop::props')[p] -%>
-<% if p =~ /^hadoop\.hdfs\.|^dfs\./ and value != '::undef' -%>
+<% if p =~ /^hadoop\.hdfs\.|^dfs\.|^nfs\./ and value != '::undef' -%>
 <% if scope.lookupvar('hadoop::descs')[p] -%>
   <!-- <%= scope.lookupvar('hadoop::descs')[p] %> -->
 <% end -%>

@@ -15,6 +15,8 @@ class hadoop::params {
       $packages_jn = [ 'hadoop-hdfs' ]
       $packages_hdfs_zkfc = [ 'hadoop-hdfs' ]
       $packages_client = [ 'hadoop-client', 'hadoop-mapreduce-examples' ]
+      $packages_nfs = [ 'hadoop-nfs' ]
+      $packages_system_nfs = [ 'nfs-utils' ]
 
       $daemons = {
         'namenode' => 'hadoop-namenode',
@@ -24,6 +26,8 @@ class hadoop::params {
         'historyserver' => 'hadoop-historyserver',
         'journalnode' => 'hadoop-journalnode',
         'hdfs-zkfc' => 'hadoop-zkfc',
+        'nfs' => 'hadoop-nfs',
+        'portmap' => undef,
       }
       $envs = {
         'common' => '/etc/sysconfig/hadoop',
@@ -32,6 +36,7 @@ class hadoop::params {
         'historyserver' => '/etc/sysconfig/hadoop-historyserver',
         'journalnode' => '/etc/sysconfig/hadoop-journalnode',
         'hdfs-zkfc' => '/etc/sysconfig/hadoop-zkfc',
+        'nfs' => '/etc/default/hadoop-nfs',
       }
 
       $confdir = '/etc/hadoop'
@@ -49,6 +54,14 @@ class hadoop::params {
       $packages_jn = [ 'hadoop-hdfs-journalnode' ]
       $packages_hdfs_zkfc = [ 'hadoop-hdfs-zkfc' ]
       $packages_client = [ 'hadoop-client', 'hadoop-doc' ]
+      $packages_nfs = $::osfamily ? {
+        /Debian/ => [ 'hadoop-hdfs-nfs3' ],
+        /RedHat/ => [ 'hadoop-hdfs-nfs3' ],
+      }
+      $packages_system_nfs = $::osfamily ? {
+        /Debian/ => [ 'nfs-common' ],
+        /RedHat/ => [ 'nfs-utils' ],
+      }
 
       $daemons = {
         'namenode' => 'hadoop-hdfs-namenode',
@@ -58,6 +71,11 @@ class hadoop::params {
         'historyserver' => 'hadoop-mapreduce-historyserver',
         'journalnode' => 'hadoop-hdfs-journalnode',
         'hdfs-zkfc' => 'hadoop-hdfs-zkfc',
+        'nfs' => 'hadoop-hdfs-nfs3',
+        'portmap' => $::osfamily ? {
+          /Debian/ => undef,
+          /RedHat/ => 'rpcbind',
+        }
       }
       $envs = {
         'common' => '/etc/default/hadoop',
@@ -66,6 +84,7 @@ class hadoop::params {
         'historyserver' => '/etc/default/hadoop-mapreduce-historyserver',
         'journalnode' => '/etc/default/hadoop-hdfs-journalnode',
         'hdfs-zkfc' => '/etc/default/hadoop-hdfs-zkfc',
+        'nfs' => '/etc/default/hadoop-hdfs-nfs3',
       }
 
       $confdir = '/etc/hadoop/conf'
@@ -93,6 +112,7 @@ class hadoop::params {
   $descriptions = {
     'dfs.hosts' => 'permitted data nodes',
     'dfs.hosts.exclude' => 'decommissioning of data nodes',
+    'dfs.namenode.accesstime.precision' => 'the access time for an HDFS file is precise up to this value, setting a value of 0 disables access times for HDFS',
     'dfs.namenode.rpc-bind-host' => 'bind address for HDFS RPC (must be used 0.0.0.0 hack for multihome)',
     'hadoop.rcp.protection' => 'authentication, integrity, privacy',
     'hadoop.security.auth_to_local' => 'give Kerberos principles proper groups (through mapping to local users), also useful when default realm is different from the service principals',
@@ -158,6 +178,10 @@ class hadoop::params {
     /RedHat-Fedora/ => '/var/cache/hadoop-mapreduce',
     /Debian|RedHat/ => '/var/lib/hadoop-mapreduce',
   }
+  $nfs_dumpdir = '/tmp/.hdfs-nfs'
+  $nfs_mount = '/hdfs'
+  $nfs_system_user = 'hdfs'
+  $nfs_system_group = 'hdfs'
   $default_uid_min = "${::osfamily}-${::operatingsystem}" ? {
     /RedHat-Fedora/ => 1000,
     /RedHat/        => 500,
@@ -212,4 +236,5 @@ class hadoop::params {
   $keytab_journalnode = '/etc/security/keytab/jn.service.keytab'
   $keytab_resourcemanager = '/etc/security/keytab/rm.service.keytab'
   $keytab_nodemanager = '/etc/security/keytab/nm.service.keytab'
+  $keytab_nfs = '/etc/security/keytab/nfs.service.keytab'
 }
