@@ -4,9 +4,9 @@
 #
 class hadoop::namenode::config {
   include ::stdlib
-  contain ::hadoop::common::config
-  contain ::hadoop::common::hdfs::config
-  contain ::hadoop::common::hdfs::daemon
+  contain hadoop::common::config
+  contain hadoop::common::hdfs::config
+  contain hadoop::common::hdfs::daemon
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)

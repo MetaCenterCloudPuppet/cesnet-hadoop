@@ -2,9 +2,9 @@
 #
 class hadoop::datanode::config {
   include ::stdlib
-  contain ::hadoop::common::config
-  contain ::hadoop::common::hdfs::config
-  contain ::hadoop::common::hdfs::daemon
+  contain hadoop::common::config
+  contain hadoop::common::hdfs::config
+  contain hadoop::common::hdfs::daemon
 
   $keytab = $hadoop::keytab_datanode
   $user = 'hdfs'
