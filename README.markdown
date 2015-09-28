@@ -246,7 +246,6 @@ In the default value in cesnet-hadoop module are also mappings for the following
  * they differ in the official documentation: *nn/\_HOST* vs *hdfs*, ...
  * they are the same in Cloudera documentation: hdfs/\_HOST vs *hdfs*, ...
 * when cross-realm authentication is needed
-* when support for more principals is needed (another Hadoop addon, ...)
 
 <a name="https"></a>
 ###Enable HTTPS

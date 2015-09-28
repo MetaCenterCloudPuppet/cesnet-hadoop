@@ -178,6 +178,7 @@ class hadoop (
       'hadoop.security.auth_to_local' => "
 RULE:[2:\$1;\$2@\$0](^jhs;.*@${realm}$)s/^.*$/mapred/
 RULE:[2:\$1;\$2@\$0](^[ndjs]n;.*@${realm}$)s/^.*$/hdfs/
+RULE:[2:\$1;\$2@\$0](^nfs;.*@${realm}$)s/^.*$/${_nfs_proxy_user}/
 RULE:[2:\$1;\$2@\$0](^[rn]m;.*@${realm}$)s/^.*$/yarn/
 RULE:[2:\$1;\$2@\$0](^hbase;.*@${realm}$)s/^.*$/hbase/
 RULE:[2:\$1;\$2@\$0](^hive;.*@${realm}$)s/^.*$/hive/
