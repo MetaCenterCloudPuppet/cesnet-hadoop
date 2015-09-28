@@ -19,7 +19,7 @@
 # * User['hdfs']
 #
 define hadoop::mkdir($touchfile, $owner = undef, $group = undef, $mode = undef, $recursive = false) {
-  include hadoop::common::hdfs::config
+  include ::hadoop::common::hdfs::config
 
   $dir = $title
   $env = [ "KRB5CCNAME=FILE:/tmp/krb5cc_nn_puppet_${touchfile}" ]

@@ -5,9 +5,9 @@
 # Requires configured https on HDFS.
 #
 class hadoop::journalnode {
-  include 'hadoop::journalnode::install'
-  include 'hadoop::journalnode::config'
-  include 'hadoop::journalnode::service'
+  include ::hadoop::journalnode::install
+  include ::hadoop::journalnode::config
+  include ::hadoop::journalnode::service
 
   if $hadoop::realm and $hadoop::realm != '' and !$hadoop::https {
     warning('https is required for using journal nodes')

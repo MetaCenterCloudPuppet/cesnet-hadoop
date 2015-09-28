@@ -27,7 +27,7 @@ class hadoop::nfs::service {
     # namenode should be launched first if it is colocated with nfs
     # (just cosmetics, some initial exceptions in logs)
     if $hadoop::daemon_namenode {
-      include hadoop::namenode::service
+      include ::hadoop::namenode::service
       Class['hadoop::namenode::service'] -> Class['hadoop::nfs::service']
     }
 

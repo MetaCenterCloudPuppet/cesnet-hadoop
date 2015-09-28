@@ -3,10 +3,10 @@
 # This class is called from hadoop::namenode. For second Name Node in high availability cluster, the first Name Node must be already configured.
 #
 class hadoop::namenode::config {
-  include stdlib
-  contain hadoop::common::config
-  contain hadoop::common::hdfs::config
-  contain hadoop::common::hdfs::daemon
+  include ::stdlib
+  contain ::hadoop::common::config
+  contain ::hadoop::common::hdfs::config
+  contain ::hadoop::common::hdfs::daemon
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)

@@ -22,7 +22,7 @@ class hadoop::namenode::service {
   # journalnode should be launched first if it is collocated with namenode
   # (to behave better during initial installation and enabled HDFS HA)
   if $hadoop::daemon_journalnode {
-    include hadoop::journalnode::service
+    include ::hadoop::journalnode::service
     Class['hadoop::journalnode::service'] -> Class['hadoop::namenode::service']
   }
 

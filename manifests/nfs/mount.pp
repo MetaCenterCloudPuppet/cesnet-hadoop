@@ -11,7 +11,7 @@ define hadoop::nfs::mount(
   $nfs_mount_options = $hadoop::nfs_mount_options,
   $nfs_mount_base_options = 'vers=3,proto=tcp,nolock,noacl,sync',
 ) {
-  include stdlib
+  include ::stdlib
 
   if !defined(Class['hadoop']) {
     fail('\'hadoop\' class is required for hadoop::nfs::mount')

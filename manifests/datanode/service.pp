@@ -9,7 +9,7 @@ class hadoop::datanode::service {
     }
 
     if $hadoop::daemon_namenode {
-      include hadoop::namenode::service
+      include ::hadoop::namenode::service
       Class['hadoop::namenode::service'] -> Class['hadoop::datanode::service']
     }
   } else {

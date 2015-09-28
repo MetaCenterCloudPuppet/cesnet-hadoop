@@ -15,14 +15,14 @@ class hadoop::nodemanager::service {
     # namenode must be launched first if it is colocated with nodemanager
     # (conflicting ports, and it's dependency anyway) (tested on hadoop 2.4.1)
     if $hadoop::daemon_namenode {
-      include hadoop::namenode::service
+      include ::hadoop::namenode::service
       Class['hadoop::namenode::service'] -> Class['hadoop::nodemanager::service']
     }
 
     # resourcemanager must be launched before nodemanager
     # (on Debian YARN ResourceManager is started unconfigured and it talks nonsense to nodemanagers)
     if $hadoop::daemon_resourcemanager {
-      include hadoop::resourcemanager::service
+      include ::hadoop::resourcemanager::service
       Class['hadoop::resourcemanager::service'] -> Class['hadoop::nodemanager::service']
     }
   } else {

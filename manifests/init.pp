@@ -60,7 +60,7 @@ class hadoop (
   $keytab_nodemanager = $params::keytab_nodemanager,
   $keytab_nfs = $params::keytab_nfs,
 ) inherits hadoop::params {
-  include 'stdlib'
+  include ::stdlib
 
   # detailed deployment bases on convenient parameters
   if $historyserver_hostname { $hs_hostname = $historyserver_hostname }
@@ -442,9 +442,9 @@ DEFAULT
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))
 
   if $hadoop::perform {
-    include 'hadoop::install'
-    include 'hadoop::config'
-    include 'hadoop::service'
+    include ::hadoop::install
+    include ::hadoop::config
+    include ::hadoop::service
 
     Class['hadoop::install'] ->
     Class['hadoop::config'] ~>

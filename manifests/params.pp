@@ -75,7 +75,7 @@ class hadoop::params {
         'portmap' => $::osfamily ? {
           /Debian/ => undef,
           /RedHat/ => 'rpcbind',
-        }
+        },
       }
       $envs = {
         'common' => '/etc/default/hadoop',

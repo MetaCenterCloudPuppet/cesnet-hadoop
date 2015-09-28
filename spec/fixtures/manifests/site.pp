@@ -1,1 +1,1 @@
-include hadoop
+include ::hadoop

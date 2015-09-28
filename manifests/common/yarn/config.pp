@@ -3,8 +3,8 @@
 # Setup the "yarn part" on the nodes. This class is used for example for historyserver, resourcemanager, nodemanagers or frontends.
 #
 class hadoop::common::yarn::config {
-  include hadoop::common::install
-  include hadoop::common::slaves
+  include ::hadoop::common::install
+  include ::hadoop::common::slaves
 
   if $hadoop::nodemanager_hostnames {
     $file_slaves = 'slaves-yarn'

@@ -1,8 +1,8 @@
 # == Class hadoop::common::hdfs::config
 #
 class hadoop::common::hdfs::config {
-  include hadoop::common::install
-  include hadoop::common::slaves
+  include ::hadoop::common::install
+  include ::hadoop::common::slaves
 
   if $hadoop::datanode_hostnames {
     $file_slaves = 'slaves-hdfs'
@@ -77,7 +77,7 @@ class hadoop::common::hdfs::config {
         system     => true,
         gid        => 'mapred',
         groups     => [ 'hadoop' ],
-        require    => [Group['mapred']]
+        require    => [Group['mapred']],
       }
     }
     /Debian|RedHat/: {
@@ -91,7 +91,7 @@ class hadoop::common::hdfs::config {
         system     => true,
         gid        => 'mapred',
         groups     => [ 'hadoop' ],
-        require    => [Group['mapred']]
+        require    => [Group['mapred']],
       }
     }
     default: {
@@ -121,7 +121,7 @@ class hadoop::common::hdfs::config {
       system     => true,
       gid        => 'mapred',
       groups     => [ 'hadoop' ],
-      require    => [Group['mapred']]
+      require    => [Group['mapred']],
     }
   }
 
