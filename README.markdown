@@ -391,7 +391,7 @@ These parameters are not required, the setup should converge when setup is repea
       hdfs_hostname2          => $master2_hostname,
       yarn_hostname           => $master1_hostname,
       yarn_hostname2          => $master2_hostname,
-      historyserer_hostnamr   => $master1_hostname,
+      historyserer_hostname   => $master1_hostname,
       slaves                  => $slaves,
       frontends               => $frontends,
       journalnode_hostnames   => $quorum_hostnames,
@@ -463,7 +463,7 @@ You can use the example above. But you will need to let skip bootstrap **on seco
 
 And activate HA **on the secondary Name Node after setup** (under *hdfs* user):
 
-    # when kerberos is enabled:
+    # when Kerberos is enabled:
     #kinit -k -t /etc/security/keytab/nn.ervice.keytab nn/`hostname -f`
     #
     hdfs namenode -initializeSharedEdits
@@ -593,8 +593,8 @@ For example:
 * `service`
 * **`datanode`**: HDFS Data Node
 * `datanode::config`
-* `datanode::instal`
-* `datanode::servic`
+* `datanode::install`
+* `datanode::service`
 * **`frontend`**: Hadoop client and examples
 * `frontend::config`
 * `frontend::install`
@@ -626,9 +626,9 @@ For example:
 * `resourcemanager::install`
 * `resourcemanager::service`
 * **`zkfc`**: HDFS Zookeeper/Failover Controller
-* `zkfs::config`
-* `zkfs::install`
-* `zkfs::service`
+* `zkfc::config`
+* `zkfc::install`
+* `zkfc::service`
 
 <a name="resources"></a>
 ###Resource Types
@@ -966,7 +966,7 @@ Enough space is needed (>= 1 GB).
 
 NFS host access privileges. Default: "${::fqdn} rw".
 
-As HDFS NFS Gateway doesn't have any authentization, we recommend to limit access according to IP/hostnames. Java regular expressions are used, entrieas are separated by ';'. Example: '192.168.0.0/22 rw ; \\w*\\.example\\.com ; host1.test.org ro'.
+As HDFS NFS Gateway doesn't have any authentication, we recommend to limit access according to IP/hostnames. Java regular expressions are used, entries are separated by ';'. Example: '192.168.0.0/22 rw ; \\w*\\.example\\.com ; host1.test.org ro'.
 
 #####`nfs_hostnames`
 
@@ -1028,7 +1028,7 @@ With security there is required:
 * /etc/security/keytab/rm.service.keytab (on resource manager node)
 * /etc/security/keytab/nfs.service.keytab (on nfs gateway node)
 
-If https is enabled, cookie domain is set automatically to lowercased *realm*. This may be overrided by *http.authentication.cookie.domain* in *properties*.
+If https is enabled, cookie domain is set automatically to lowercased *realm*. This may be overridden by *http.authentication.cookie.domain* in *properties*.
 
 #####`slaves`
 
