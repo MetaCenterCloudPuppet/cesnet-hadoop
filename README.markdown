@@ -532,13 +532,13 @@ Principals needed:
 <a name="nfs-auth"></a>
 ##### Authorization
 
-*root* user must be authorized for client access to able to mount. By default it is not needed (authorization is '\*'). See *authorization* parameter.
+*root* user must be authorized for client access to able to mount. In secured cluster, *nfs* user needs to be authorized too. By default this is not needed, authorization is '\*'. See *authorization* parameter.
 
 Example of changing HADOOP default ACL to more strict settings:
 
      authorization => {
        'rules' => 'limit',
-       'security.client.protocol.acl' => 'root hadoop,hbase,hive,spark,users'
+       'security.client.protocol.acl' => 'root,nfs hadoop,hbase,hive,spark,users'
        'security.service.authorization.default.acl' => ' hadoop,hbase,hive,spark,users',
      }
 
