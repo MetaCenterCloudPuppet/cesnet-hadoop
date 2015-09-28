@@ -10,7 +10,7 @@ class hadoop (
   $slaves = $params::slaves,
   $frontends = [],
   $cluster_name = $params::cluster_name,
-  $realm,
+  $realm = '',
 
   $historyserver_hostname = undef,
   $nodemanager_hostnames = undef,

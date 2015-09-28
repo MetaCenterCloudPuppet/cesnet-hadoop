@@ -1015,7 +1015,9 @@ Launch all installation and setup here, from hadoop class. Default: false.
 
 #####`realm`
 
-Enable security and Kerberos realm to use. Required parameter, empty string disables the security.
+Enable security and Kerberos realm to use. Default: ''.
+
+Empty string disables the security.
 
 With security there is required:
 
