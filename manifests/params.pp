@@ -96,13 +96,6 @@ class hadoop::params {
     }
   }
 
-  $alternatives = "${::osfamily}-${::operatingsystem}" ? {
-    /RedHat-Fedora/ => undef,
-    # https://github.com/puppet-community/puppet-alternatives/issues/18
-    /RedHat/        => '',
-    /Debian/        => 'cluster',
-  }
-
   $hdfs_hostname = $::fqdn
   $yarn_hostname = $::fqdn
   $slaves = [ $::fqdn ]

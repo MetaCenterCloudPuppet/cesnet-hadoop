@@ -31,7 +31,7 @@ class hadoop (
   $features = $params::features,
   $compress_enable = true,
   $acl = undef,
-  $alternatives = $params::alternatives,
+  $alternatives = '::default',
   $authorization = undef,
   $https = undef,
   $https_cacerts = $params::https_cacerts,

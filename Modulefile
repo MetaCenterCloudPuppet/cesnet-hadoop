@@ -8,4 +8,4 @@ description 'Hadoop Cluster with security'
 project_page 'https://github.com/MetaCenterCloudPuppet'
 
 dependency 'puppetlabs/stdlib', '>= 1.0.0 <5.0.0'
-dependency 'adrien/alternatives', '>= 0.3.0 <1.0.0'
+dependency 'cesnet/hadoop_lib', '<1.0.0'
