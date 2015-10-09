@@ -127,4 +127,14 @@ class hadoop::common::hdfs::config {
 
   # slaves needs Hadoop configuration directory
   Class['hadoop::common::install'] -> Class['hadoop::common::slaves']
+
+  #
+  # Nfs proxy user is required on name node.
+  #
+  # It is created by hadoop::nfs class, but NFS Gateway may not be installed
+  # at the name node.
+  #
+  if $hadoop::nfs_properties {
+    contain hadoop::nfs::user
+  }
 }

@@ -4,6 +4,7 @@ class hadoop::nfs::config {
   contain hadoop::common::config
   contain hadoop::common::hdfs::config
   contain hadoop::common::hdfs::daemon
+  contain hadoop::nfs::user
 
   #$env_nfs = $hadoop::envs['nfs']
   #augeas{$env_nfs:
@@ -20,25 +21,6 @@ class hadoop::nfs::config {
       mode   => '0400',
       alias  => 'nfs.service.keytab',
       before => File['hdfs-site.xml'],
-    }
-
-  }
-
-  # proxy user needed only if it doesn't exist in the system
-  if $hadoop::_nfs_proxy_user != 'hdfs' and $hadoop::_nfs_proxy_user != $hadoop::nfs_system_user {
-    group { $hadoop::_nfs_proxy_user:
-      ensure => present,
-      system => true,
-    }
-    ->
-    user { $hadoop::_nfs_proxy_user:
-      ensure     => present,
-      gid        => $hadoop::_nfs_proxy_user,
-      home       => '/var/lib/hadoop-nfs',
-      managehome => true,
-      password   => '!!',
-      shell      => '/bin/false',
-      system     => true,
     }
   }
 }

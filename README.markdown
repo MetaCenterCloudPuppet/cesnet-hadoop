@@ -616,6 +616,7 @@ For example:
 * `nfs::config`
 * `nfs::install`
 * `nfs::service`
+* `nfs::user`: Create system user for NFS Gateway (if needed)
 * **`nodemanager`**: YARN Node Manager
 * `nodemanager::config`
 * `nodemanager::install`
