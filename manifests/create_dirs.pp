@@ -43,6 +43,15 @@ class hadoop::create_dirs {
     touchfile => 'hdfs-root-created',
   }
   ->
+  # log aggregation needs access for both: yarn and mapred (not needed for
+  # CDH 5.4.2, needed for CDH 5.4.7)
+  hadoop::mkdir { '/var/log/hadoop-yarn/apps':
+    mode      => '1777',
+    owner     => 'yarn',
+    group     => 'hadoop',
+    touchfile => 'hdfs-root-created',
+  }
+  ->
   # for resource manager state store feature
   hadoop::mkdir { '/rmstore':
     owner     => $rmstore_user,
