@@ -26,7 +26,7 @@
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Classes](#classes)
     * [Resource Types](#resources)
-    * [Module Parameters (hadoop class)](#hadoop)
+    * [Module Parameters (hadoop class)](#class-hadoop)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
@@ -574,72 +574,72 @@ For example:
 <a name="classes"></a>
 ###Classes
 
-* [**`hadoop`**](#hadoop): Main configuration class
-* `common::hdfs::config`
-* `common::hdfs::daemon`
-* `common::mapred::config`
-* `common::mapred::daemon`
-* `common::yarn::config`
-* `common::yarn::daemon`
-* `common::config`
-* `common::install`
-* `common::postinstall`
-* `common::slaves`
-* `config`
-* `create_dirs`
-* `install`
-* `params`
-* `service`
-* **`datanode`**: HDFS Data Node
-* `datanode::config`
-* `datanode::install`
-* `datanode::service`
-* **`frontend`**: Hadoop client and examples
-* `frontend::config`
-* `frontend::install`
-* `frontend::service` (empty)
-* **`historyserver`**: MapReduce Job History Server
-* `historyserver::config`
-* `historyserver::install`
-* `historyserver::service`
-* **`journalnode`**: HDFS Journal Node used for Quorum Journal Manager
-* `journalnode::config`
-* `journalnode::install`
-* `journalnode::service`
-* **`namenode`**: HDFS Name Node
-* `namenode::bootstrap`
-* `namenode::config`
-* `namenode::format`
-* `namenode::install`
-* `namenode::service`
-* **`nfs`**: HDFS NFS Gateway
-* `nfs::config`
-* `nfs::install`
-* `nfs::service`
-* `nfs::user`: Create system user for NFS Gateway (if needed)
-* **`nodemanager`**: YARN Node Manager
-* `nodemanager::config`
-* `nodemanager::install`
-* `nodemanager::service`
-* **`resourcemanager`**: YARN Resource Manager
-* `resourcemanager::config`
-* `resourcemanager::install`
-* `resourcemanager::service`
-* **`zkfc`**: HDFS Zookeeper/Failover Controller
-* `zkfc::config`
-* `zkfc::install`
-* `zkfc::service`
+* [**`hadoop`**](#class-hadoop): Main configuration class
+* `hadoop::common::hdfs::config`
+* `hadoop::common::hdfs::daemon`
+* `hadoop::common::mapred::config`
+* `hadoop::common::mapred::daemon`
+* `hadoop::common::yarn::config`
+* `hadoop::common::yarn::daemon`
+* `hadoop::common::config`
+* `hadoop::common::install`
+* `hadoop::common::postinstall`
+* `hadoop::common::slaves`
+* `hadoop::config`
+* `hadoop::create_dirs`
+* `hadoop::install`
+* `hadoop::params`
+* `hadoop::service`
+* **`hadoop::datanode`**: HDFS Data Node
+* `hadoop::datanode::config`
+* `hadoop::datanode::install`
+* `hadoop::datanode::service`
+* **`hadoop::frontend`**: Hadoop client and examples
+* `hadoop::frontend::config`
+* `hadoop::frontend::install`
+* `hadoop::frontend::service` (empty)
+* **`hadoop::historyserver`**: MapReduce Job History Server
+* `hadoop::historyserver::config`
+* `hadoop::historyserver::install`
+* `hadoop::historyserver::service`
+* **`hadoop::journalnode`**: HDFS Journal Node used for Quorum Journal Manager
+* `hadoop::journalnode::config`
+* `hadoop::journalnode::install`
+* `hadoop::journalnode::service`
+* **`hadoop::namenode`**: HDFS Name Node
+* `hadoop::namenode::bootstrap`
+* `hadoop::namenode::config`
+* `hadoop::namenode::format`
+* `hadoop::namenode::install`
+* `hadoop::namenode::service`
+* **`hadoop::nfs`**: HDFS NFS Gateway
+* `hadoop::nfs::config`
+* `hadoop::nfs::install`
+* `hadoop::nfs::service`
+* `hadoop::nfs::user`: Create system user for NFS Gateway (if needed)
+* **`hadoop::nodemanager`**: YARN Node Manager
+* `hadoop::nodemanager::config`
+* `hadoop::nodemanager::install`
+* `hadoop::nodemanager::service`
+* **`hadoop::resourcemanager`**: YARN Resource Manager
+* `hadoop::resourcemanager::config`
+* `hadoop::resourcemanager::install`
+* `hadoop::resourcemanager::service`
+* **`hadoop::zkfc`**: HDFS Zookeeper/Failover Controller
+* `hadoop::zkfc::config`
+* `hadoop::zkfc::install`
+* `hadoop::zkfc::service`
 
 <a name="resources"></a>
 ###Resource Types
 
-* **`kinit`**: Init credentials
-* **`kdestroy`**: Destroy credentials
-* **`mkdir`**: Creates a directory on HDFS
-* **`nfs::mount`**: Mount NFS provided by the HDFS NFS gateway
+* **`hadoop::kinit`**: Init credentials
+* **`hadoop::kdestroy`**: Destroy credentials
+* **`hadoop::mkdir`**: Creates a directory on HDFS
+* **`hadoop::nfs::mount`**: Mount NFS provided by the HDFS NFS gateway
 
-<a name="hadoop"></a>
-### `hadoop`
+<a name="class-hadoop"></a>
+### `hadoop` class
 
 <a name="parameters"></a>
 #### Parameters
