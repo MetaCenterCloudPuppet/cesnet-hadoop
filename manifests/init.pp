@@ -123,7 +123,7 @@ class hadoop (
     $daemon_journalnode = false
   }
 
-  if $zookeeper_hostnames and $daemon_namenode {
+  if $daemon_namenode and $zookeeper_hostnames and (!$properties or !has_key($properties, 'dfs.ha.automatic-failover.enabled') or $properties['dfs.ha.automatic-failover.enabled']) {
     $daemon_hdfs_zkfc = true
   } else {
     $daemon_hdfs_zkfc = false
@@ -255,7 +255,10 @@ DEFAULT
     $mh_properties = {
       'hadoop.security.token.service.use_ip' => false,
       'yarn.resourcemanager.bind-host' => '0.0.0.0',
+      'dfs.namenode.https-bind-host' => '0.0.0.0',
+      'dfs.namenode.http-bind-host' => '0.0.0.0',
       'dfs.namenode.rpc-bind-host' => '0.0.0.0',
+      'dfs.namenode.servicerpc-bind-host' => '0.0.0.0',
     }
   } else {
     $mh_properties = undef
@@ -332,7 +335,7 @@ DEFAULT
       'fs.defaultFS' => "hdfs://${hadoop::cluster_name}",
     }
 
-    if $hadoop::ha_credentials and $hadoop::ha_diest {
+    if $hadoop::ha_credentials and $hadoop::ha_digest {
       $ha_credentials_properties = {
         'ha.zookeeper.auth' => "@${hadoop::confdir}/zk-auth.txt",
         'ha.zookeeper.acl' => "@${hadoop::confdir}/zk-acl.txt",

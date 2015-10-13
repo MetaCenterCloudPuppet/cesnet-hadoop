@@ -18,6 +18,7 @@
     * [High Availability](#ha)
      * [Fresh installation](#ha-fresh)
      * [Converting non-HA cluster](#ha-convert)
+     * [HA Quorum Security](#ha-security)
     * [HDFS NFS Gateway](#nfs)
      * [Security](#nfs-sec)
      * [Authorization](#nfs-auth)
@@ -348,7 +349,10 @@ Multi-home feature enables following properties:
 
 * 'hadoop.security.token.service.use\_ip' => false
 * 'yarn.resourcemanager.bind-host' => '0.0.0.0'
+* 'dfs.namenode.http-bind-host' => '0.0.0.0'
+* 'dfs.namenode.https-bind-host' => '0.0.0.0'
 * 'dfs.namenode.rpc-bind-host' => '0.0.0.0'
+* 'dfs.namenode.servicerpc-bind-host' => '0.0.0.0'
 
 <a name="ha"></a>
 ###High Availability
@@ -359,6 +363,8 @@ There are needed also these daemons for High Availability:
 * Journal Node (>=3) - requires HTTPS, when Kerberos security is enabled
 * Zookeeper/Failover Controller (2) - on each Name Node
 * Zookeeper (>=3)
+
+When specifying zookeeper (*zookeeper\_hostnames* parameter), automatic failover is enabled. You can override it by *dfs.ha.automatic-failover.enabled* and *yarn.resourcemanager.ha.automatic-failover.enabled* properties in *properties* parameter.
 
 <a name="ha-fresh"></a>
 #### Fresh installation
@@ -460,12 +466,26 @@ You can use the example above. But you will need to let skip bootstrap **on seco
 
     touch /var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped
 
-And activate HA **on the secondary Name Node after setup** (under *hdfs* user):
+And activate HA **on the primary Name Node after Journal Nodes Quorum setup** (under *hdfs* user):
 
     # when Kerberos is enabled:
-    #kinit -k -t /etc/security/keytab/nn.ervice.keytab nn/`hostname -f`
+    #export KRB5CCNAME=FILE:/tmp/krb5cc_hdfs_admin
+    #kinit -k -t /etc/security/keytab/nn.service.keytab nn/`hostname -f`
     #
     hdfs namenode -initializeSharedEdits
+
+You must rsync namenode metadata from the primary Name Node **to the secondary Name Node after setup**, then start the secondary Name Node server (this replaces the command *hdfs namenode -bootstrapStandby*, which seems to have issues).
+
+<a name="ha-security"></a>
+#### HA Quorum Security
+
+It is recommended to secure zookeeper quorum in secured Hadoop cluster.
+
+See *hadoop* class parameters:
+
+* [ha\_credentials](#ha_credentials)
+* [ha\_digest](#ha_digest)
+
 
 <a name="nfs"></a>
 #### HDFS NFS Gateway
@@ -784,6 +804,7 @@ We recommend to enable: **rmstore**, **aggregation** and probably **multihome**.
 
 Array of frontend hostnames. Default: *slaves*.
 
+<a name="ha_credentials"></a>
 #####`ha_credentials`
 
 Zookeeper credentials for HA HDFS. Default: undef.
@@ -792,13 +813,16 @@ With enabled high availability of HDFS in secured cluster, it is recommended to 
 
 Set this to something like: **hdfs-zkfcs:PASSWORD**.
 
+<a name="ha_digest"></a>
 #####`ha_digest` undef
 
 Digest version of *ha\_credentials*. Default: undef.
 
 You can generate it this way:
 
-    java -cp $ZK_HOME/lib/*:$ZK_HOME/zookeeper-*.jar org.apache.zookeeper.server.auth.DigestAuthenticationProvider hdfs-zkfcs:PASSWORD
+    ZK_HOME=/usr/lib/zookeeper
+    ZK_CP=`ls -1 $ZK_HOME/lib/*.jar $ZK_HOME/*.jar | tr '\n' ':'`
+    java -cp $ZK_CP org.apache.zookeeper.server.auth.DigestAuthenticationProvider hdfs-zkfcs:PASSWORD
 
 #####`hdfs_data_dirs`
 
