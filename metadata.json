@@ -1,11 +1,11 @@
 {
   "name": "cesnet-hadoop",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "author": "Frantisek Dvorak <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
   "source": "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop",
-  "project_page": "https://github.com/MetaCenterCloudPuppet",
+  "project_page": "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop",
   "issues_url": "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop/issues",
   "tags": [
     "hadoop"
