@@ -103,6 +103,7 @@ class hadoop::params {
   $cluster_name = 'cluster'
 
   $descriptions = {
+    'dfs.datanode.hdfs-blocks-metadata.enabled' => 'required for Impala',
     'dfs.hosts' => 'permitted data nodes',
     'dfs.hosts.exclude' => 'decommissioning of data nodes',
     'dfs.namenode.accesstime.precision' => 'the access time for an HDFS file is precise up to this value, setting a value of 0 disables access times for HDFS',

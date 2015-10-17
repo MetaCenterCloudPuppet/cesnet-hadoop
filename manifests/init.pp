@@ -156,6 +156,7 @@ class hadoop (
     $slaves_yarn = 'slaves'
   }
   $dyn_properties = {
+    'dfs.datanode.hdfs-blocks-metadata.enabled' => true,
     'dfs.hosts' => "${hadoop::confdir}/${slaves_hdfs}",
     'dfs.hosts.exclude' => "${hadoop::confdir}/excludes",
     'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",

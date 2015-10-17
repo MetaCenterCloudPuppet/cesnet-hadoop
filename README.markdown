@@ -77,6 +77,8 @@ There are some limitations how to use this module. You should read the documenta
  * */var/lib/hadoop-hdfs/.puppet-hdfs-\**
 * Secret Files (keytabs, certificates): some files are copied to home directories of service users: ~hdfs/, ~yarn/, ~mapred/
 
+It is enabled also HDFS blocks metadata, which is required for Impala addon. You can disable it by setting *dfs.datanode.hdfs-blocks-metadata.enabled* to *false* in *properties* parameter.
+
 <a name="setup-requirements"></a>
 ###Setup Requirements
 
