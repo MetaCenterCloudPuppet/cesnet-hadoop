@@ -103,6 +103,9 @@ class hadoop::params {
   $cluster_name = 'cluster'
 
   $descriptions = {
+    'dfs.client.file-block-storage-locations.timeout.millis' => 'optimization for Impala',
+    'dfs.client.read.shortcircuit' => 'optimization for Impala',
+    'dfs.domain.socket.path' => 'optimization for Impala',
     'dfs.datanode.hdfs-blocks-metadata.enabled' => 'required for Impala',
     'dfs.hosts' => 'permitted data nodes',
     'dfs.hosts.exclude' => 'decommissioning of data nodes',
@@ -175,6 +178,7 @@ class hadoop::params {
     /RedHat-Fedora/ => '/var/cache/hadoop-mapreduce',
     /Debian|RedHat/ => '/var/lib/hadoop-mapreduce',
   }
+  $hdfs_socketdir = '/var/run/hadoop-hdfs'
   $nfs_dumpdir = '/tmp/.hdfs-nfs'
   $nfs_mount = '/hdfs'
   $nfs_system_user = 'hdfs'

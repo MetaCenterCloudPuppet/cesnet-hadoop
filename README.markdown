@@ -928,6 +928,15 @@ Keytab file for HTTPS. Default: '/etc/security/keytab/http.service.keytab'.
 
 It will be copied for each daemon user and according permissions and properties set.
 
+#####`impala_enable`
+
+Enable settings needed for Impala addon. Default: true.
+
+Features enabled:
+
+* HDFS blocks metadata (*dfs.datanode.hdfs-blocks-metadata.enabled*)
+* Short-circuit reads (*dfs.client.read.shortcircuit*, *dfs.domain.socket.path*)
+
 #####`journalnode_hostnames`
 
 Array of HDFS Journal Node machines. Default: undef.

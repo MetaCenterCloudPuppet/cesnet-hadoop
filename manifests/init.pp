@@ -40,6 +40,7 @@ class hadoop (
   $https_keystore_password = $params::https_keystore_password,
   $https_keytab = $params::https_keytab,
   $https_keystore_keypassword = $params::https_keystore_keypassword,
+  $impala_enable = true,
   $min_uid = $params::uid_min,
   $nfs_dumpdir = $params::nfs_dumpdir,
   $nfs_exports = "${::fqdn} rw",
@@ -306,6 +307,17 @@ DEFAULT
     $https_properties = {}
   }
 
+  if $impala_enable {
+    $impala_properties = {
+      'dfs.datanode.hdfs-blocks-metadata.enabled' => true,
+      'dfs.client.file-block-storage-locations.timeout.millis' => 10000,
+      'dfs.client.read.shortcircuit' => true,
+      'dfs.domain.socket.path' => "${::hadoop::hdfs_socketdir}/dn.socket",
+    }
+  } else {
+    $impala_properties = {}
+  }
+
   # High Availability of HDFS
   if $hdfs_hostname2 {
     if !$hadoop::realm or $hadoop::realm == '' {
@@ -441,7 +453,7 @@ DEFAULT
     $preset_authorization = {}
   }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
+  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
   $descs = merge($params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))
