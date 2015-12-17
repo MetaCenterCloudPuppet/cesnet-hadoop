@@ -74,7 +74,7 @@ class hadoop (
   else { $frontend_hostnames = $slaves }
 
   $_hdfs_name_dirs = $hdfs_name_dirs
-  $_hdfs_data_dirs = $hdfs_data_dirs
+  $_hdfs_data_storages = hadoop_storages($hdfs_data_dirs)
   if !$hdfs_secondary_dirs { $_hdfs_secondary_dirs = $hadoop::hdfs_name_dirs }
   if !$hdfs_journal_dirs { $_hdfs_journal_dirs = $hadoop::hdfs_name_dirs }
 

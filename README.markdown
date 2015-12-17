@@ -836,9 +836,23 @@ You can generate it this way:
 
 Directory prefixes to store the data on HDFS datanodes. Default: ["/var/lib/hadoop-hdfs"] or ["/var/lib/hadoop-hdfs/cache"].
 
-* directory for DFS data blocks
- * /${user.name}/dfs/datanode suffix is always added
- * If there is multiple directories, then data will be stored in all directories, typically on different devices.
+They are used for DFS data blocks.
+
+Expected is an array, the format of each item is: **[TYPE]SCHEME://PATH**
+
+* *[TYPE]* (optional): **[DISK]**, **[SSD]**, **[ARCHIVE]**, **[RAM\_DISK]** (default: *[DISK]*)
+* *SCHEME* (optional): **file** (default: *file*)
+* *PATH*: the directory for the data
+
+Notes:
+
+* */${user.name}/dfs/datanode* suffix is always added
+* if there are multiple directories, then data will be stored in all directories, typically on different devices
+
+Examples:
+
+    ['/data/1', '/data/2']
+    ['[RAM_DISK]/ram', '[DISK]/var/lib/hadoop-hdfs/cache']
 
 #####`hdfs_deployed`
 

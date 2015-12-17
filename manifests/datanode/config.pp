@@ -16,7 +16,7 @@ class hadoop::datanode::config {
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)
-  ensure_resource('file', $hadoop::_hdfs_data_dirs, {
+  ensure_resource('file', $hadoop::_hdfs_data_storages['paths'], {
     ensure => directory,
     owner  => 'hdfs',
     group  => 'hadoop',

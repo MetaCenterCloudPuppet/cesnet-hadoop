@@ -21,19 +21,19 @@
 
   <property>
      <name>dfs.namenode.name.dir</name>
-     <value><%= suffix = scope.lookupvar('hadoop::hdfs_namenode_suffix'); scope.lookupvar('hadoop::_hdfs_name_dirs').map{ |dir| "file://#{dir}/#{suffix}" }.join(',') -%></value>
+     <value><%= suffix = scope.lookupvar('hadoop::hdfs_namenode_suffix'); scope.lookupvar('hadoop::_hdfs_name_dirs').map{ |dir| "file://#{dir}#{suffix}" }.join(',') -%></value>
   </property>
   <property>
      <name>dfs.namenode.checkpoint.dir</name>
-     <value><%= suffix = scope.lookupvar('hadoop::hdfs_secondarynamenode_suffix'); scope.lookupvar('hadoop::_hdfs_secondary_dirs').map{ |dir| "file://#{dir}/#{suffix}" }.join(',') -%></value>
+     <value><%= suffix = scope.lookupvar('hadoop::hdfs_secondarynamenode_suffix'); scope.lookupvar('hadoop::_hdfs_secondary_dirs').map{ |dir| "file://#{dir}#{suffix}" }.join(',') -%></value>
   </property>
   <property>
      <name>dfs.datanode.data.dir</name>
-     <value><%= suffix = scope.lookupvar('hadoop::hdfs_datanode_suffix'); scope.lookupvar('hadoop::_hdfs_data_dirs').map{ |dir| "file://#{dir}/#{suffix}" }.join(',') -%></value>
+     <value><%= suffix = scope.lookupvar('hadoop::hdfs_datanode_suffix'); scope.lookupvar('hadoop::_hdfs_data_storages')['storages'].map{ |s| type=s['type']; schema=s['schema']; path=s['path']; "#{type}#{schema}://#{path}#{suffix}" }.join(',') -%></value>
   </property>
   <property>
      <name>dfs.journalnode.edits.dir</name>
-     <value><%= suffix = scope.lookupvar('hadoop::hdfs_journalnode_suffix'); scope.lookupvar('hadoop::_hdfs_journal_dirs').map{ |dir| "#{dir}/#{suffix}" }.join(',') -%></value>
+     <value><%= suffix = scope.lookupvar('hadoop::hdfs_journalnode_suffix'); scope.lookupvar('hadoop::_hdfs_journal_dirs').map{ |dir| "#{dir}#{suffix}" }.join(',') -%></value>
   </property>
 
 <% props = scope.lookupvar('hadoop::props') -%>
