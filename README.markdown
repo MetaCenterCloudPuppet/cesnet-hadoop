@@ -201,7 +201,7 @@ It is recommended also to enable HTTPS when security is enabled. See [Enable HTT
       authorization => {
         'rules' => 'limit',
         # more paranoid permissions to users in "hadoopusers" group
-        #'security.service.authorization.default.acl' => ' hadoop,hbase,hive,hadoopusers',
+        #'security.service.authorization.default.acl' => ' hadoop,hbase,hive,hadoopusers,impala,spark',
       },
       # https recommended (and other extensions may require it)
       https => true,
@@ -560,8 +560,8 @@ Example of changing HADOOP default ACL to more strict settings:
 
      authorization => {
        'rules' => 'limit',
-       'security.client.protocol.acl' => 'root,nfs hadoop,hbase,hive,spark,users'
-       'security.service.authorization.default.acl' => ' hadoop,hbase,hive,spark,users',
+       'security.client.protocol.acl' => 'root,nfs hadoop,hbase,hive,impala,spark,users'
+       'security.service.authorization.default.acl' => ' hadoop,hbase,hive,impala,spark,users',
      }
 
 <a name="nfs-check"></a>
