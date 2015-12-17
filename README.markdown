@@ -26,6 +26,7 @@
     * [Upgrade](#upgrade)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Classes](#classes)
+    * [Facts](#facts)
     * [Resource Types](#resources)
     * [Module Parameters (hadoop class)](#class-hadoop)
 5. [Limitations - OS compatibility, etc.](#limitations)
@@ -651,6 +652,11 @@ For example:
 * `hadoop::zkfc::config`
 * `hadoop::zkfc::install`
 * `hadoop::zkfc::service`
+
+<a name="facts"></a>
+##Facts
+
+* **`uid_min`**: minimal UID (*UID_MIN* as read from */etc/login.defs*)
 
 <a name="resources"></a>
 ###Resource Types
