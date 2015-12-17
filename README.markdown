@@ -1106,6 +1106,10 @@ On other hand this leads to some limitations as mentioned in [Setup Requirements
 
 Other limitation is poor support for synchronization across multiple machines. Setup will converge on repeated runs, but it is better to separate setup to two (or more) stages.
 
+###High Availability
+
+*zookeeper\_deployed=true*, *hdfs\_deployed=false*: HDFC zkfc startup on secondary NN fails before primary NN is completely setup.
+
 <a name="development"></a>
 ##Development
 
