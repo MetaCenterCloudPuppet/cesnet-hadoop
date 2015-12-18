@@ -19,16 +19,6 @@
 
 <configuration>
 
-  <!-- HTTPFS proxy user setting -->
-  <property>
-    <name>hadoop.proxyuser.tomcat.hosts</name>
-    <value>*</value>
-  </property>
-  <property>
-    <name>hadoop.proxyuser.tomcat.groups</name>
-    <value>*</value>
-  </property>
-
 <% props = scope.lookupvar('hadoop::props') -%>
 <%# sort the properties list for ruby <= 1.8 #-%>
 <% rv=RUBY_VERSION.split('.') -%>
