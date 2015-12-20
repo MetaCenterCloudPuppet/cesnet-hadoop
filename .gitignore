@@ -1,2 +1,12 @@
-pkg/
-
+.*.sw?
+/pkg
+/spec/fixtures/modules
+/.rspec_system
+/.vagrant
+/.bundle
+/vendor
+/Gemfile.lock
+/junit
+/log
+.yardoc
+coverage

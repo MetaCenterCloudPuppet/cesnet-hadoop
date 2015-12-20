@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 group :test do
   gem "rake"
-  gem "puppet", ENV['PUPPET_VERSION'] || '~> 3.7.0'
+  gem "puppet", ENV['PUPPET_GEM_VERSION'] || '~> 3.8.0'
   gem "rspec", '< 3.2.0'
   gem "rspec-puppet", :git => 'https://github.com/rodjek/rspec-puppet.git'
   gem "puppetlabs_spec_helper"
@@ -22,9 +22,4 @@ group :development do
   gem "travis-lint"
   gem "puppet-blacksmith"
   gem "guard-rake"
-end
-
-group :system_tests do
-  gem "beaker"
-  gem "beaker-rspec"
 end
