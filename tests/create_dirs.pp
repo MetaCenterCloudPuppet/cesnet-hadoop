@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
-include hadoop::create_dirs
+include ::hadoop::create_dirs

@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
-include hadoop::resourcemanager::config
+include ::hadoop::resourcemanager::config

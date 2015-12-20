@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
-include hadoop::namenode::install
+include ::hadoop::namenode::install

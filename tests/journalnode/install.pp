@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
-include hadoop::journalnode::install
+include ::hadoop::journalnode::install

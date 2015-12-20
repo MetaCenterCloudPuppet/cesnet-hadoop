@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
 hadoop::kinit{'my-kinit':

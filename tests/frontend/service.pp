@@ -1,2 +1,2 @@
 # do nothing
-include hadoop::frontend::service
+include ::hadoop::frontend::service

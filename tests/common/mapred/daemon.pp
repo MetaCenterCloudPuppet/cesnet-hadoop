@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
-include hadoop::common::mapred::daemon
+include ::hadoop::common::mapred::daemon

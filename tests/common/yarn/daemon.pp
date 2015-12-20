@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
-include hadoop::common::yarn::daemon
+include ::hadoop::common::yarn::daemon

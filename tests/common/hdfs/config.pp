@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
-include hadoop::common::hdfs::config
+include ::hadoop::common::hdfs::config

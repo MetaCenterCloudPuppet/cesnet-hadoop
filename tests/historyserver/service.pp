@@ -1,6 +1,6 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
-include hadoop::common::config
-include hadoop::common::yarn::config
-include hadoop::historyserver::service
+include ::hadoop::common::config
+include ::hadoop::common::yarn::config
+include ::hadoop::historyserver::service

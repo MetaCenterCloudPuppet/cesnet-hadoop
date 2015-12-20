@@ -1,1 +1,1 @@
-include hadoop::params
+include ::hadoop::params

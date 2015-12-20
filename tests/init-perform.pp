@@ -1,5 +1,5 @@
 # with perform => true all services are installed and configured right away
-class{'hadoop':
+class{'::hadoop':
   hdfs_hostname => $::fqdn,
   yarn_hostname => $::fqdn,
   slaves        => [ $::fqdn ],

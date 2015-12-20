@@ -1,6 +1,6 @@
 # this only configures this hadoop module,
 # particular services need to be included in the nodes
-class{'hadoop':
+class{'::hadoop':
   hdfs_hostname => $::fqdn,
   yarn_hostname => $::fqdn,
   slaves        => [ $::fqdn ],

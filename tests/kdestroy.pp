@@ -1,4 +1,4 @@
-class{'hadoop':
+class{'::hadoop':
   realm => '',
 }
 hadoop::kdestroy{'my-kdestroy':
