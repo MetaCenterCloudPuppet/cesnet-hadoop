@@ -1,9 +1,8 @@
 require 'spec_helper'
 
 describe 'hadoop::journalnode::config', :type => 'class' do
-  $test_os.each do |facts|
-    os = facts['operatingsystem']
-    path = $test_config_dir[os]
+  on_supported_os($test_os).each do |os,facts|
+    path = $test_config_dir[facts[:operatingsystem]]
 
     context "on #{os}" do
       let(:facts) do
@@ -17,8 +16,7 @@ describe 'hadoop::journalnode::config', :type => 'class' do
 end
 
 describe 'hadoop::journalnode', :type => 'class' do
-  $test_os.each do |facts|
-    os = facts['operatingsystem']
+  on_supported_os($test_os).each do |os,facts|
     context "on #{os}" do
       let(:facts) do
         facts
