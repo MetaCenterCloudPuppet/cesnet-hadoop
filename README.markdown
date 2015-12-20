@@ -1130,6 +1130,10 @@ Other limitation is poor support for synchronization across multiple machines. S
 
 *zookeeper\_deployed=true*, *hdfs\_deployed=false*: HDFC zkfc startup on secondary NN fails before primary NN is completely setup.
 
+###Unit tests
+
+Only Puppet 3 can be tested by unit-tests, Puppet 4 can't use *site.pp* from tests.
+
 <a name="development"></a>
 ##Development
 

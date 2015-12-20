@@ -33,6 +33,6 @@ class hadoop::namenode::service {
     Service[$hadoop::daemons['namenode']] -> Class['hadoop::create_dirs']
     User['mapred'] -> Class['hadoop::create_dirs']
 
-    Service[$hadoop::daemons['namenode']] -> Mkdir <| |>
+    Service[$hadoop::daemons['namenode']] -> Hadoop::Mkdir <| |>
   }
 }

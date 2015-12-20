@@ -3,13 +3,13 @@
 # Main configuration class.
 #
 class hadoop (
-  $hdfs_hostname = $params::hdfs_hostname,
+  $hdfs_hostname = $::hadoop::params::hdfs_hostname,
   $hdfs_hostname2 = undef,
-  $yarn_hostname = $params::yarn_hostname,
+  $yarn_hostname = $::hadoop::params::yarn_hostname,
   $yarn_hostname2 = undef,
-  $slaves = $params::slaves,
+  $slaves = $::hadoop::params::slaves,
   $frontends = [],
-  $cluster_name = $params::cluster_name,
+  $cluster_name = $::hadoop::params::cluster_name,
   $realm = '',
 
   $historyserver_hostname = undef,
@@ -21,45 +21,45 @@ class hadoop (
 
   $ha_credentials = undef,
   $ha_digest = undef,
-  $hdfs_name_dirs = $params::hdfs_name_dirs,
-  $hdfs_data_dirs = $params::hdfs_data_dirs,
+  $hdfs_name_dirs = $::hadoop::params::hdfs_name_dirs,
+  $hdfs_data_dirs = $::hadoop::params::hdfs_data_dirs,
   $hdfs_secondary_dirs = undef,
   $hdfs_journal_dirs = undef,
   $properties = undef,
   $descriptions = undef,
   $environment = undef,
-  $features = $params::features,
+  $features = $::hadoop::params::features,
   $compress_enable = true,
   $acl = undef,
   $alternatives = '::default',
   $authorization = undef,
   $https = undef,
-  $https_cacerts = $params::https_cacerts,
-  $https_cacerts_password = $params::https_cacerts_password,
-  $https_keystore = $params::https_keystore,
-  $https_keystore_password = $params::https_keystore_password,
-  $https_keytab = $params::https_keytab,
-  $https_keystore_keypassword = $params::https_keystore_keypassword,
+  $https_cacerts = $::hadoop::params::https_cacerts,
+  $https_cacerts_password = $::hadoop::params::https_cacerts_password,
+  $https_keystore = $::hadoop::params::https_keystore,
+  $https_keystore_password = $::hadoop::params::https_keystore_password,
+  $https_keytab = $::hadoop::params::https_keytab,
+  $https_keystore_keypassword = $::hadoop::params::https_keystore_keypassword,
   $impala_enable = true,
-  $min_uid = $params::uid_min,
-  $nfs_dumpdir = $params::nfs_dumpdir,
+  $min_uid = $::hadoop::params::uid_min,
+  $nfs_dumpdir = $::hadoop::params::nfs_dumpdir,
   $nfs_exports = "${::fqdn} rw",
-  $nfs_mount = $params::nfs_mount,
+  $nfs_mount = $::hadoop::params::nfs_mount,
   $nfs_mount_options = undef,
   $nfs_proxy_user = undef,
-  $nfs_system_user = $params::nfs_system_user,
-  $perform = $params::perform,
+  $nfs_system_user = $::hadoop::params::nfs_system_user,
+  $perform = $::hadoop::params::perform,
 
-  $hdfs_deployed = $params::hdfs_deployed,
-  $zookeeper_deployed = $params::zookeeper_deployed,
+  $hdfs_deployed = $::hadoop::params::hdfs_deployed,
+  $zookeeper_deployed = $::hadoop::params::zookeeper_deployed,
 
-  $keytab_namenode = $params::keytab_namenode,
-  $keytab_datanode = $params::keytab_datanode,
-  $keytab_jobhistory = $params::keytab_jobhistory,
-  $keytab_journalnode = $params::keytab_journalnode,
-  $keytab_resourcemanager = $params::keytab_resourcemanager,
-  $keytab_nodemanager = $params::keytab_nodemanager,
-  $keytab_nfs = $params::keytab_nfs,
+  $keytab_namenode = $::hadoop::params::keytab_namenode,
+  $keytab_datanode = $::hadoop::params::keytab_datanode,
+  $keytab_jobhistory = $::hadoop::params::keytab_jobhistory,
+  $keytab_journalnode = $::hadoop::params::keytab_journalnode,
+  $keytab_resourcemanager = $::hadoop::params::keytab_resourcemanager,
+  $keytab_nodemanager = $::hadoop::params::keytab_nodemanager,
+  $keytab_nfs = $::hadoop::params::keytab_nfs,
 ) inherits hadoop::params {
   include ::stdlib
 
@@ -453,8 +453,8 @@ DEFAULT
     $preset_authorization = {}
   }
 
-  $props = merge($params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
-  $descs = merge($params::descriptions, $descriptions)
+  $props = merge($::hadoop::params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
+  $descs = merge($::hadoop::params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))
 
