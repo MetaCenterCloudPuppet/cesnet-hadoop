@@ -46,8 +46,8 @@ Puppet >= 3.x is required.
 
 Supported are:
 
-* **Debian 7/wheezy**: Cloudera distribution (tested with CDH 5.3.1/5.4.1, Hadoop 2.5.0/2.6.0)
-* **Fedora 21**: native packages (tested with Hadoop 2.4.1)
+* **Debian 7/wheezy**: Cloudera distribution (tested with CDH 5.3/5.4/5.5, Hadoop 2.5.0/2.6.0)
+* **Fedora**: native packages (tested with Hadoop 2.4.1)
 * **Ubuntu 14/trusty**: Cloudera distribution (tested with CDH 5.3.1, Hadoop 2.5.0)
 * **RHEL 6 and clones**: Cloudera distribution (tested with CDH 5.4.1, Hadoop 2.6.0)
 
