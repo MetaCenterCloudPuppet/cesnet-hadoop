@@ -64,7 +64,7 @@ There are some limitations how to use this module. You should read the documenta
  * */etc/hadoop/\** (or */etc/hadoop/conf/\**)
  * */etc/sysconfig/hadoop\** (or */etc/default/hadoop\**)
  * */etc/cron.d/hadoop-\** (only when explicit key refresh or restarts are requested)
- * */usr/local/sbin/yellowmanager* (not needed, only when administrator manager script is requested by *features*)
+ * */usr/local/sbin/yellowmanager* (not needed, only when administrator manager script is requested by `features`)
 * Alternatives:
  * alternatives are used for */etc/hadoop/conf* in Cloudera
  * this module switches to the new alternative by default, so the Cloudera original configuration can be kept intact
@@ -78,7 +78,7 @@ There are some limitations how to use this module. You should read the documenta
  * */var/lib/hadoop-hdfs/.puppet-hdfs-\**
 * Secret Files (keytabs, certificates): some files are copied to home directories of service users: ~hdfs/, ~yarn/, ~mapred/
 
-It is enabled also HDFS blocks metadata, which is required for Impala addon. You can disable it by setting *dfs.datanode.hdfs-blocks-metadata.enabled* to *false* in *properties* parameter.
+It is enabled also HDFS blocks metadata, which is required for Impala addon. You can disable it by setting *dfs.datanode.hdfs-blocks-metadata.enabled* to *false* in `properties` parameter.
 
 <a name="setup-requirements"></a>
 ###Setup Requirements
@@ -92,25 +92,24 @@ Be aware of:
  * *java* is not installed by this module (*openjdk-7-jre-headless* is OK for Debian 7/wheezy)
  * for security the package providing kinit is also needed (Debian: *krb5-util* or *heimdal-clients*, RedHat/Fedora: *krb5-workstation*)
 
-* **One-node Hadoop cluster** (may be collocated on one machine): Hadoop replicates by default all data to at least to 3 data nodes. For one-node Hadoop cluster use property *dfs.replication=1* in *properties* parameter
+* **One-node Hadoop cluster** (may be collocated on one machine): Hadoop replicates by default all data to at least to 3 data nodes. For one-node Hadoop cluster use property *dfs.replication=1* in `properties` parameter
 
 * **No inter-node dependencies**: working HDFS (namenode+some data nodes) is required before history server launch or for state-store resourcemanager feature; some workarounds exists:
- * helper parameter *hdfs\_deployed*: when false, services dependent on HDFS are not launched (default: true)
- * administrators are encouraged to use any other way to solve inter-node dependencies (PuppetDB?)
- * or just repeat setup on historyserver and resourcemanager machines
+ * helper parameter `hdfs_deployed`: when false, services dependent on HDFS are not launched (default: true)
+ * repeat setup on historyserver and resourcemanager machines is needed
 
    Note: Hadoop cluster collocated on one-machine is handled OK
 
-* **Secure mode**: keytabs must be prepared in /etc/security/keytabs/ (see *realm* parameter)
+* **Secure mode**: keytabs must be prepared in */etc/security/keytabs/* (see `realm` parameter)
  * Fedora:<br />
  1) see [RedHat Bug #1163892](https://bugzilla.redhat.com/show\_bug.cgi?id=1163892), you may use repository at [http://copr-fe.cloud.fedoraproject.org/coprs/valtri/hadoop/](http://copr-fe.cloud.fedoraproject.org/coprs/valtri/hadoop/)<br />
- 2) you need to enable ticket refresh and RM restarts (see *features* module parameter)
+ 2) you need to enable ticket refresh and RM restarts (see `features` module parameter)
 
 * **HTTPS**:
- * prepare CA certificate keystore and machine certificate keystore in /etc/security/cacerts and /etc/security/server.keystore (location can be modified by *https\_cacerts* and *https\_keystore* parameters), see [Enable HTTPS](#https) section
- * prepare /etc/security/http-auth-signature-secret file (with any content)
+ * prepare CA certificate keystore and machine certificate keystore in */etc/security/cacerts* and */etc/security/server.keystore* (location can be modified by `https_cacerts` and `https_keystore` parameters), see [Enable HTTPS](#https) section
+ * prepare */etc/security/http-auth-signature-secret* file (with any content)
 
-   Note: some files are copied into ~hdfs, ~yarn/, and ~mapred/ directories
+   Note: some files are copied into *~hdfs/*, *~yarn/*, and *~mapred/* directories
 
 <a name="beginning-with-hadoop"></a>
 ###Beginning with hadoop
@@ -126,8 +125,6 @@ Let's start with brief examples. Before beginning you should read the [Setup Req
       yarn_hostname => $::fqdn,
       slaves => [ $::fqdn ],
       frontends => [ $::fqdn ],
-      # security needs to be disabled explicitly by using empty string
-      realm => '',
       properties => {
         'dfs.replication' => 1,
       }
@@ -154,7 +151,7 @@ For full-fledged Hadoop cluster it is recommended (services can be collocated):
 * one YARN resourcemanager (or two for high availability, see below)
 * N slaves with HDFS datanode and YARN nodemanager
 
-Modify $::fqdn and node(s) section as needed. You can also remove the dfs.replication property with more data nodes.
+Modify *$::fqdn* and node(s) section as needed. You can also remove the *dfs.replication* property with more data nodes.
 
 Multiple HDFS namespaces are not supported now (ask or send patches, if you need it :-)).
 
@@ -168,21 +165,21 @@ Security in Hadoop is based on Kerberos. Keytab files needs to be prepared on th
 
 Following parameters are used for security (see also [Module Parameters](#parameters)):
 
-* *realm* (required parameter)<br />
+* `realm` ('')<br />
   Enable security and Kerberos realm to use. Empty string disables security.
   To enable security, there are required:
-  * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
-  * configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
-  * /etc/security/keytab/dn.service.keytab (on data nodes)
-  * /etc/security/keytab/jhs.service.keytab (on job history node)
-  * /etc/security/keytab/nm.service.keytab (on node manager nodes)
-  * /etc/security/keytab/nn.service.keytab (on name nodes)
-  * /etc/security/keytab/rm.service.keytab (on resource manager node)
-  * /etc/security/keytab/nfs.service.keytab (on nfs gateway node)
+  * installed Kerberos client (Debian: *krb5-user*/*heimdal-clients*; RedHat: *krb5-workstation*)
+  * configured Kerberos client (*/etc/krb5.conf*, */etc/krb5.keytab*)
+  * */etc/security/keytab/dn.service.keytab* (on data nodes)
+  * */etc/security/keytab/jhs.service.keytab* (on job history node)
+  * */etc/security/keytab/nm.service.keytab* (on node manager nodes)
+  * */etc/security/keytab/nn.service.keytab* (on name nodes)
+  * */etc/security/keytab/rm.service.keytab* (on resource manager node)
+  * */etc/security/keytab/nfs.service.keytab* (on nfs gateway node)
 
-* *authorization* (empty hash by default)
+* `authorization` (empty hash by default)
 
-It is recommended also to enable HTTPS when security is enabled. See [Enable HTTPS](#https).
+We recommend to enable HTTPS when security is enabled. See [Enable HTTPS](#https).
 
 **Example**: One-node Hadoop cluster with security (add also the node section from the single-node setup above):
 
@@ -195,14 +192,10 @@ It is recommended also to enable HTTPS when security is enabled. See [Enable HTT
       properties => {
         'dfs.replication' => 1,
       },
-      features => {
-        #restarts => '00 */12 * * *',
-        #krbrefresh => '00 */12 * * *',
-      },
       authorization => {
         'rules' => 'limit',
-        # more paranoid permissions to users in "hadoopusers" group
-        #'security.service.authorization.default.acl' => ' hadoop,hbase,hive,hadoopusers,impala,spark',
+        # more paranoid permissions to users in "users" group
+        #'security.service.authorization.default.acl' => ' hadoop,hbase,hive,impala,spark,users',
       },
       # https recommended (and other extensions may require it)
       https => true,
@@ -211,12 +204,12 @@ It is recommended also to enable HTTPS when security is enabled. See [Enable HTT
       https_keystore_password => 'changeit',
     }
 
-Modify $::fqdn and add node sections as needed for multi-node cluster.
+Modify *$::fqdn* and add node sections as needed for multi-node cluster.
 
 <a name="long-run"></a>
 #### Long running applications
 
-For long-running applications as Spark Streaming jobs you may need to workaround user's delegation tokens a maximum lifetime of 7 days by these properties in *properties* parameter:
+For long-running applications as Spark Streaming jobs you may need to workaround user's delegation tokens a maximum lifetime of 7 days by these properties in `properties` parameter:
 
     'yarn.resourcemanager.proxy-user-privileges.enabled' => true,
     'hadoop.proxyuser.yarn.hosts' => RESOURCE MANAGER HOSTS,
@@ -258,13 +251,13 @@ Hadoop is able to use SPNEGO protocol (="Kerberos tickets through HTTPS"). This 
 
 HTTPS support requires:
 
-* enabled security (*realm* => ...)
-* /etc/security/cacerts file (*https_cacerts* parameter) - kept in the place, only permission changed if needed
-* /etc/security/server.keystore file (*https_keystore* parameter) - copied for each daemon user
-* /etc/security/http-auth-signature-secret file (any data, string or blob) - copied for each daemon user
-* /etc/security/keytab/http.service.keytab - copied for each daemon user
+* enabled security (non-empty `realm`)
+* */etc/security/cacerts* file (`https_cacerts` parameter) - kept in the place, only permission changed if needed
+* */etc/security/server.keystore* file (`https_keystore` parameter) - copied for each daemon user
+* */etc/security/http-auth-signature-secret* file (any data, string or blob) - copied for each daemon user
+* */etc/security/keytab/http.service.keytab* - copied for each daemon user
 
-Preparing the CA certificates store (/etc/security/cacerts):
+Preparing the CA certificates store (*/etc/security/cacerts*):
 
     # for each CA certificate in the chain
     keytool -importcert -keystore cacerts -storepass changeit -trustcacerts -alias some-alias -file some-file.pem
@@ -273,7 +266,7 @@ Preparing the CA certificates store (/etc/security/cacerts):
     # move to the right default location
     mv cacerts /etc/security/
 
-Preparing the certificates keystore (/etc/security/server.keystore):
+Preparing the certificates keystore (*/etc/security/server.keystore*):
 
     # X509 -> pkcs12
     # (enter some passphrase)
@@ -295,41 +288,42 @@ Preparing the certificates keystore (/etc/security/server.keystore):
     chmod 0600 server.keystore
     mv server.keystore /etc/security/
 
-Preparing the signature secret file (/etc/security/http-auth-signature-secret):
+Preparing the signature secret file (*/etc/security/http-auth-signature-secret*):
 
     dd if=/dev/random bs=128 count=1 > http-auth-signature-secret
     chmod 0600 http-auth-signature-secret
     mv http-auth-signature-secret /etc/security/
 
 The following hadoop class parameters are used for HTTPS (see also [Module Parameters](#parameters)):
-* *realm* (required for HTTPS)
+
+* `realm` (required for HTTPS)
   Enable security and Kerberos realm to use. See [Security](#security).
 
-* *https* (undef)
+* `https` (undef)
   Enable support for https.
 
-* *https_cacerts* (/etc/security/cacerts)
+* `https_cacerts` (*/etc/security/cacerts*)
   CA certificates file.
 
-* *https_cacerts_password* ('')
+* `https_cacerts_password` ('')
   CA certificates keystore password.
 
-* *https_keystore* (/etc/security/server.keystore)
+* `https_keystore` (*/etc/security/server.keystore*)
   Certificates keystore file.
 
-* *https_keystore_password* ('changeit')
+* `https_keystore_password` ('changeit')
   Certificates keystore file password.
 
-* *https_keystore_keypassword* (undef)
-  Certificates keystore key password. If not specified, *https_keystore_password* is used.
+* `https_keystore_keypassword` (undef)
+  Certificates keystore key password. If not specified, `https_keystore_password` is used.
 
-Consider also checking POSIX ACL support in the system and enable *acl* in Hadoop module. It's useful for more pedantic rights on ssl-\*.xml files, which needs to be read by Hadoop additions (like HBase).
+Consider also checking POSIX ACL support in the system and enable `acl` in Hadoop module. It's useful for more pedantic rights on *ssl-\*.xml* files, which needs to be read by Hadoop additions (like HBase).
 
 
 <a name="multihome"></a>
 ###Multihome Support
 
-Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Properties and bind hacks to multihome support can be enabled by **multihome => true** in *features*. You will also need to add secondary IPs of datanodes to *datanode_hostnames* (or *slaves*, which sets *datanode_hostnames* and *nodemanager_hostnames*):
+Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Properties and bind hacks to multihome support can be enabled by **multihome => true** in `features`. You will also need to add secondary IPs of datanodes to `datanode_hostnames` (or `slaves`, which sets `datanode_hostnames` and `nodemanager_hostnames`):
 
     class{"hadoop":
       hdfs_hostname => $::fqdn,
@@ -350,12 +344,12 @@ Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Propert
 
 Multi-home feature enables following properties:
 
-* 'hadoop.security.token.service.use\_ip' => false
-* 'yarn.resourcemanager.bind-host' => '0.0.0.0'
-* 'dfs.namenode.http-bind-host' => '0.0.0.0'
-* 'dfs.namenode.https-bind-host' => '0.0.0.0'
-* 'dfs.namenode.rpc-bind-host' => '0.0.0.0'
-* 'dfs.namenode.servicerpc-bind-host' => '0.0.0.0'
+* *hadoop.security.token.service.use\_ip* => false
+* *yarn.resourcemanager.bind-host* => '0.0.0.0'
+* *dfs.namenode.http-bind-host* => '0.0.0.0'
+* *dfs.namenode.https-bind-host* => '0.0.0.0'
+* *dfs.namenode.rpc-bind-host* => '0.0.0.0'
+* *dfs.namenode.servicerpc-bind-host* => '0.0.0.0'
 
 <a name="ha"></a>
 ###High Availability
@@ -367,7 +361,7 @@ There are needed also these daemons for High Availability:
 * Zookeeper/Failover Controller (2) - on each Name Node
 * Zookeeper (>=3)
 
-When specifying zookeeper (*zookeeper\_hostnames* parameter), automatic failover is enabled. You can override it by *dfs.ha.automatic-failover.enabled* and *yarn.resourcemanager.ha.automatic-failover.enabled* properties in *properties* parameter.
+When specifying zookeeper (`zookeeper_hostnames` parameter), automatic failover is enabled. You can override it by *dfs.ha.automatic-failover.enabled* and *yarn.resourcemanager.ha.automatic-failover.enabled* properties in `properties` parameter.
 
 <a name="ha-fresh"></a>
 #### Fresh installation
@@ -376,9 +370,9 @@ Setup High Availability requires precise order of all steps. For example all zoo
 
 There are helper parameters to separate overall cluster setup to more stages:
 
-1. *zookeeper\_deployed*=**false**, *hdfs\_deployed=***false**: zookeeper quorum and journal nodes quorum
-2. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***false**: HDFS format and bootstrap (primary and secondary NN), setup and launch ZKFC and NN daemons
-3. *zookeeper\_deployed*=**true**, *hdfs\_deployed=***true**: enable History Server and RM state-store feature, if enabled
+1. `zookeeper_deployed`=**false**, `hdfs_deployed`=**false**: zookeeper quorum and journal nodes quorum
+2. `zookeeper_deployed`=**true**, `hdfs_deployedr`=**false**: HDFS format and bootstrap (primary and secondary NN), setup and launch ZKFC and NN daemons
+3. `zookeeper_deployed`=**true**, `hdfs_deployedr`=**true**: enable History Server and RM state-store feature, if enabled
 
 These parameters are not required, the setup should converge when setup is repeated. They may help with debugging problems though, because less things will fail if the setup is separated to several stages over the whole cluster.
 
@@ -493,11 +487,11 @@ See *hadoop* class parameters:
 <a name="nfs"></a>
 #### HDFS NFS Gateway
 
-HDFS NFS Gateway provides limited support for direct access to HDFS. Beware, the NFS is still problematic and unstable (tested with Hadoop 2.6.0/Cloudera 5.4.7).
+HDFS NFS Gateway provides limited support for direct access to HDFS. Beware, the NFS may still have issues (problems with <= 3 nodes, problems with HDFS HA and cluster name), tested on Hadoop 2.6.0/Cloudera 5.4.7.
 
 The class *hadoop::nfs* will setup the daemon and mount locally HDFS to /hdfs. The resource *hadoop::nfs::mount* is used to perform the mounting. If mounting remotely, don't forget to add authorization access to the remote HDFS NFS server.
 
-HDFS NFS Gateway doesn't support any authentication, so we recommend to filter clients at least by hostnames/IPs. By default only local machine is allowed to mount the NFS (*nfs_exports* parameter).
+HDFS NFS Gateway doesn't support any authentication, so we recommend to filter clients at least by hostnames/IPs. By default only local machine is allowed to mount the NFS (`nfs_exports` parameter).
 
 Useful properties:
 
@@ -545,7 +539,7 @@ Useful environments:
 
 The keytab file */etc/security/keytab/nfs.service.keytab* is required. It must contain principal for HDFS NFS Gateway.
 
-The principal must corespond to the valid system user (auth\_to\_local rules provides the mapping). This system user will be used also as Hadoop proxy user. The default value is 'nfs'.
+The principal must corespond to the valid system user (`auth_to_local` rules provides the mapping). This system user will be used also as Hadoop proxy user. The default value is 'nfs'.
 
 Principals needed:
 
@@ -555,7 +549,7 @@ Principals needed:
 <a name="nfs-auth"></a>
 ##### Authorization
 
-*root* user must be authorized for client access to able to mount. In secured cluster, *nfs* user needs to be authorized too. By default this is not needed, authorization is '\*'. See *authorization* parameter.
+*root* user must be authorized for client access to able to mount. In secured cluster, *nfs* user needs to be authorized too. By default this is not needed, authorization is '\*'. See `authorization` parameter.
 
 Example of changing HADOOP default ACL to more strict settings:
 
@@ -776,13 +770,13 @@ This will set following properties:
 
 #####`datanode_hostnames`
 
-Array of Data Node machines. Default: *slaves*.
+Array of Data Node machines. Default: `slaves`.
 
 #####`descriptions`
 
 Descriptions for the properties. Default: see params.pp.
 
-Just for cuteness.
+Just for cuteness of config files.
 
 #####`environment`
 
@@ -810,7 +804,7 @@ We recommend to enable: **rmstore**, **aggregation** and probably **multihome**.
 
 #####`frontends`
 
-Array of frontend hostnames. Default: *slaves*.
+Array of frontend hostnames. Default: `slaves`.
 
 <a name="ha_credentials"></a>
 #####`ha_credentials`
@@ -882,11 +876,11 @@ If you're converting existing Hadoop cluster without HA to cluster with HA, you 
 
 Zookeepers are required for automatic transitions.
 
-If Hadoop cluster is secured, it is recommended also secure Zookeeper. See *ha_credentials* and *ha_digest* parameters.
+If Hadoop cluster is secured, it is recommended also secure Zookeeper. See `ha_credentials` and `ha_digest` parameters.
 
 #####`hdfs_journal_dirs`
 
-Directory prefixes to store journal logs by journal name nodes, if different from *hdfs\_name\_dirs*. Default: undef.
+Directory prefixes to store journal logs by journal name nodes, if different from `hdfs_name_dirs`. Default: undef.
 
 #####`hdfs_name_dirs`
 
@@ -894,7 +888,7 @@ Directory prefixes to store the metadata on the namenode. Default: ["/var/lib/ha
 
 * directory for name table (fsimage)
 * /${user.name}/dfs/namenode or /${user.name}/dfs/name suffix is always added
- * If there is multiple directories, then the name table is replicated in all of the directories, for redundancy.
+ * If there is multiple directories, then the name table is replicated in all of the directories, for redundancy
  * All directories needs to be available to namenode work properly (==> good on mirrored raid)
  * Crucial data (==> good to save at different physical locations)
 
@@ -902,23 +896,17 @@ When adding a new directory, you will need to replicate the contents from some o
 
 #####`hdfs_secondary_dirs`
 
-Directory prefixes to store metadata by secondary name nodes, if different from *hdfs\_name\_dirs*. Default: undef.
+Directory prefixes to store metadata by secondary name nodes, if different from `hdfs_name_dirs`. Default: undef.
 
 #####`historyserver_hostname`
 
-History Server machine. Default: *yarn\_hostname*.
+History Server machine. Default: `yarn_hostname`.
 
 #####`https`
 
 Enable support for https. Default: undef.
 
-Requires:
-
-* enabled security (non-empty *realm*)
-* /etc/security/cacerts file (https\_cacerts parameter) - kept in the place, only permission changed, if needed
-* /etc/security/server.keystore file (https\_keystore parameter) - copied for each daemon user
-* /etc/security/http-auth-signature-secret file (any data, string or blob) - copied for each daemon user
-* /etc/security/keytab/http.service.keytab - copied for each daemon user
+See also [Enable HTTPS](#https).
 
 #####`https_cacerts`
 
@@ -932,11 +920,13 @@ CA certificates keystore password. Default: ''.
 
 Certificates keystore file. Default: '/etc/security/server.keystore'.
 
+See also [Enable HTTPS](#https).
+
 #####`https_keystore_keypassword`
 
 Certificates keystore key password. Default: undef.
 
-If not specified, *https\_keystore\_password* is used.
+If not specified, `https_keystore_password` is used.
 
 #####`https_keystore_password`
 
@@ -1056,7 +1046,7 @@ The value must correspond to packaging of Hadoop distribution.
 
 #####`nodemanager_hostnames`
 
-Array of Node Manager machines. Default: *slaves*.
+Array of Node Manager machines. Default: `slaves`.
 
 #####`perform`
 
@@ -1064,7 +1054,7 @@ Launch all installation and setup here, from hadoop class. Default: false.
 
 #####`properties`
 
-"Raw" properties for hadoop cluster. Default: see params.pp.
+"Raw" properties for hadoop cluster. Default: (see params.pp).
 
 "::undef" value will remove given property set automatically by this module, empty string sets the empty value.
 
@@ -1077,15 +1067,15 @@ Empty string disables the security.
 With security there is required:
 
 * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
-* configured Kerberos client (/etc/krb5.conf, /etc/krb5.keytab)
-* /etc/security/keytab/dn.service.keytab (on data nodes)
-* /etc/security/keytab/jhs.service.keytab (on job history node)
-* /etc/security/keytab/nm.service.keytab (on node manager nodes)
-* /etc/security/keytab/nn.service.keytab (on name nodes)
-* /etc/security/keytab/rm.service.keytab (on resource manager node)
-* /etc/security/keytab/nfs.service.keytab (on nfs gateway node)
+* configured Kerberos client (*/etc/krb5.conf*, */etc/krb5.keytab*)
+* */etc/security/keytab/dn.service.keytab* (on data nodes)
+* */etc/security/keytab/jhs.service.keytab* (on job history node)
+* */etc/security/keytab/nm.service.keytab* (on node manager nodes)
+* */etc/security/keytab/nn.service.keytab* (on name nodes)
+* */etc/security/keytab/rm.service.keytab* (on resource manager node)
+* */etc/security/keytab/nfs.service.keytab* (on nfs gateway node)
 
-If https is enabled, cookie domain is set automatically to lowercased *realm*. This may be overridden by *http.authentication.cookie.domain* in *properties*.
+If https is enabled, cookie domain is set automatically to lowercased `realm`. This may be overridden by *http.authentication.cookie.domain* in `properties`.
 
 #####`slaves`
 
@@ -1097,11 +1087,11 @@ Yarn machine (with Resource Manager and Job History services). Default: $::fqdn.
 
 #####`yarn_hostname2`
 
-YARN resourcemanager second hostname for High Availability. This parameter will activate the YARN HA feature. See [http://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html](http://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html).
+YARN resourcemanager second hostname for High Availability. Default: undef.
 
-Zookeepers are required (*zookeeper\_hostnames* parameter).
+This parameter will activate the YARN HA feature. See [http://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html](http://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html).
 
-Default: undef.
+Zookeepers are required (`zookeeper_hostnames` parameter).
 
 #####`zookeeper_deployed`
 
@@ -1128,7 +1118,7 @@ Other limitation is poor support for synchronization across multiple machines. S
 
 ###High Availability
 
-*zookeeper\_deployed=true*, *hdfs\_deployed=false*: HDFC zkfc startup on secondary NN fails before primary NN is completely setup.
+*zookeeper\_deployed=true*, *hdfs\_deployed=false*: HDFC zkfc startup on secondary NN fails before primary NN is completely setup, it's started later during another puppet launch.
 
 ###Unit tests
 
