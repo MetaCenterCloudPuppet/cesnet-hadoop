@@ -947,6 +947,16 @@ Features enabled:
 * HDFS blocks metadata (*dfs.datanode.hdfs-blocks-metadata.enabled*)
 * Short-circuit reads (*dfs.client.read.shortcircuit*, *dfs.domain.socket.path*)
 
+#####`scratch_dir`
+
+Creates and sets directory for local computational data for YARN. Default: undef.
+
+Sets also the property *yarn.nodemanager.local-dirs*, suffix */${user.name}/nm-local-dir* is always added.
+
+This parameter is used on YARN slave nodes. To boost performace, it should be set to quick local disk (striped raid, SSD, ...), big enough to hold temporary computational data.
+
+If not set, it is used system default (*${hadoop.tmp.dir}/nm-local-dir*, which points to */tmp/hadoop-${user.name}*).
+
 #####`journalnode_hostnames`
 
 Array of HDFS Journal Node machines. Default: undef.

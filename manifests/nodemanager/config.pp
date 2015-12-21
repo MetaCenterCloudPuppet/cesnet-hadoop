@@ -14,6 +14,15 @@ class hadoop::nodemanager::config {
   # for templates in env/*
   $krbrefresh = $hadoop::features["krbrefresh"]
 
+  if $hadoop::scratch_dir {
+    file{$hadoop::scratch_dir:
+      ensure => 'directory',
+      mode   => '1777',
+      owner  => 'yarn',
+      group  => 'hadoop',
+    }
+  }
+
   if $hadoop::realm and $hadoop::realm != '' {
     file { $keytab:
       owner  => 'yarn',

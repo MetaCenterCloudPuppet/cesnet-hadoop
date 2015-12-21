@@ -49,6 +49,7 @@ class hadoop (
   $nfs_proxy_user = undef,
   $nfs_system_user = $::hadoop::params::nfs_system_user,
   $perform = $::hadoop::params::perform,
+  $scratch_dir = undef,
 
   $hdfs_deployed = $::hadoop::params::hdfs_deployed,
   $zookeeper_deployed = $::hadoop::params::zookeeper_deployed,
@@ -318,6 +319,14 @@ DEFAULT
     $impala_properties = {}
   }
 
+  if $scratch_dir {
+    $scratch_properties = {
+      'yarn.nodemanager.local-dirs' => "${scratch_dir}/\${user.name}/nm-local-dir",
+    }
+  } else {
+    $scratch_properties = {}
+  }
+
   # High Availability of HDFS
   if $hdfs_hostname2 {
     if !$hadoop::realm or $hadoop::realm == '' {
@@ -453,7 +462,7 @@ DEFAULT
     $preset_authorization = {}
   }
 
-  $props = merge($::hadoop::params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
+  $props = merge($::hadoop::params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
   $descs = merge($::hadoop::params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))
