@@ -19,6 +19,7 @@
      * [Fresh installation](#ha-fresh)
      * [Converting non-HA cluster](#ha-convert)
      * [HA Quorum Security](#ha-security)
+     * [Hadoop addons](#ha-addons)
     * [HDFS NFS Gateway](#nfs)
      * [Security](#nfs-sec)
      * [Authorization](#nfs-auth)
@@ -483,6 +484,12 @@ See *hadoop* class parameters:
 * [ha\_credentials](#ha_credentials)
 * [ha\_digest](#ha_digest)
 
+<a name="ha-addons"></a>
+#### Hadoop addons
+
+Some Hadoop addons may require extra actions:
+
+* Hive schema needs to be updated when changing non-HA cluster to HA (because defaultFS has been changed), see [Hive#defaultfs](https://github.com/MetaCenterCloudPuppet/cesnet-hive#defaultfs)
 
 <a name="nfs"></a>
 #### HDFS NFS Gateway
