@@ -269,21 +269,26 @@ Preparing the CA certificates store (*/etc/security/cacerts*):
 
 Preparing the certificates keystore (*/etc/security/server.keystore*):
 
+    # example values for certificate alias and passphrase
+    alias='hadoop-dcv'
+    read pass
+
     # X509 -> pkcs12
     # (enter some passphrase)
     openssl pkcs12 -export -in /etc/grid-security/hostcert.pem
                    -inkey /etc/grid-security/hostkey.pem \
-                   -out server.p12 -name hadoop-dcv -certfile tcs-ca-bundle.pem
+                   -out server.p12 -name ${alias} -certfile tcs-ca-bundle.pem
 
     # pkcs12 -> java
     # (the alias must be the same as the name above)
+    # (some addons may need the same store passphrase and key passphrase)
     keytool -importkeystore \
-            -deststorepass changeit1 -destkeypass changeit2 -destkeystore server.keystore \
+            -deststorepass ${pass} -destkeypass ${pass} -destkeystore server.keystore \
             -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass some-passphrase \
-            -alias hadoop-dcv
+            -alias ${alias}
 
     # check
-    keytool -list -keystore server.keystore -storepass changeit1
+    keytool -list -keystore server.keystore -storepass ${pass}
 
     # move to the right default location
     chmod 0600 server.keystore
