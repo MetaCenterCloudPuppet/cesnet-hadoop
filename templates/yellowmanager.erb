@@ -9,7 +9,7 @@
   nfs  = scope.lookupvar('hadoop::daemons')['nfs']
 
   realm = scope.lookupvar('hadoop::realm')
-  has_security = scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty?
+  has_security = (scope.lookupvar('hadoop::realm') and not scope.lookupvar('hadoop::realm').empty?)
 -%>
 #! /bin/sh
 
@@ -99,8 +99,8 @@ while [ -n "$1" ]; do
 <%if has_security -%>
 		export KRB5CCNAME=FILE:/tmp/krb5cc_rm_refresh
 		su yarn -p -s /bin/bash -c 'kinit -k -t <%= scope.lookupvar('hadoop::keytab_resourcemanager') -%> rm/<%= @fqdn -%>@<%= realm %>'
-		su yarn -p -s /bin/bash -c 'yarn rmadmin -refreshNodes'
 <% end -%>
+		su yarn -p -s /bin/bash -c 'yarn rmadmin -refreshNodes'
 <%if has_security -%>
 		kdestroy
 <% end -%>
