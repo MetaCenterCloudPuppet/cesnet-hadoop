@@ -188,7 +188,7 @@ We recommend to enable HTTPS when security is enabled. See [Enable HTTPS](#https
       hdfs_hostname => $::fqdn,
       yarn_hostname => $::fqdn,
       slaves => [ $::fqdn ],
-      frontends => [ $:fqdn ],
+      frontends => [ $::fqdn ],
       realm => 'MY.REALM',
       properties => {
         'dfs.replication' => 1,
@@ -323,7 +323,7 @@ The following hadoop class parameters are used for HTTPS (see also [Module Param
 * `https_keystore_keypassword` (undef)
   Certificates keystore key password. If not specified, `https_keystore_password` is used.
 
-Consider also checking POSIX ACL support in the system and enable `acl` in Hadoop module. It's useful for more pedantic rights on *ssl-\*.xml* files, which needs to be read by Hadoop additions (like HBase).
+Consider also checking POSIX ACL support in the system and enabling `acl` in Hadoop module. It's useful for more pedantic rights on *ssl-&#42;.xml* files, which needs to be read by Hadoop additions (like HBase).
 
 
 <a name="multihome"></a>
@@ -337,7 +337,7 @@ Multihome support doesn't work out-of-the box in Hadoop 2.6.x (2015-01). Propert
       # for multi-home
       datanode_hostnames => [ $::fqdn, '10.0.0.2', '192.169.0.2' ],
       slaves => [ $::fqdn ],
-      frontends => [ $:fqdn ],
+      frontends => [ $::fqdn ],
       realm => '',
       properties => {
         'dfs.replication' => 1,
@@ -447,12 +447,6 @@ These parameters are not required, the setup should converge when setup is repea
 
     node 'frontend.example.com' {
       include hadoop::frontend
-      include hadoop::journalnode
-
-      class{'zookeeper':
-        hostnames => $quorum_hostnames,
-        realm     => '',
-      }
     }
 
     node /hadoop\d+.example.com/ {
@@ -460,7 +454,7 @@ These parameters are not required, the setup should converge when setup is repea
       include hadoop::nodemanager
     }
 
-Note: Journalnode and Zookeeper are not resource intensive daemons and can be collocated with other daemons. In this example the content of *master3.example.com* node can be moved to some slave node or the frontend.
+Note: Journalnode and Zookeeper are not resource intensive daemons and can be collocated with other daemons. In this example the content of *master3.example.com* node can be moved to some slave node or the frontend (and *$quorum_hostnames* upated).
 
 <a name="ha-convert"></a>
 #### Converting non-HA cluster
@@ -531,7 +525,7 @@ Useful environments:
 
     class{"hadoop":
        ...
-       nfs_hostnames => ['hadoop-frontend.example.com', 'external-host.example.com'],
+       nfs_hostnames => ['hadoop-frontend.example.com'],
        #nfs_dumpdir => '/mnt/scratch/.hdfs-nfs',
        nfs_exports => "${::fqdn} rw; external-host.example.com rw",
     }
