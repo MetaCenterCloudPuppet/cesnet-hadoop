@@ -188,7 +188,7 @@ class hadoop::params {
     /RedHat/        => 500,
     default         => 1000,
   }
-  if $::uid_min {
+  if getvar('::uid_min') {
     $uid_min = $::uid_min
   } else {
     $uid_min = $default_uid_min
