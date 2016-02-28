@@ -663,8 +663,9 @@ For example:
 
 * **`hadoop::kinit`**: Init credentials
 * **`hadoop::kdestroy`**: Destroy credentials
-* **`hadoop::mkdir`**: Creates a directory on HDFS
+* [**`hadoop::mkdir`**](#resource-mkdir): Creates a directory on HDFS
 * **`hadoop::nfs::mount`**: Mount NFS provided by the HDFS NFS gateway
+* [**`hadoop::user`**](#resource-user): Create user account
 
 <a name="class-hadoop"></a>
 ### `hadoop` class
@@ -1122,6 +1123,73 @@ Array of Zookeeper machines. Default: undef.
 Used in HDFS namenode HA for automatic failover and for YARN resourcemanager state-store feature.
 
 Without zookeepers and HDFS HA, the manual failover is needed: the namenodes are always started in standby mode and one would need to be activated manually.
+
+<a name="resource-mkdir"></a>
+### `mkdir` resource
+
+Creates a directory on HDFS. Skip everything, if a helper *$touchfile* exists.
+
+#####`touchfile`
+
+Required.
+
+#####`owner`
+
+Default: undef.
+
+#####`group`
+
+Default: undef.
+
+#####`mode`
+
+Default: undef.
+
+#####`resursive`
+
+Default: false.
+
+<a name="resource-user"></a>
+### `user` resource
+
+Creates user account. Beware there is no additional logic! *hdfs* must be enabled only once and on HDFD name node, *shell* is not needed except the frontend.
+
+**Example**:
+
+    hadoopuser{['hawking']:
+      groups => 'users',
+      hdfs   => ($hadoop::hdfs_hostname == $::fqdn),
+      shell  => member($hadoop::frontends, $::fqdn),
+      realms => ['EXAMPLE.COM'],
+    }
+
+#####`shell`
+
+Enable shell. Required.
+
+Values:
+
+* **true**
+* **false**
+
+#####`hdfs`
+
+Create also user directory on HDFS. Required.
+
+Values:
+
+* **true**
+* **false**
+
+#####`groups`
+
+Additional user groups. Default: ['users'].
+
+#####`realms`
+
+Kerberos realms, if any. Default: [].
+
+Creates the *.k5login* file, if specified.
 
 <a name="limitations"></a>
 ##Limitations

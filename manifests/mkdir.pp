@@ -1,6 +1,6 @@
 # == Define hadoop::mkdir
 #
-# Creates a directory on HDFS. Skip everything, if a $touchfile exists. It is recommended the last hadoop::mkdir() call to have '$touch => true' parameter.
+# Creates a directory on HDFS. Skip everything, if a $touchfile exists.
 #
 # === Parameters
 #
