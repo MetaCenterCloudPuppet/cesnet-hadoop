@@ -654,7 +654,7 @@ For example:
 * `hadoop::zkfc::service`
 
 <a name="facts"></a>
-##Facts
+###Facts
 
 * **`uid_min`**: minimal UID (*UID_MIN* as read from */etc/login.defs*)
 
@@ -1127,27 +1127,42 @@ Without zookeepers and HDFS HA, the manual failover is needed: the namenodes are
 <a name="resource-mkdir"></a>
 ### `mkdir` resource
 
-Creates a directory on HDFS. Skip everything, if a helper *$touchfile* exists.
+Creates a directory on HDFS. Skips everything, if a helper *$touchfile* exists. Parent directories are created, if needed.
 
-#####`touchfile`
+**Example**:
 
-Required.
+    hadoop::kinit { 'hdfs-extradir-created': }
+    ->
+    hadoop::mkdir{'/bigdata':
+      owner     => 'hawking',
+      group     => 'users',
+      mode      => '1770',
+      touchfile => 'hdfs-extradir-created',
+    }
+    ->
+    hadoop::kdestroy { 'hdfs-extradir-created': }
 
 #####`owner`
 
-Default: undef.
+Sets the owner. Default: undef (system default is 'hdfs').
 
 #####`group`
 
-Default: undef.
+Sets the group. Default: undef (system default is 'supergroup').
 
 #####`mode`
 
-Default: undef.
+Sets the permissions. Default: undef (system default is '0755', if the property *fs.permissions.umask-mode* has default value of *022*).
 
 #####`resursive`
 
-Default: false.
+Changes permissions recursively. Default: false.
+
+#####`touchfile`
+
+Helper file name. Required.
+
+The name should be the same as used in *hadoop::kinit()* and *hadoop::kdestroy()* resources. It skips everything, if the touchfile already exists.
 
 <a name="resource-user"></a>
 ### `user` resource
@@ -1156,21 +1171,21 @@ Creates user account. Beware there is no additional logic! *hdfs* must be enable
 
 **Example**:
 
-    hadoopuser{['hawking']:
-      groups => 'users',
-      hdfs   => ($hadoop::hdfs_hostname == $::fqdn),
-      shell  => member($hadoop::frontends, $::fqdn),
-      realms => ['EXAMPLE.COM'],
+    hadoop::kinit { 'hdfs-user-created': }
+    ->
+    hadoop::user{['hawking']:
+      groups    => 'users',
+      hdfs      => ($hadoop::hdfs_hostname == $::fqdn),
+      shell     => member($hadoop::frontends, $::fqdn),
+      realms    => ['EXAMPLE.COM'],
+      touchfile => 'hdfs-user-created',
     }
+    ->
+    hadoop::kdestroy { 'hdfs-user-created': }
 
-#####`shell`
+#####`groups`
 
-Enable shell. Required.
-
-Values:
-
-* **true**
-* **false**
+Additional user groups. Default: ['users'].
 
 #####`hdfs`
 
@@ -1181,15 +1196,30 @@ Values:
 * **true**
 * **false**
 
-#####`groups`
+#####`homedir`
 
-Additional user groups. Default: ['users'].
+User home directory, where to create *.k5login* file. Default: "/home/${title}".
 
 #####`realms`
 
 Kerberos realms, if any. Default: [].
 
-Creates the *.k5login* file, if specified.
+Creates the *.k5login* file, if the *realms* specified.
+
+#####`shell`
+
+Enable shell. Required.
+
+Values:
+
+* **true**
+* **false**
+
+#####`touchfile`
+
+Helper file name. Required.
+
+The name should be the same as used in *hadoop::kinit()* and *hadoop::kdestroy()* resources. It skips everything, if the touchfile already exists.
 
 <a name="limitations"></a>
 ##Limitations

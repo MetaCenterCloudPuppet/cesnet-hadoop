@@ -6,7 +6,7 @@
 #
 # * User['hdfs']
 #
-define hadoop::kdestroy($touchfile, $touch) {
+define hadoop::kdestroy($touchfile = $title, $touch = true) {
   $env = [ "KRB5CCNAME=FILE:/tmp/krb5cc_nn_puppet_${touchfile}" ]
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"

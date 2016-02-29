@@ -1,12 +1,12 @@
 # == Define hadoop::kinit
 #
-# Init credentials. To be called before any hadoop::mkdir() resource type.
+# Init credentials. To be called before any hadoop::mkdir() and hadoop::user() resource type.
 #
 # === Requirements
 #
 # * User['hdfs']
 #
-define hadoop::kinit($touchfile) {
+define hadoop::kinit($touchfile = $title) {
   include ::hadoop::common::hdfs::config
 
   $env = [ "KRB5CCNAME=FILE:/tmp/krb5cc_nn_puppet_${touchfile}" ]

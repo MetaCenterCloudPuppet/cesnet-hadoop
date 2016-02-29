@@ -3,9 +3,11 @@
 # Create user account.
 #
 define hadoop::user(
+  $touchfile,
   $shell,
   $hdfs,
   $groups = ['users'],
+  $homedir = "/home/${title}",
   $realms = [],
 ) {
   $username = $title
@@ -27,7 +29,7 @@ define hadoop::user(
   }
 
   if $shell and $realms {
-    file{"/home/${username}/.k5login":
+    file{"${homedir}/.k5login":
       owner   => $username,
       group   => $username,
       mode    => '0644',
@@ -41,7 +43,7 @@ define hadoop::user(
       owner     => $username,
       group     => 'hadoop',
       mode      => '0750',
-      touchfile => "user-${username}-created",
+      touchfile => $touchfile,
     }
   }
 }

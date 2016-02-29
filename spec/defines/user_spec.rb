@@ -7,8 +7,9 @@ describe 'hadoop::user', :type => 'define' do
         facts
       }
       let(:params) {{
-        :hdfs  => true,
-        :shell => true
+        :hdfs      => true,
+        :shell     => true,
+        :touchfile => 'user-created',
       }}
       let(:title) { 'hawking' }
 
