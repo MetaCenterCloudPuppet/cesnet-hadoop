@@ -125,8 +125,12 @@ class hadoop (
     $daemon_journalnode = false
   }
 
-  if $daemon_namenode and $zookeeper_hostnames and (!$properties or !has_key($properties, 'dfs.ha.automatic-failover.enabled') or $properties['dfs.ha.automatic-failover.enabled']) {
-    $daemon_hdfs_zkfc = true
+  if $hdfs_hostname2 {
+    if $daemon_namenode and $zookeeper_hostnames and (!$properties or !has_key($properties, 'dfs.ha.automatic-failover.enabled') or $properties['dfs.ha.automatic-failover.enabled']) {
+      $daemon_hdfs_zkfc = true
+    } else {
+      $daemon_hdfs_zkfc = false
+    }
   } else {
     $daemon_hdfs_zkfc = false
   }
