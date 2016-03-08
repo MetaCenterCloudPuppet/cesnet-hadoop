@@ -28,7 +28,7 @@ define hadoop::user(
     shell      => $usershell,
   }
 
-  if $shell and $realms {
+  if $shell and $realms and !empty($realms) {
     file{"${homedir}/.k5login":
       owner   => $username,
       group   => $username,
