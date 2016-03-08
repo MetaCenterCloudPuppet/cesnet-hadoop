@@ -161,24 +161,35 @@ class hadoop (
   } else {
     $slaves_yarn = 'slaves'
   }
+  if $yarn_hostname {
+    $framework = 'yarn'
+  } else {
+    $framework = '::undef'
+  }
   $dyn_properties = {
     'dfs.datanode.hdfs-blocks-metadata.enabled' => true,
     'dfs.hosts' => "${hadoop::confdir}/${slaves_hdfs}",
     'dfs.hosts.exclude' => "${hadoop::confdir}/excludes",
     'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
-    'yarn.resourcemanager.hostname' => $yarn_hostname,
-    'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
-    'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
-    'yarn.nodemanager.log-dirs' => 'file:///var/log/hadoop-yarn/containers',
-    'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/${slaves_yarn}",
-    'yarn.resourcemanager.nodes.exclude-path' => "${hadoop::confdir}/excludes",
-    'mapreduce.framework.name' => 'yarn',
+    'mapreduce.framework.name' => $framework,
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
     'mapreduce.jobhistory.webapps.address' => "${hs_hostname}:19888",
     'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
   }
+  if $yarn_hostname {
+    $yarn_properties = {
+      'yarn.resourcemanager.hostname' => $yarn_hostname,
+      'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
+      'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
+      'yarn.nodemanager.log-dirs' => 'file:///var/log/hadoop-yarn/containers',
+      'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/${slaves_yarn}",
+      'yarn.resourcemanager.nodes.exclude-path' => "${hadoop::confdir}/excludes",
+    }
+  } else {
+    $yarn_properties = undef
+  }
   if $hadoop::realm and $hadoop::realm != '' {
-    $sec_properties = {
+    $sec_common_properties = {
       'hadoop.security.authentication' => 'kerberos',
       'hadoop.rcp.protection' => 'integrity',
       # update also "Auth to local mapping" chapter
@@ -213,6 +224,8 @@ DEFAULT
       'dfs.web.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
       'mapreduce.jobhistory.keytab' => $keytab_jobhistory,
       'mapreduce.jobhistory.principal' => "jhs/_HOST@${hadoop::realm}",
+    }
+    $sec_yarn_properties = {
       'yarn.resourcemanager.keytab' => $keytab_resourcemanager,
       'yarn.nodemanager.keytab' => $keytab_nodemanager,
       'yarn.resourcemanager.principal' => "rm/_HOST@${hadoop::realm}",
@@ -220,6 +233,7 @@ DEFAULT
       'yarn.nodemanager.container-executor.class' => 'org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor',
       'yarn.nodemanager.linux-container-executor.group' => 'hadoop',
     }
+    $sec_properties = merge($sec_common_properties, $sec_yarn_properties)
   } else {
     $sec_properties = undef
   }
@@ -233,7 +247,7 @@ DEFAULT
     }
   }
 
-  if $hadoop::features['rmstore'] {
+  if $hadoop::features['rmstore'] and $yarn_hostname {
     if $hadoop::features['rmstore'] == 'hdfs' or ($hadoop::features['rmstore'] != 'zookeeper' and !$zookeeper_hostnames) {
       if $hadoop::hdfs_deployed {
         $rm_ss_properties = {
@@ -271,7 +285,7 @@ DEFAULT
     $mh_properties = undef
   }
 
-  if $hadoop::features['aggregation'] {
+  if $hadoop::features['aggregation'] and $yarn_hostname {
     $agg_properties = {
       'yarn.log-aggregation-enable' => true,
       'yarn.nodemanager.remote-app-log-dir' => '/var/log/hadoop-yarn/apps',
@@ -293,7 +307,7 @@ DEFAULT
     if !$hadoop::realm or $hadoop::realm == '' {
       err('Kerberos feature required for https support.')
     }
-    $https_properties = {
+    $https_common_properties = {
       'hadoop.http.filter.initializers' => 'org.apache.hadoop.security.AuthenticationFilterInitializer',
       'hadoop.http.authentication.type' => 'kerberos',
       'hadoop.http.authentication.token.validity' => '36000',
@@ -306,8 +320,15 @@ DEFAULT
       'dfs.journalnode.kerberos.internal.spnego.principal' => "HTTP/_HOST@${hadoop::realm}",
       'dfs.web.authentication.kerberos.keytab' => "${hadoop::hdfs_homedir}/hadoop.keytab",
       'mapreduce.jobhistory.http.policy' => 'HTTPS_ONLY',
-      'yarn.http.policy' => 'HTTPS_ONLY',
     }
+    if $yarn_hostname {
+      $https_yarn_properties = {
+        'yarn.http.policy' => 'HTTPS_ONLY',
+      }
+    } else {
+      $https_yarn_properties = undef
+    }
+    $https_properties = merge($https_common_properties, $https_yarn_properties)
   } else {
     $https_properties = {}
   }
@@ -376,7 +397,7 @@ DEFAULT
   }
 
   # High Availability of YARN
-  if $yarn_hostname2 {
+  if $yarn_hostname and $yarn_hostname2 {
     $ha_yarn_properties = {
       'yarn.resourcemanager.cluster-id' => $hadoop::cluster_name,
       'yarn.resourcemanager.ha.enabled' => true,
@@ -466,7 +487,7 @@ DEFAULT
     $preset_authorization = {}
   }
 
-  $props = merge($::hadoop::params::properties, $dyn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
+  $props = merge($::hadoop::params::properties, $dyn_properties, $yarn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
   $descs = merge($::hadoop::params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))
