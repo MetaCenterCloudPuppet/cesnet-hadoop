@@ -387,8 +387,8 @@ Setup High Availability requires precise order of all steps. For example all zoo
 There are helper parameters to separate overall cluster setup to more stages:
 
 1. `zookeeper_deployed`=**false**, `hdfs_deployed`=**false**: zookeeper quorum and journal nodes quorum
-2. `zookeeper_deployed`=**true**, `hdfs_deployedr`=**false**: HDFS format and bootstrap (primary and secondary NN), setup and launch ZKFC and NN daemons
-3. `zookeeper_deployed`=**true**, `hdfs_deployedr`=**true**: enable History Server and RM state-store feature, if enabled
+2. `zookeeper_deployed`=**true**, `hdfs_deployed`=**false**: HDFS format and bootstrap (primary and secondary NN), setup and launch ZKFC and NN daemons
+3. `zookeeper_deployed`=**true**, `hdfs_deployed`=**true**: enable History Server and RM state-store feature, if enabled
 
 These parameters are not required, the setup should converge when setup is repeated. They may help with debugging problems though, because less things will fail if the setup is separated to several stages over the whole cluster.
 
@@ -410,7 +410,7 @@ These parameters are not required, the setup should converge when setup is repea
       hdfs_hostname2          => $master2_hostname,
       yarn_hostname           => $master1_hostname,
       yarn_hostname2          => $master2_hostname,
-      historyserer_hostname   => $master1_hostname,
+      historyserver_hostname  => $master1_hostname,
       httpfs_hostnames        => $httpfs_hostnames,
       slaves                  => $slaves,
       frontends               => $frontends,
@@ -467,7 +467,7 @@ These parameters are not required, the setup should converge when setup is repea
       include hadoop::nodemanager
     }
 
-Note: Journalnode and Zookeeper are not resource intensive daemons and can be collocated with other daemons. In this example the content of *master3.example.com* node can be moved to some slave node or the frontend (and *$quorum_hostnames* upated).
+Note: Journalnode and Zookeeper are not resource intensive daemons and can be collocated with other daemons. In this example the content of *master3.example.com* node can be moved to some slave node or the frontend (and *$quorum_hostnames* updated).
 
 <a name="ha-convert"></a>
 #### Converting non-HA cluster
@@ -558,7 +558,7 @@ Useful environments:
 
 The keytab file */etc/security/keytab/nfs.service.keytab* is required. It must contain principal for HDFS NFS Gateway.
 
-The principal must corespond to the valid system user (`auth_to_local` rules provides the mapping). This system user will be used also as Hadoop proxy user. The default value is 'nfs'.
+The principal must correspond to the valid system user (`auth_to_local` rules provides the mapping). This system user will be used also as Hadoop proxy user. The default value is 'nfs'.
 
 Principals needed:
 
@@ -602,7 +602,7 @@ The keytab file */etc/security/keytabs/httpfs-http.service.keytab* is required. 
 <a name="httpfs-auth"></a>
 ##### Authorization
 
-Properties *hadoop.proxyuser.httpfs.hosts* and *hadoop.proxyuser.httpfs.groups* are set, parameter *httpfs_hostnames* is used for the list of the hostnames (it may be overriden by using the *hadoop.proxyuser.httpfs.hosts* property directly).
+Properties *hadoop.proxyuser.httpfs.hosts* and *hadoop.proxyuser.httpfs.groups* are set, parameter *httpfs_hostnames* is used for the list of the hostnames (it may be overridden by using the *hadoop.proxyuser.httpfs.hosts* property directly).
 
 <a name="httpfs-check"></a>
 ##### Usage
@@ -719,7 +719,7 @@ For example:
 <a name="resources"></a>
 ###Resource Types
 
-* **`hadoop::kinit`**: Init credentials
+* **`hadoop::kinit`**: Initialize credentials
 * **`hadoop::kdestroy`**: Destroy credentials
 * [**`hadoop::mkdir`**](#resource-mkdir): Creates a directory on HDFS
 * **`hadoop::nfs::mount`**: Mount NFS provided by the HDFS NFS gateway
@@ -1034,7 +1034,7 @@ Creates and sets directory for local computational data for YARN. Default: undef
 
 Sets also the property *yarn.nodemanager.local-dirs*, suffix */${user.name}/nm-local-dir* is always added.
 
-This parameter is used on YARN slave nodes. To boost performace, it should be set to quick local disk (striped raid, SSD, ...), big enough to hold temporary computational data.
+This parameter is used on YARN slave nodes. To boost performance, it should be set to quick local disk (striped raid, SSD, ...), big enough to hold temporary computational data.
 
 If not set, it is used system default (*${hadoop.tmp.dir}/nm-local-dir*, which points to */tmp/hadoop-${user.name}*).
 
@@ -1166,7 +1166,7 @@ Enable security and Kerberos realm to use. Default: ''.
 
 Empty string disables the security.
 
-With security there is required:
+When security is enabled, there is required:
 
 * installed Kerberos client (Debian: krb5-user/heimdal-clients; RedHat: krb5-workstation)
 * configured Kerberos client (*/etc/krb5.conf*, */etc/krb5.keytab*)
@@ -1240,7 +1240,7 @@ Sets the group. Default: undef (system default is 'supergroup').
 
 Sets the permissions. Default: undef (system default is '0755', if the property *fs.permissions.umask-mode* has default value of *022*).
 
-#####`resursive`
+#####`recursive`
 
 Changes permissions recursively. Default: false.
 

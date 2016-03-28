@@ -1,6 +1,6 @@
 # == Define hadoop::kinit
 #
-# Init credentials. To be called before any hadoop::mkdir() and hadoop::user() resource type.
+# Initialize credentials. To be called before any hadoop::mkdir() and hadoop::user() resource type.
 #
 # === Requirements
 #
