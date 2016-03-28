@@ -81,7 +81,7 @@ class hadoop (
   if $nodemanager_hostnames {
     validate_array($nodemanager_hostnames)
   }
-  if $zookeeeprt_hostnames {
+  if $zookeeper_hostnames {
     validate_array($zookeeper_hostnames)
   }
   validate_hash($features)

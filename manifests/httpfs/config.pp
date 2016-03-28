@@ -41,13 +41,13 @@ class hadoop::httpfs::config {
   $env_file = "${::hadoop::confdir_httpfs}/httpfs-env.sh"
   if $hadoop::https {
     $environment = {
-      'HTTPFS_SSL_ENABLED' => 'true',
+      'HTTPFS_SSL_ENABLED' => true,
       'HTTPFS_SSL_KEYSTORE_FILE' => '${HOME}/.keystore',
       'HTTPFS_SSL_KEYSTORE_PASS' => "'${::hadoop::https_keystore_password}'",
     }
   } else {
     $environment = {
-      'HTTPFS_SSL_ENABLED' => 'false',
+      'HTTPFS_SSL_ENABLED' => false,
       'HTTPFS_SSL_KEYSTORE_FILE' => '::undef',
       'HTTPFS_SSL_KEYSTORE_PASS' => '::undef',
     }
