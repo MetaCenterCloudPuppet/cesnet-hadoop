@@ -977,6 +977,12 @@ History Server machine. Default: `yarn_hostname`.
 
 List of HTTPFS proxy hostnames. Default: [].
 
+#####`hue_hostnames`
+
+List of Apache Hue hostnames. Default: [].
+
+Used for proxyuser authorization properties (*httpfs.proxyuser.hue.hosts* when *httpfs_hostnames* parameter is specified, or *hadoop.proxyuser.hue.hosts*).
+
 #####`https`
 
 Enable support for https. Default: undef.

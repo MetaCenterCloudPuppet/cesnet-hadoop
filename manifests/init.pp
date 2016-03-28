@@ -12,6 +12,7 @@ class hadoop (
 
   $historyserver_hostname = undef,
   $httpfs_hostnames = [],
+  $hue_hostnames = [],
   $nodemanager_hostnames = undef,
   $datanode_hostnames = undef,
   $journalnode_hostnames = undef,
@@ -549,7 +550,23 @@ DEFAULT
     $httpfs_properties = {}
   }
 
-  $props = merge($::hadoop::params::properties, $dyn_properties, $yarn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $httpfs_properties, $properties)
+  if $hue_hostnames and !empty($hue_hostnames){
+    if $httpfs_hostnames and !empty($httpfs_hostnames){
+      $hue_properties = {
+        'httpfs.proxyuser.hue.hosts' => join($hue_hostnames, ','),
+        'httpfs.proxyuser.hue.groups' => '*',
+      }
+    } else {
+      $hue_properties = {
+        'hadoop.proxyuser.hue.hosts' => join($hue_hostnames, ','),
+        'hadoop.proxyuser.hue.groups' => '*',
+      }
+    }
+  } else {
+    $hue_properties = {}
+  }
+
+  $props = merge($::hadoop::params::properties, $dyn_properties, $yarn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $httpfs_properties, $hue_properties, $properties)
   $descs = merge($::hadoop::params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))
