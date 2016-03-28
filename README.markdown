@@ -24,6 +24,10 @@
      * [Security](#nfs-sec)
      * [Authorization](#nfs-auth)
      * [Quick Check](#nfs-check)
+    * [HTTPFS Proxy](#httpfs)
+     * [Security](#httpfs-sec)
+     * [Authorization](#httpfs-auth)
+     * [Usage](#httpfs-check)
     * [Upgrade](#upgrade)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Classes](#classes)
@@ -581,6 +585,47 @@ Example of changing HADOOP default ACL to more strict settings:
 
     rpcinfo -p ${nfs_hostname}
     showmount -e ${nfs_hostname}
+
+<a name="httpfs"></a>
+#### HTTPFS Proxy
+
+HTTPFS Proxy is not as good as the internal WebHDFS, because all communication must go through the proxy. But it is probably good enough as local proxy. It is required for Apache Hue, when there is used High Availability of HDFS.
+
+<a name="httpfs-sec"></a>
+##### Security
+
+The keytab file */etc/security/keytabs/httpfs-http.service.keytab* is required. Following principals must be available (replace *HOSTNAME* and *REALM* for real values):
+
+* *httpfs/HOSTNAME@REALM*
+* *HTTP/HOSTNAME@REALM*
+
+<a name="httpfs-auth"></a>
+##### Authorization
+
+Properties *hadoop.proxyuser.httpfs.hosts* and *hadoop.proxyuser.httpfs.groups* are set, parameter *httpfs_hostnames* is used for the list of the hostnames (it may be overriden by using the *hadoop.proxyuser.httpfs.hosts* property directly).
+
+<a name="httpfs-check"></a>
+##### Usage
+
+**Example**: list status (without security)
+
+    httpfs_hostname=...
+    user=...
+    HDFS_FILE=/user/...
+    curl -i "https://${httpfs_hostname}:14000/webhdfs/v1${HDFS_FILE}?op=liststatus&user.name=${user}"
+
+**Example**: list status (with security)
+
+    httpfs_hostname=...
+    HDFS_FILE=/user/...
+    curl --negotiate -u : -i "https://${httpfs_hostname}:14000/webhdfs/v1${HDFS_FILE}?op=liststatus"
+
+**Example**: creating the file (with security):
+
+    httpfs_hostname=...
+    LOCAL_FILE=...
+    HDFS_FILE=/user/...
+    curl --negotiate -u : -i -T ${LOCAL_FILE} -H 'Content-Type: application/octet-stream' "https://${httpfs_hostname}:14000/webhdfs/v1${HDFS_FILE}?op=create&data=true"
 
 <a name="upgrade"></a>
 ### Upgrade
