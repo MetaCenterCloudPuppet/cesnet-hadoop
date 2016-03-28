@@ -550,18 +550,13 @@ DEFAULT
     $httpfs_properties = {}
   }
 
-  if $hue_hostnames and !empty($hue_hostnames){
-    if $httpfs_hostnames and !empty($httpfs_hostnames){
+  if $hue_hostnames and !empty($hue_hostnames) {
       $hue_properties = {
         'httpfs.proxyuser.hue.hosts' => join($hue_hostnames, ','),
         'httpfs.proxyuser.hue.groups' => '*',
-      }
-    } else {
-      $hue_properties = {
         'hadoop.proxyuser.hue.hosts' => join($hue_hostnames, ','),
         'hadoop.proxyuser.hue.groups' => '*',
       }
-    }
   } else {
     $hue_properties = {}
   }

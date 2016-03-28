@@ -981,7 +981,12 @@ List of HTTPFS proxy hostnames. Default: [].
 
 List of Apache Hue hostnames. Default: [].
 
-Used for proxyuser authorization properties (*httpfs.proxyuser.hue.hosts* when *httpfs_hostnames* parameter is specified, or *hadoop.proxyuser.hue.hosts*).
+Used for proxyuser authorization properties:
+
+* *httpfs.proxyuser.hue.groups*
+* *httpfs.proxyuser.hue.hosts*
+* *hadoop.proxyuser.hue.groups*
+* *hadoop.proxyuser.hue.hosts*
 
 #####`https`
 
