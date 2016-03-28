@@ -29,7 +29,7 @@
 <% end -%>
 <% props_keys.each do |p| -%>
 <% value = props[p] -%>
-<% if not (p =~ /^hadoop\.hdfs\.|^dfs\.|^nfs\./) and not (p =~ /^mapreduce\./) and not (p =~ /^yarn\./) and value != '::undef' -%>
+<% if not (p =~ /^hadoop\.hdfs\.|^dfs\.|^nfs\./) and not (p =~ /^mapreduce\./) and not (p =~ /^yarn\./) and not (p =~ /^httpfs\./) and value != '::undef' -%>
 <% if scope.lookupvar('hadoop::descs')[p] -%>
   <!-- <%= scope.lookupvar('hadoop::descs')[p] %> -->
 <% end -%>

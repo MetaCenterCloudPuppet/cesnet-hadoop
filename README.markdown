@@ -176,7 +176,8 @@ Following parameters are used for security (see also [Module Parameters](#parame
   * */etc/security/keytab/nm.service.keytab* (on node manager nodes)
   * */etc/security/keytab/nn.service.keytab* (on name nodes)
   * */etc/security/keytab/rm.service.keytab* (on resource manager node)
-  * */etc/security/keytab/nfs.service.keytab* (on nfs gateway node)
+  * */etc/security/keytab/httpfs-http.service.keytab* (on HTTPFS proxy node)
+  * */etc/security/keytab/nfs.service.keytab* (on NFS gateway node)
 
 * `authorization` (empty hash by default)
 
@@ -235,6 +236,7 @@ In the default value in cesnet-hadoop module are also mappings for the following
 * Spark: *spark/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *spark*
 * Zookeeper: *zookeeper/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *zookeeper*
 * ... and helper principals:
+ * HTTFS proxy: *httpfs/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *httpfs*
  * HTTP SPNEGO: *HTTP/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *HTTP*
  * Tomcat: *tomcat/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *tomcat*
 
@@ -367,6 +369,10 @@ There are needed also these daemons for High Availability:
 * Zookeeper/Failover Controller (2) - on each Name Node
 * Zookeeper (>=3)
 
+There is also recommended for WebHDFS and High Availability:
+
+* HTTPFS proxy (1) - required for Apache Hue, requires also HTTPS
+
 When specifying zookeeper (`zookeeper_hostnames` parameter), automatic failover is enabled. You can override it by *dfs.ha.automatic-failover.enabled* and *yarn.resourcemanager.ha.automatic-failover.enabled* properties in `properties` parameter.
 
 <a name="ha-fresh"></a>
@@ -388,6 +394,7 @@ These parameters are not required, the setup should converge when setup is repea
     $master2_hostname = 'hadoop-master2.example.com'
     $slaves           = ['hadoop1.example.com', 'hadoop2.example.com', ...]
     $frontends        = ['hadoop.example.com']
+    $httpfs_hostnames = [$master1_hostname]
     $quorum_hostnames = [$master1_hostname, $master2_hostname, 'master3.example.com']
     $cluster_name     = 'example'
 
@@ -400,6 +407,7 @@ These parameters are not required, the setup should converge when setup is repea
       yarn_hostname           => $master1_hostname,
       yarn_hostname2          => $master2_hostname,
       historyserer_hostname   => $master1_hostname,
+      httpfs_hostnames        => $httpfs_hostnames,
       slaves                  => $slaves,
       frontends               => $frontends,
       journalnode_hostnames   => $quorum_hostnames,
@@ -415,6 +423,7 @@ These parameters are not required, the setup should converge when setup is repea
       include hadoop::namenode
       include hadoop::resourcemanager
       include hadoop::historyserver
+      include hadoop::httpfs
       include hadoop::zkfc
       include hadoop::journalnode
 
@@ -625,6 +634,10 @@ For example:
 * `hadoop::historyserver::config`
 * `hadoop::historyserver::install`
 * `hadoop::historyserver::service`
+* **`hadoop::httpfs`**: Hadoop HTTPFS proxy
+* `hadoop::httpfs::config`
+* `hadoop::httpfs::install`
+* `hadoop::httpfs::service`
 * **`hadoop::journalnode`**: HDFS Journal Node used for Quorum Journal Manager
 * `hadoop::journalnode::config`
 * `hadoop::journalnode::install`
@@ -682,6 +695,12 @@ It is used only when https is enabled to set less open privileges on ssl-server.
 #####`alternatives`
 
 Switches the alternatives used for the configuration. Default: 'cluster' (Debian) or undef.
+
+It can be used only when supported (for example with Cloudera distribution).
+
+#####`alternatives_httpfs`
+
+Switches the alternatives used for the configuration of HTTPFS proxy. Default: 'cluster' (Debian) or undef.
 
 It can be used only when supported (for example with Cloudera distribution).
 
@@ -909,6 +928,10 @@ Directory prefixes to store metadata by secondary name nodes, if different from 
 
 History Server machine. Default: `yarn_hostname`.
 
+#####`httpfs_hostnames`
+
+List of HTTPFS proxy hostnames. Default: [].
+
 #####`https`
 
 Enable support for https. Default: undef.
@@ -974,43 +997,54 @@ Used in HDFS namenode HA.
 
 Keytab file for HDFS Data Node. Default: '/etc/security/keytab/dn.service.keytab'.
 
-This will set also property *dfs.datanode.keytab.file*, if not specified directly.
+This will set also property *dfs.datanode.keytab.file*, if not specified directly. The keytab file must already exists.
+
+#####`keytab_httpfs`
+
+Keytab file for HDFS HTTP Proxy. Default: '/etc/security/keytab/httpfs-http.service.keytab'.
+
+This will set also property *httpfs.authentication.kerberos.keytab*, if not specified directly.
+
+The keytab file must already exists. Following principals must be available (replace *HOSTNAME* and *REALM* for real values):
+
+* *httpfs/HOSTNAME@REALM*
+* *HTTP/HOSTNAME@REALM*
 
 #####`keytab_jobhistory`
 
 Keytab file for Map Reduce Job History Server. Default: '/etc/security/keytab/jhs.service.keytab'.
 
-This will set also property *mapreduce.jobhistory.keytab*, if not specified directly.
+This will set also property *mapreduce.jobhistory.keytab*, if not specified directly. The keytab file must already exists.
 
 #####`keytab_journalnode`
 
 Keytab file for HDFS Data Node. Default: '/etc/security/keytab/jn.service.keytab'.
 
-This will set also property *dfs.journalnode.keytab.file*, if not specified directly.
+This will set also property *dfs.journalnode.keytab.file*, if not specified directly. The keytab file must already exists.
 
 #####`keytab_namenode`
 
 Keytab file for HDFS Name Node. Default: '/etc/security/keytab/nn.service.keytab'.
 
-This will set also property *dfs.namenode.keytab.file*, if not specified directly.
+This will set also property *dfs.namenode.keytab.file*, if not specified directly. The keytab file must already exists.
 
 #####`keytab_nfs`
 
 Keytab file for HDFS NFS Gateway. Default: '/etc/security/keytab/hdfs.service.keytab'.
 
-This will set also property *nfs.keytab.file*, if not specified directly.
+This will set also property *nfs.keytab.file*, if not specified directly. The keytab file must already exists.
 
 #####`keytab_nodemanager`
 
 Keytab file for YARN Node Manager. Default: '/etc/security/keytab/nm.service.keytab'.
 
-This will set also property *yarn.nodemanager.keytab*, if not specified directly.
+This will set also property *yarn.nodemanager.keytab*, if not specified directly. The keytab file must already exists.
 
 #####`keytab_resourcemanager`
 
 Keytab file for YARN Resource Manager. Default: '/etc/security/keytab/rm.service.keytab'.
 
-This will set also property *yarn.resourcemanager.keytab*, if not specified directly.
+This will set also property *yarn.resourcemanager.keytab*, if not specified directly. The keytab file must already exists.
 
 #####`min_uid`
 
@@ -1090,7 +1124,8 @@ With security there is required:
 * */etc/security/keytab/nm.service.keytab* (on node manager nodes)
 * */etc/security/keytab/nn.service.keytab* (on name nodes)
 * */etc/security/keytab/rm.service.keytab* (on resource manager node)
-* */etc/security/keytab/nfs.service.keytab* (on nfs gateway node)
+* */etc/security/keytab/httpfs-http.service.keytab* (on HTTPFS proxy node)
+* */etc/security/keytab/nfs.service.keytab* (on NFS gateway node)
 
 If https is enabled, cookie domain is set automatically to lowercased `realm`. This may be overridden by *http.authentication.cookie.domain* in `properties`.
 

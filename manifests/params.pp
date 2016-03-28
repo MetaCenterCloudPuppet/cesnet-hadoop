@@ -4,6 +4,11 @@
 # It sets variables according to platform
 #
 class hadoop::params {
+  $alternatives_ssl = "${::osfamily}-${::operatingsystem}" ? {
+    /RedHat-Fedora/ => '',
+    /Debian|RedHat/ => 'hadoop-httpfs-tomcat-conf',
+  }
+
   case "${::osfamily}-${::operatingsystem}" {
     /RedHat-Fedora/: {
       $packages_common = [ 'hadoop-common', 'hadoop-common-native' ]
@@ -17,6 +22,7 @@ class hadoop::params {
       $packages_client = [ 'hadoop-client', 'hadoop-mapreduce-examples' ]
       $packages_nfs = [ 'hadoop-nfs' ]
       $packages_system_nfs = [ 'nfs-utils' ]
+      $packages_httpfs = [ 'hadoop-httpfs' ]
 
       $daemons = {
         'namenode' => 'hadoop-namenode',
@@ -28,6 +34,7 @@ class hadoop::params {
         'hdfs-zkfc' => 'hadoop-zkfc',
         'nfs' => 'hadoop-nfs',
         'portmap' => undef,
+        'httpfs' => 'tomcat@httpfs',
       }
       $envs = {
         'common' => '/etc/sysconfig/hadoop',
@@ -37,9 +44,11 @@ class hadoop::params {
         'journalnode' => '/etc/sysconfig/hadoop-journalnode',
         'hdfs-zkfc' => '/etc/sysconfig/hadoop-zkfc',
         'nfs' => '/etc/default/hadoop-nfs',
+        'httpfs' => undef,
       }
 
       $confdir = '/etc/hadoop'
+      $confdir_httpfs = undef
       # container group, official recommendation is 'hadoop'
       # depends on result of: https://bugzilla.redhat.com/show_bug.cgi?id=1163892
       $yarn_group = 'hadoop'
@@ -62,6 +71,7 @@ class hadoop::params {
         /Debian/ => [ 'nfs-common' ],
         /RedHat/ => [ 'nfs-utils' ],
       }
+      $packages_httpfs = ['hadoop-httpfs']
 
       $daemons = {
         'namenode' => 'hadoop-hdfs-namenode',
@@ -76,6 +86,7 @@ class hadoop::params {
           /Debian/ => undef,
           /RedHat/ => 'rpcbind',
         },
+        'httpfs' => 'hadoop-httpfs',
       }
       $envs = {
         'common' => '/etc/default/hadoop',
@@ -85,9 +96,11 @@ class hadoop::params {
         'journalnode' => '/etc/default/hadoop-hdfs-journalnode',
         'hdfs-zkfc' => '/etc/default/hadoop-hdfs-zkfc',
         'nfs' => '/etc/default/hadoop-hdfs-nfs3',
+        'httpfs' => '/etc/default/hadoop-httpfs',
       }
 
       $confdir = '/etc/hadoop/conf'
+      $confdir_httpfs = '/etc/hadoop-httpfs/conf'
       # container group
       $yarn_group = 'yarn'
     }
@@ -95,10 +108,6 @@ class hadoop::params {
       fail("${::osfamily} (${::operatingsystem}) not supported")
     }
   }
-
-  $hdfs_hostname = $::fqdn
-  $yarn_hostname = $::fqdn
-  $slaves = [ $::fqdn ]
 
   $cluster_name = 'cluster'
 
@@ -170,6 +179,10 @@ class hadoop::params {
     /RedHat-Fedora/ => '/var/lib/hadoop-hdfs',
     /Debian|RedHat/ => '/var/lib/hadoop-hdfs',
   }
+  $httpfs_homedir = "${::osfamily}-${::operatingsystem}" ? {
+    /RedHat-Fedora/ => undef,
+    /Debian|RedHat/ => '/var/lib/hadoop-httpfs',
+  }
   $yarn_homedir = "${::osfamily}-${::operatingsystem}" ? {
     /RedHat-Fedora/ => '/var/cache/hadoop-yarn',
     /Debian|RedHat/ => '/var/lib/hadoop-yarn',
@@ -233,6 +246,7 @@ class hadoop::params {
   $https_keytab = '/etc/security/keytab/http.service.keytab'
   $keytab_namenode = '/etc/security/keytab/nn.service.keytab'
   $keytab_datanode = '/etc/security/keytab/dn.service.keytab'
+  $keytab_httpfs = '/etc/security/keytab/httpfs-http.service.keytab'
   $keytab_jobhistory = '/etc/security/keytab/jhs.service.keytab'
   $keytab_journalnode = '/etc/security/keytab/jn.service.keytab'
   $keytab_resourcemanager = '/etc/security/keytab/rm.service.keytab'

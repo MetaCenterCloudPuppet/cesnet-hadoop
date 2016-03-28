@@ -1,10 +1,10 @@
 <% if @environment and not @environment.empty? -%>
 <% @environment.keys.each do |k| -%>
 <% if @environment[k] == '::undef' -%>
-rm /files<%= @env_common -%>/<%= k %>
+rm /files<%= @env_file -%>/<%= k %>
 <% else -%>
-set /files<%= @env_common -%>/<%= k -%> <%= @environment[k] %>
-set /files<%= @env_common -%>/<%= k -%>/export ""
+set /files<%= @env_file -%>/<%= k -%> <%= @environment[k] %>
+set /files<%= @env_file -%>/<%= k -%>/export ""
 <% end -%>
 <% end -%>
 <% end -%>

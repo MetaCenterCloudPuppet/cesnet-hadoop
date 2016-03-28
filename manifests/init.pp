@@ -3,22 +3,22 @@
 # Main configuration class.
 #
 class hadoop (
-  $hdfs_hostname = $::hadoop::params::hdfs_hostname,
+  $hdfs_hostname = $::fqdn,
   $hdfs_hostname2 = undef,
-  $yarn_hostname = $::hadoop::params::yarn_hostname,
+  $yarn_hostname = $::fqdn,
   $yarn_hostname2 = undef,
-  $slaves = $::hadoop::params::slaves,
+  $slaves = [$::fqdn],
   $frontends = [],
-  $cluster_name = $::hadoop::params::cluster_name,
-  $realm = '',
 
   $historyserver_hostname = undef,
+  $httpfs_hostnames = [],
   $nodemanager_hostnames = undef,
   $datanode_hostnames = undef,
   $journalnode_hostnames = undef,
   $nfs_hostnames = [],
   $zookeeper_hostnames = undef,
 
+  $cluster_name = $::hadoop::params::cluster_name,
   $ha_credentials = undef,
   $ha_digest = undef,
   $hdfs_name_dirs = $::hadoop::params::hdfs_name_dirs,
@@ -32,6 +32,7 @@ class hadoop (
   $compress_enable = true,
   $acl = undef,
   $alternatives = '::default',
+  $alternatives_httpfs = '::default',
   $authorization = undef,
   $https = undef,
   $https_cacerts = $::hadoop::params::https_cacerts,
@@ -49,6 +50,7 @@ class hadoop (
   $nfs_proxy_user = undef,
   $nfs_system_user = $::hadoop::params::nfs_system_user,
   $perform = $::hadoop::params::perform,
+  $realm = '',
   $scratch_dir = undef,
 
   $hdfs_deployed = $::hadoop::params::hdfs_deployed,
@@ -56,6 +58,7 @@ class hadoop (
 
   $keytab_namenode = $::hadoop::params::keytab_namenode,
   $keytab_datanode = $::hadoop::params::keytab_datanode,
+  $keytab_httpfs = $::hadoop::params::keytab_httpfs,
   $keytab_jobhistory = $::hadoop::params::keytab_jobhistory,
   $keytab_journalnode = $::hadoop::params::keytab_journalnode,
   $keytab_resourcemanager = $::hadoop::params::keytab_resourcemanager,
@@ -63,6 +66,33 @@ class hadoop (
   $keytab_nfs = $::hadoop::params::keytab_nfs,
 ) inherits hadoop::params {
   include ::stdlib
+
+  validate_array($frontends)
+  validate_array($slaves)
+  validate_array($nfs_hostnames)
+  validate_array($httpfs_hostnames)
+  if $datanode_hostnames {
+    validate_array($datanode_hostnames)
+  }
+  if $journalnode_hostnames {
+    validate_array($journalnode_hostnames)
+  }
+  if $nodemanager_hostnames {
+    validate_array($nodemanager_hostnames)
+  }
+  if $zookeeeprt_hostnames {
+    validate_array($zookeeper_hostnames)
+  }
+  validate_hash($features)
+  if $descriptions {
+    validate_hash($descriptions)
+  }
+  if $environment {
+    validate_hash($environment)
+  }
+  if $properties {
+    validate_hash($properties)
+  }
 
   # detailed deployment bases on convenient parameters
   if $historyserver_hostname { $hs_hostname = $historyserver_hostname }
@@ -135,6 +165,12 @@ class hadoop (
     $daemon_hdfs_zkfc = false
   }
 
+  if member($httpfs_hostnames, $::fqdn) {
+    $daemon_httpfs = true
+  } else {
+    $daemon_httpfs = false
+  }
+
   if member($frontend_hostnames, $::fqdn) {
     $frontend = true
   } else {
@@ -171,6 +207,7 @@ class hadoop (
     'dfs.hosts' => "${hadoop::confdir}/${slaves_hdfs}",
     'dfs.hosts.exclude' => "${hadoop::confdir}/excludes",
     'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
+    'httpfs.hadoop.config.dir' => $hadoop::confdir,
     'mapreduce.framework.name' => $framework,
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
     'mapreduce.jobhistory.webapps.address' => "${hs_hostname}:19888",
@@ -188,12 +225,8 @@ class hadoop (
   } else {
     $yarn_properties = undef
   }
-  if $hadoop::realm and $hadoop::realm != '' {
-    $sec_common_properties = {
-      'hadoop.security.authentication' => 'kerberos',
-      'hadoop.rcp.protection' => 'integrity',
-      # update also "Auth to local mapping" chapter
-      'hadoop.security.auth_to_local' => "
+  # update also "Auth to local mapping" chapter
+  $auth_rules_default = "
 RULE:[2:\$1;\$2@\$0](^jhs;.*@${realm}$)s/^.*$/mapred/
 RULE:[2:\$1;\$2@\$0](^[ndjs]n;.*@${realm}$)s/^.*$/hdfs/
 RULE:[2:\$1;\$2@\$0](^nfs;.*@${realm}$)s/^.*$/${_nfs_proxy_user}/
@@ -201,12 +234,23 @@ RULE:[2:\$1;\$2@\$0](^[rn]m;.*@${realm}$)s/^.*$/yarn/
 RULE:[2:\$1;\$2@\$0](^hbase;.*@${realm}$)s/^.*$/hbase/
 RULE:[2:\$1;\$2@\$0](^hive;.*@${realm}$)s/^.*$/hive/
 RULE:[2:\$1;\$2@\$0](^hue;.*@${realm}$)s/^.*$/hue/
+RULE:[2:\$1;\$2@\$0](^httpfs;.*@${realm}$)s/^.*$/httpfs/
 RULE:[2:\$1;\$2@\$0](^spark;.*@${realm}$)s/^.*$/spark/
 RULE:[2:\$1;\$2@\$0](^tomcat;.*@${realm}$)s/^.*$/tomcat/
 RULE:[2:\$1;\$2@\$0](^zookeeper;.*@${realm}$)s/^.*$/zookeeper/
 RULE:[2:\$1;\$2@\$0](^HTTP;.*@${realm}$)s/^.*$/HTTP/
 DEFAULT
-",
+"
+  if $properties and has_key($properties, 'hadoop.security.auth_to_local') {
+    $auth_rules = $properties['hadoop.security.auth_to_local']
+  } else {
+    $auth_rules = $auth_rules_default
+  }
+  if $hadoop::realm and $hadoop::realm != '' {
+    $sec_common_properties = {
+      'hadoop.security.authentication' => 'kerberos',
+      'hadoop.rcp.protection' => 'integrity',
+      'hadoop.security.auth_to_local' => $auth_rules_default,
       'dfs.datanode.address' => '0.0.0.0:1004',
       'dfs.datanode.http.address' => '0.0.0.0:1006',
       'dfs.block.access.token.enable' => true,
@@ -316,6 +360,15 @@ DEFAULT
       'hadoop.http.authentication.simple.anonymous.allowed' => false,
       'hadoop.http.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
       'hadoop.http.authentication.kerberos.keytab' => '${user.home}/hadoop.keytab',
+      'httpfs.authentication.type' => 'kerberos',
+      # _HOST not possible here, $::fqdn required
+      'httpfs.authentication.kerberos.principal' => "HTTP/${::fqdn}@${hadoop::realm}",
+      'httpfs.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
+      'httpfs.authentication.kerberos.name.rules' => $auth_rules,
+      'httpfs.hadoop.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
+      # _HOST not possible here, $::fqdn required
+      'httpfs.hadoop.authentication.kerberos.principal' => "httpfs/${::fqdn}@${hadoop::realm}",
+      'httpfs.hadoop.authentication.type' => 'kerberos',
       'dfs.http.policy' => 'HTTPS_ONLY',
       'dfs.journalnode.kerberos.internal.spnego.principal' => "HTTP/_HOST@${hadoop::realm}",
       'dfs.web.authentication.kerberos.keytab' => "${hadoop::hdfs_homedir}/hadoop.keytab",
@@ -487,7 +540,16 @@ DEFAULT
     $preset_authorization = {}
   }
 
-  $props = merge($::hadoop::params::properties, $dyn_properties, $yarn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $properties)
+  if $httpfs_hostnames and !empty($httpfs_hostnames){
+    $httpfs_properties = {
+      'hadoop.proxyuser.httpfs.hosts' => join($httpfs_hostnames, ','),
+      'hadoop.proxyuser.httpfs.groups' => '*',
+    }
+  } else {
+    $httpfs_properties = {}
+  }
+
+  $props = merge($::hadoop::params::properties, $dyn_properties, $yarn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $httpfs_properties, $properties)
   $descs = merge($::hadoop::params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))

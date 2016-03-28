@@ -12,10 +12,10 @@ class hadoop::common::config {
   }
 
   $environment = $hadoop::environment
-  $env_common = $hadoop::envs['common']
-  augeas{ $env_common:
+  $env_file = $hadoop::envs['common']
+  augeas{ $env_file:
     lens    => 'Shellvars.lns',
-    incl    => $env_common,
+    incl    => $env_file,
     changes => template('hadoop/env/common.augeas.erb'),
   }
   #notice(template('hadoop/env/common.augeas.erb'))

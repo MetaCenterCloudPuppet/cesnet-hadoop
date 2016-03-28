@@ -32,7 +32,7 @@ $test_os={
         }, {
             'osfamily' => 'RedHat',
             'operatingsystem' => 'CentOS',
-            'operatingsystemrelease' => ['6']
+            'operatingsystemrelease' => ['7']
         }, {
             'osfamily' => 'Debian',
             'operatingsystem' => 'Ubuntu',
@@ -46,5 +46,15 @@ $test_config_dir={
   'Debian' => '/etc/hadoop/conf',
   'Fedora' => '/etc/hadoop',
   'RedHat' => '/etc/hadoop/conf',
+  'Scientific' => '/etc/hadoop/conf',
   'Ubuntu' => '/etc/hadoop/conf',
+}
+
+$httpfs_config_dir={
+  'CentOS' => '/etc/hadoop-httpfs/conf',
+  'Debian' => '/etc/hadoop-httpfs/conf',
+  'Fedora' => '/etc/hadoop-httpfs',
+  'RedHat' => '/etc/hadoop-httpfs/conf',
+  'Scientific' => '/etc/hadoop-httpfs/conf',
+  'Ubuntu' => '/etc/hadoop-httpfs/conf',
 }
