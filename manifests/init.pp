@@ -17,6 +17,7 @@ class hadoop (
   $datanode_hostnames = undef,
   $journalnode_hostnames = undef,
   $nfs_hostnames = [],
+  $oozie_hostnames = [],
   $zookeeper_hostnames = undef,
 
   $cluster_name = $::hadoop::params::cluster_name,
@@ -71,6 +72,8 @@ class hadoop (
   validate_array($frontends)
   validate_array($slaves)
   validate_array($nfs_hostnames)
+  validate_array($hue_hostnames)
+  validate_array($oozie_hostnames)
   validate_array($httpfs_hostnames)
   if $datanode_hostnames {
     validate_array($datanode_hostnames)
@@ -561,7 +564,16 @@ DEFAULT
     $hue_properties = {}
   }
 
-  $props = merge($::hadoop::params::properties, $dyn_properties, $yarn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $httpfs_properties, $hue_properties, $properties)
+  if $oozie_hostnames and !empty($oozie_hostnames) {
+      $oozie_properties = {
+        'hadoop.proxyuser.oozie.hosts' => join($oozie_hostnames, ','),
+        'hadoop.proxyuser.oozie.groups' => '*',
+      }
+  } else {
+    $oozie_properties = {}
+  }
+
+  $props = merge($::hadoop::params::properties, $dyn_properties, $yarn_properties, $sec_properties, $auth_properties, $rm_ss_properties, $mh_properties, $agg_properties, $compress_properties, $https_properties, $impala_properties, $scratch_properties, $ha_properties, $zoo_properties, $nfs_properties, $httpfs_properties, $hue_properties, $oozie_properties, $properties)
   $descs = merge($::hadoop::params::descriptions, $descriptions)
 
   $_authorization = merge($preset_authorization, delete($authorization, 'rules'))

@@ -1155,6 +1155,15 @@ The value must correspond to packaging of Hadoop distribution.
 
 Array of Node Manager machines. Default: `slaves`.
 
+#####`oozie_hostnames`
+
+List of Apache Oozie hostnames. Default: [].
+
+Used for proxyuser authorization properties:
+
+* *hadoop.proxyuser.oozie.groups*
+* *hadoop.proxyuser.oozie.hosts*
+
 #####`perform`
 
 Launch all installation and setup here, from hadoop class. Default: false.
