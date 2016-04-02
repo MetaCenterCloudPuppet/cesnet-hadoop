@@ -31,6 +31,8 @@ class hadoop::zkfc::service {
       }
       ->
       Service[$hadoop::daemons['hdfs-zkfc']]
+
+      Service[$hadoop::daemons['hdfs-zkfc']] -> Hadoop::Mkdir <| |>
     }
   }
 }
