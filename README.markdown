@@ -201,7 +201,8 @@ We recommend to enable HTTPS when security is enabled. See [Enable HTTPS](#https
       authorization => {
         'rules' => 'limit',
         # more paranoid permissions to users in "users" group
-        #'security.service.authorization.default.acl' => ' hadoop,hbase,hive,impala,spark,users',
+        'security.client.protocol.acl' => 'hue,nfs,root hadoop,hbase,hive,impala,oozie,spark,users',
+        'security.service.authorization.default.acl' => ' hadoop,users',
       },
       # https recommended (and other extensions may require it)
       https => true,
@@ -574,8 +575,8 @@ Example of changing HADOOP default ACL to more strict settings:
 
      authorization => {
        'rules' => 'limit',
-       'security.client.protocol.acl' => 'root,nfs hadoop,hbase,hive,impala,spark,users'
-       'security.service.authorization.default.acl' => ' hadoop,hbase,hive,impala,spark,users',
+       'security.client.protocol.acl' => 'hue,nfs,root hadoop,hbase,hive,impala,oozie,spark,users',
+       'security.service.authorization.default.acl' => ' hadoop,users',
      }
 
 <a name="nfs-check"></a>
@@ -815,7 +816,8 @@ You can use use **limit** rules. For more strict settings you can define *securi
 
     authorization => {
       'rules' => 'limit',
-      'security.service.authorization.default.acl' => ' hadoop,hbase,hive,spark,users',
+      'security.client.protocol.acl' => 'hue,nfs,root hadoop,hbase,hive,impala,oozie,spark,users',
+      'security.service.authorization.default.acl' => ' hadoop,users',
     }
 
 Note: Beware *...acl.blocked* are not used if the *....acl* counterpart is defined.
