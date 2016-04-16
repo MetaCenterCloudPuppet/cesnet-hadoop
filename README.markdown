@@ -238,7 +238,10 @@ In the default value in cesnet-hadoop module are also mappings for the following
 * HBase: *hbase/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *hbase*
 * Hive: *hive/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *hive*
 * Hue: *hue/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *hue*
+* Oozie: *oozie/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *oozie*
+* Solr: *solr/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *solr*
 * Spark: *spark/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *spark*
+* Sqoop: *sqoop/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *sqoop*
 * Zookeeper: *zookeeper/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *zookeeper*
 * ... and helper principals:
  * HTTFS proxy: *httpfs/&lt;HOST&gt;@&lt;REALM&gt;* -&gt; *httpfs*

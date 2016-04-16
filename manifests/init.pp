@@ -239,7 +239,10 @@ RULE:[2:\$1;\$2@\$0](^hbase;.*@${realm}$)s/^.*$/hbase/
 RULE:[2:\$1;\$2@\$0](^hive;.*@${realm}$)s/^.*$/hive/
 RULE:[2:\$1;\$2@\$0](^hue;.*@${realm}$)s/^.*$/hue/
 RULE:[2:\$1;\$2@\$0](^httpfs;.*@${realm}$)s/^.*$/httpfs/
+RULE:[2:\$1;\$2@\$0](^oozie;.*@${realm}$)s/^.*$/oozie/
+RULE:[2:\$1;\$2@\$0](^solr;.*@${realm}$)s/^.*$/solr/
 RULE:[2:\$1;\$2@\$0](^spark;.*@${realm}$)s/^.*$/spark/
+RULE:[2:\$1;\$2@\$0](^sqoop;.*@${realm}$)s/^.*$/sqoop/
 RULE:[2:\$1;\$2@\$0](^tomcat;.*@${realm}$)s/^.*$/tomcat/
 RULE:[2:\$1;\$2@\$0](^zookeeper;.*@${realm}$)s/^.*$/zookeeper/
 RULE:[2:\$1;\$2@\$0](^HTTP;.*@${realm}$)s/^.*$/HTTP/
