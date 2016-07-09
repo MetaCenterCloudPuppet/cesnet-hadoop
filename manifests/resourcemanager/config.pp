@@ -1,11 +1,11 @@
 # == Class hadoop::resourcemanager::config
 #
 class hadoop::resourcemanager::config {
-  contain ::hadoop::common::config
-  contain ::hadoop::common::hdfs::config
-  contain ::hadoop::common::mapred::config
-  contain ::hadoop::common::yarn::config
-  contain ::hadoop::common::yarn::daemon
+  contain hadoop::common::config
+  contain hadoop::common::hdfs::config
+  contain hadoop::common::mapred::config
+  contain hadoop::common::yarn::config
+  contain hadoop::common::yarn::daemon
 
   if $hadoop::realm and $hadoop::realm != '' {
     file { $hadoop::keytab_resourcemanager:

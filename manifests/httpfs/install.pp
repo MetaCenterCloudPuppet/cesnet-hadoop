@@ -2,7 +2,7 @@
 #
 class hadoop::httpfs::install {
   include ::stdlib
-  contain ::hadoop::common::install
+  contain hadoop::common::install
 
   ensure_packages($hadoop::packages_httpfs)
 

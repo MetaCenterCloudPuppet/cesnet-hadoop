@@ -1,11 +1,11 @@
 # == Class hadoop::nodemanager::config
 #
 class hadoop::nodemanager::config {
-  contain ::hadoop::common::config
-  contain ::hadoop::common::hdfs::config
-  contain ::hadoop::common::mapred::config
-  contain ::hadoop::common::yarn::config
-  contain ::hadoop::common::yarn::daemon
+  contain hadoop::common::config
+  contain hadoop::common::hdfs::config
+  contain hadoop::common::mapred::config
+  contain hadoop::common::yarn::config
+  contain hadoop::common::yarn::daemon
 
   $keytab = $hadoop::keytab_nodemanager
   $user = 'yarn'

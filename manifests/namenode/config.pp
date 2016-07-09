@@ -4,9 +4,9 @@
 #
 class hadoop::namenode::config {
   include ::stdlib
-  contain ::hadoop::common::config
-  contain ::hadoop::common::hdfs::config
-  contain ::hadoop::common::hdfs::daemon
+  contain hadoop::common::config
+  contain hadoop::common::hdfs::config
+  contain hadoop::common::hdfs::daemon
 
   # ensure proper owner and group
   # (better to enable sticky bit for more protection)
@@ -38,7 +38,7 @@ class hadoop::namenode::config {
   # format only on the first namenode
   # (requires running all journal nodes in HA)
   if $hadoop::hdfs_hostname == $::fqdn and $hadoop::zookeeper_deployed {
-    contain ::hadoop::namenode::format
+    contain hadoop::namenode::format
 
     File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::namenode::format']
     Class['hadoop::common::config'] -> Class['hadoop::namenode::format']
@@ -48,7 +48,7 @@ class hadoop::namenode::config {
   # bootstrap only with High Availability on the second namenode
   # (bootstrap requires formatted primary namenode; just wait for it there)
   if $hadoop::hdfs_hostname2 == $::fqdn and $hadoop::zookeeper_deployed {
-    contain ::hadoop::namenode::bootstrap
+    contain hadoop::namenode::bootstrap
 
     File[$hadoop::_hdfs_name_dirs] -> Class['hadoop::namenode::bootstrap']
     Class['hadoop::common::config'] -> Class['hadoop::namenode::bootstrap']

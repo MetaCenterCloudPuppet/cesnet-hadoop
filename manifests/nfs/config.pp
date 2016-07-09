@@ -1,10 +1,10 @@
 # == Class hadoop::nfs::config
 #
 class hadoop::nfs::config {
-  contain ::hadoop::common::config
-  contain ::hadoop::common::hdfs::config
-  contain ::hadoop::common::hdfs::daemon
-  contain ::hadoop::nfs::user
+  contain hadoop::common::config
+  contain hadoop::common::hdfs::config
+  contain hadoop::common::hdfs::daemon
+  contain hadoop::nfs::user
 
   #$env_nfs = $hadoop::envs['nfs']
   #augeas{$env_nfs:

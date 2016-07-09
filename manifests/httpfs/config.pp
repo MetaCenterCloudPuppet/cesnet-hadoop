@@ -1,8 +1,8 @@
 # == Class hadoop::httpfs::config
 #
 class hadoop::httpfs::config {
-  contain ::hadoop::common::config
-  contain ::hadoop::common::hdfs::config
+  contain hadoop::common::config
+  contain hadoop::common::hdfs::config
 
   $keytab = $hadoop::keytab_httpfs
 

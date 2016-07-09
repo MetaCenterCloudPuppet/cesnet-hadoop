@@ -4,9 +4,9 @@
 #
 class hadoop::journalnode::config {
   include ::stdlib
-  contain ::hadoop::common::config
-  contain ::hadoop::common::hdfs::config
-  contain ::hadoop::common::hdfs::daemon
+  contain hadoop::common::config
+  contain hadoop::common::hdfs::config
+  contain hadoop::common::hdfs::daemon
 
   $keytab = $hadoop::keytab_journalnode
   $user = 'hdfs'
