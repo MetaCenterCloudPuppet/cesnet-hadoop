@@ -213,8 +213,6 @@ class hadoop (
     'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
     'httpfs.hadoop.config.dir' => $hadoop::confdir,
     'mapreduce.framework.name' => $framework,
-    'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
-    'mapreduce.jobhistory.webapps.address' => "${hs_hostname}:19888",
     'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
   }
   if $yarn_hostname {
