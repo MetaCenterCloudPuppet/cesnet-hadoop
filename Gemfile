@@ -10,6 +10,8 @@ group :test do
   gem "rspec-puppet-facts"
   gem 'simplecov', '>= 0.11.0'
   gem 'simplecov-console'
+  # >= 2.0.1 hard requires ruby >= 2.0
+  gem 'json', '< 2.0.0'
   # >= 3.1 hard requires newest ruby
   gem 'listen', '< 3.1'
 
