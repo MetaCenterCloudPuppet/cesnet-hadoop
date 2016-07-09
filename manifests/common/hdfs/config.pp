@@ -135,6 +135,6 @@ class hadoop::common::hdfs::config {
   # at the name node.
   #
   if $hadoop::nfs_properties {
-    contain hadoop::nfs::user
+    contain ::hadoop::nfs::user
   }
 }

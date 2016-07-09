@@ -4,7 +4,7 @@
 #
 class hadoop::zkfc::config {
   include ::stdlib
-  contain hadoop::common::config
-  contain hadoop::common::hdfs::config
-  contain hadoop::common::hdfs::daemon
+  contain ::hadoop::common::config
+  contain ::hadoop::common::hdfs::config
+  contain ::hadoop::common::hdfs::daemon
 }

@@ -4,8 +4,8 @@
 #
 class hadoop::namenode::install {
   include ::stdlib
-  contain hadoop::common::install
-  contain hadoop::common::postinstall
+  contain ::hadoop::common::install
+  contain ::hadoop::common::postinstall
 
   ensure_packages($hadoop::packages_nn)
   Package[$hadoop::packages_nn] -> Class['hadoop::common::postinstall']

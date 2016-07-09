@@ -2,8 +2,8 @@
 #
 class hadoop::nfs::install {
   include ::stdlib
-  contain hadoop::common::install
-  contain hadoop::common::postinstall
+  contain ::hadoop::common::install
+  contain ::hadoop::common::postinstall
 
   ensure_packages($hadoop::packages_system_nfs)
   ensure_packages($hadoop::packages_nfs)
