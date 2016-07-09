@@ -10,6 +10,8 @@ group :test do
   gem "rspec-puppet-facts"
   gem 'simplecov', '>= 0.11.0'
   gem 'simplecov-console'
+  # >= 3.1 hard requires newest ruby
+  gem 'listen', '< 3.1'
 
   gem "puppet-lint-absolute_classname-check"
   gem "puppet-lint-leading_zero-check"
