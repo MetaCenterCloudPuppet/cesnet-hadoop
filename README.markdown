@@ -200,7 +200,7 @@ We recommend to enable HTTPS when security is enabled. See [Enable HTTPS](#https
       },
       authorization => {
         'rules' => 'limit',
-        # more paranoid permissions to users in "users" group
+        # more paranoid permissions only for users in "users" group
         'security.client.protocol.acl' => 'hue,nfs,root hadoop,hbase,hive,impala,oozie,spark,users',
         'security.service.authorization.default.acl' => ' hadoop,users',
       },
@@ -574,7 +574,7 @@ Principals needed:
 
 *root* user must be authorized for client access to able to mount. In secured cluster, *nfs* user needs to be authorized too. By default this is not needed, authorization is '\*'. See `authorization` parameter.
 
-Example of changing HADOOP default ACL to more strict settings:
+Example of changing HADOOP default ACL to more strict settings with NFS:
 
      authorization => {
        'rules' => 'limit',
@@ -892,7 +892,7 @@ With enabled high availability of HDFS in secured cluster, it is recommended to 
 Set this to something like: **hdfs-zkfcs:PASSWORD**.
 
 <a name="ha_digest"></a>
-#####`ha_digest` undef
+#####`ha_digest`
 
 Digest version of *ha\_credentials*. Default: undef.
 
