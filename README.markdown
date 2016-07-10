@@ -1,6 +1,6 @@
 ##Hadoop
 
-[![Build Status](https://travis-ci.org/MetaCenterCloudPuppet/cesnet-hadoop.svg?branch=master)](https://travis-ci.org/MetaCenterCloudPuppet/cesnet-hadoop)
+[![Build Status](https://travis-ci.org/MetaCenterCloudPuppet/cesnet-hadoop.svg?branch=master)](https://travis-ci.org/MetaCenterCloudPuppet/cesnet-hadoop) [![Puppet Forge](https://img.shields.io/puppetforge/v/cesnet/hadoop.svg)](https://forge.puppetlabs.com/cesnet/hadoop)
 
 ####Table of Contents
 
