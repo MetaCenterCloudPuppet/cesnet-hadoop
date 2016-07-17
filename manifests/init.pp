@@ -237,6 +237,7 @@ RULE:[2:\$1;\$2@\$0](^hbase;.*@${realm}$)s/^.*$/hbase/
 RULE:[2:\$1;\$2@\$0](^hive;.*@${realm}$)s/^.*$/hive/
 RULE:[2:\$1;\$2@\$0](^hue;.*@${realm}$)s/^.*$/hue/
 RULE:[2:\$1;\$2@\$0](^httpfs;.*@${realm}$)s/^.*$/httpfs/
+RULE:[2:\$1;\$2@\$0](^impala;.*@${realm}$)s/^.*$/impala/
 RULE:[2:\$1;\$2@\$0](^oozie;.*@${realm}$)s/^.*$/oozie/
 RULE:[2:\$1;\$2@\$0](^solr;.*@${realm}$)s/^.*$/solr/
 RULE:[2:\$1;\$2@\$0](^spark;.*@${realm}$)s/^.*$/spark/
