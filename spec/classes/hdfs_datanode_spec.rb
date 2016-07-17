@@ -23,6 +23,7 @@ describe 'hadoop::datanode', :type => 'class' do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('hadoop::datanode') }
       it { should contain_class('hadoop::common::config') }
       it { should contain_class('hadoop::datanode::install') }
       it { should contain_class('hadoop::datanode::config') }

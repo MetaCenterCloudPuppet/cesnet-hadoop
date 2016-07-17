@@ -25,6 +25,7 @@ describe 'hadoop::resourcemanager', :type => 'class' do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('hadoop::resourcemanager') }
       it { should contain_class('hadoop::common::config') }
       it { should contain_class('hadoop::resourcemanager::install') }
       it { should contain_class('hadoop::resourcemanager::config') }

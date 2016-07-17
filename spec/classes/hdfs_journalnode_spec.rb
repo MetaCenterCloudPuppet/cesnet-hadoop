@@ -23,6 +23,7 @@ describe 'hadoop::journalnode', :type => 'class' do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('hadoop::journalnode') }
       it { should contain_class('hadoop::common::config') }
       it { should contain_class('hadoop::journalnode::install') }
       it { should contain_class('hadoop::journalnode::config') }

@@ -25,6 +25,7 @@ describe 'hadoop::frontend', :type => 'class' do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('hadoop::frontend') }
       it { should contain_class('hadoop::frontend::install') }
       it { should contain_class('hadoop::frontend::config') }
     end

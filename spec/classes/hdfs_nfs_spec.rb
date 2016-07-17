@@ -23,6 +23,7 @@ describe 'hadoop::nfs', :type => 'class' do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('hadoop::nfs') }
       it { should contain_class('hadoop::common::config') }
       it { should contain_class('hadoop::nfs::install') }
       it { should contain_class('hadoop::nfs::config') }

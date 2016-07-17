@@ -26,6 +26,7 @@ describe 'hadoop::httpfs', :type => 'class' do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('hadoop::httpfs') }
       it { should contain_class('hadoop::common::config') }
       it { should contain_class('hadoop::httpfs::install') }
       it { should contain_class('hadoop::httpfs::config') }

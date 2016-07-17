@@ -25,6 +25,7 @@ describe 'hadoop::nodemanager', :type => 'class' do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('hadoop::nodemanager') }
       it { should contain_class('hadoop::common::config') }
       it { should contain_class('hadoop::nodemanager::install') }
       it { should contain_class('hadoop::nodemanager::config') }

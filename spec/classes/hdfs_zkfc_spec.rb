@@ -23,6 +23,7 @@ describe 'hadoop::zkfc', :type => 'class' do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('hadoop::zkfc') }
       it { should contain_class('hadoop::common::config') }
       it { should contain_class('hadoop::zkfc::install') }
       it { should contain_class('hadoop::zkfc::config') }
