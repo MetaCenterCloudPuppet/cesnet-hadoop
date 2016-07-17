@@ -1,6 +1,6 @@
 {
   "name": "cesnet-hadoop",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "author": "Frantisek Dvorak <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
@@ -10,8 +10,9 @@
   "tags": [
     "hadoop",
     "hdfs",
-    "yarn",
     "mapreduce",
+    "nfs",
+    "yarn",
     "webhdfs"
   ],
   "operatingsystem_support": [
