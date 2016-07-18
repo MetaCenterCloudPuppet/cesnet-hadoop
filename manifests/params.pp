@@ -130,6 +130,7 @@ class hadoop::params {
     'dfs.datanode.address' => 'different port with security enabled (original port 50010)',
     'dfs.datanode.http.address' => 'different port with security enabled (original port 50075)',
     'dfs.webhdfs.enabled' => 'read-only Web HDFS access',
+    'mapreduce.jobhistory.address' => 'bind address for MapRed Job History Server, but it is also required to be real hostname for Oozie',
     'mapreduce.map.output.compress' => 'compression of intermediate files',
     'mapreduce.map.output.compress.codec' => 'compression codec of intermediate files',
     'mapreduce.task.tmp.dir' => 'temporary directory for map and reduce tasks',
