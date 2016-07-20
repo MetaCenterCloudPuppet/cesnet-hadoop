@@ -368,6 +368,11 @@ Multi-home feature enables following properties:
 * *dfs.namenode.rpc-bind-host* => '0.0.0.0'
 * *dfs.namenode.servicerpc-bind-host* => '0.0.0.0'
 
+Also **Oozie** addon may have problems accessing MapRed History Server. For example there is needed public access to the **port 10020** in network environment with addresses in DNS and private addresses in */etc/hosts*. This mapping helps in such case:
+
+    iptables -t nat -A PREROUTING -p tcp -m tcp -d $PUBLIC_IP --dport 10020 -j DNAT --to-destination $PRIVATE_BIND_IP:10020
+
+
 <a name="ha"></a>
 ###High Availability
 
