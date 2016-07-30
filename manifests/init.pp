@@ -380,6 +380,8 @@ DEFAULT
       'dfs.journalnode.kerberos.internal.spnego.principal' => "HTTP/_HOST@${hadoop::realm}",
       'dfs.web.authentication.kerberos.keytab' => "${hadoop::hdfs_homedir}/hadoop.keytab",
       'mapreduce.jobhistory.http.policy' => 'HTTPS_ONLY',
+      # it listens on 19890 automatically, but it needs to be specified anyway for tracking URL working in RM
+      'mapreduce.jobhistory.webapp.address' => '0.0.0.0:19890',
     }
     if $yarn_hostname {
       $https_yarn_properties = {
