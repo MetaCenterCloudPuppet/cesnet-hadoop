@@ -4,6 +4,7 @@
 # It ensure the services are running.
 #
 class hadoop::service {
+  if $hadoop::daemon_journalnode { contain hadoop::journalnode::service }
   if $hadoop::daemon_namenode { contain hadoop::namenode::service }
   if $hadoop::daemon_resourcemanager { contain hadoop::resourcemanager::service }
   if $hadoop::daemon_historyserver { contain hadoop::historyserver::service }
