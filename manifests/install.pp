@@ -3,6 +3,7 @@
 class hadoop::install {
   contain hadoop::common::install
 
+  if $hadoop::daemon_journalnode { contain hadoop::journalnode::install }
   if $hadoop::daemon_namenode { contain hadoop::namenode::install }
   if $hadoop::daemon_resourcemanager { contain hadoop::resourcemanager::install }
   if $hadoop::daemon_historyserver { contain hadoop::historyserver::install }

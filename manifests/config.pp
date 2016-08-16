@@ -5,6 +5,10 @@
 class hadoop::config {
   contain hadoop::common::config
 
+  if $hadoop::daemon_journalnode {
+    contain hadoop::journalnode::config
+  }
+
   if $hadoop::daemon_namenode {
     contain hadoop::namenode::config
   }
