@@ -19,10 +19,20 @@ class hadoop::zkfc::service {
       }
       ->
       exec {'hdfs-zkfc-format':
-        command => 'hdfs zkfc -formatZK',
+        # If the znode created by -formatZK already exists, and for
+        # some buggy reason it happens to run, -formatZK will prompt
+        # the user to confirm if the znode should be reformatted.
+        # Puppet isn't able to answer this question on its own.
+        # Default to answering with 'N' if the command asks.
+        # This should never happen, but just in case it does,
+        # We don't want this eternally unanswered prompt to fill up
+        # puppet logs and disks.
+        command => 'echo N | hdfs zkfc -formatZK',      
         path    => '/sbin:/usr/sbin:/bin:/usr/bin',
         user    => 'hdfs',
         creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-zkfc-formatted',
+        # acceptable responses 0 = success, 2 = znode already exists
+        returns => [ "0", "2", ],
       }
       ->
       hadoop::kdestroy {'hdfs-zkfc-kdestroy':
