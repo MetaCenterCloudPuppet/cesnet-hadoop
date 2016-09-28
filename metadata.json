@@ -1,6 +1,6 @@
 {
   "name": "cesnet-hadoop",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "author": "Frantisek Dvorak <valtri@civ.zcu.cz>",
   "summary": "Hadoop Cluster with security",
   "license": "MIT",
