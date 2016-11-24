@@ -48,7 +48,7 @@ class hadoop::params {
       }
 
       $confdir = '/etc/hadoop'
-      $confdir_httpfs = undef
+      $confdir_httpfs = '/etc/hadoop'
       # container group, official recommendation is 'hadoop'
       # depends on result of: https://bugzilla.redhat.com/show_bug.cgi?id=1163892
       $yarn_group = 'hadoop'
