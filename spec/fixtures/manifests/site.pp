@@ -1,1 +1,3 @@
-include ::hadoop
+class { '::hadoop':
+  realm => 'MONKEY_ISLANDS',
+}

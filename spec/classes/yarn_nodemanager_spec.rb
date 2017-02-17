@@ -13,6 +13,7 @@ describe 'hadoop::nodemanager::config', :type => 'class' do
       it { should contain_file(path + '/hdfs-site.xml') }
       it { should contain_file(path + '/mapred-site.xml') }
       it { should contain_file(path + '/yarn-site.xml') }
+      it { should contain_file($keytabs['yarn_nodemanager']) }
     end
   end
 end

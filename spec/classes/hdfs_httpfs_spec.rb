@@ -14,6 +14,7 @@ describe 'hadoop::httpfs::config', :type => 'class' do
       it { should contain_file(path + '/hdfs-site.xml') }
       it { should contain_file(path_httpfs + '/httpfs-env.sh') }
       it { should contain_file(path_httpfs + '/httpfs-site.xml') }
+      it { should contain_file($keytabs['hdfs_httpfs']) }
     end
   end
 end

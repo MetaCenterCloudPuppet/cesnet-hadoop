@@ -58,3 +58,22 @@ $httpfs_config_dir={
   'Scientific' => '/etc/hadoop-httpfs/conf',
   'Ubuntu' => '/etc/hadoop-httpfs/conf',
 }
+
+#
+# For testing parameters originated from separated hadoop class
+#
+# There is *realm* parameter in site.pp file, which means the following keytab
+# files must be used.
+#
+# XXX: Manifests with rspec tests problematic in Puppet >= 4.
+#
+$keytabs={
+  'hdfs_namenode' => '/etc/security/keytab/nn.service.keytab',
+  'hdfs_datanode' => '/etc/security/keytab/dn.service.keytab',
+  'hdfs_httpfs' => '/etc/security/keytab/httpfs-http.service.keytab',
+  'hdfs_journalnode' => '/etc/security/keytab/jn.service.keytab',
+  'hdfs_nfs' => '/etc/security/keytab/nfs.service.keytab',
+  'mapred_historyserver' => '/etc/security/keytab/jhs.service.keytab',
+  'yarn_nodemanager' => '/etc/security/keytab/nm.service.keytab',
+  'yarn_resourcemanager' => '/etc/security/keytab/rm.service.keytab',
+}

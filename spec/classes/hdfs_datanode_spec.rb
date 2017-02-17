@@ -11,6 +11,7 @@ describe 'hadoop::datanode::config', :type => 'class' do
       it { should compile.with_all_deps }
       it { should contain_file(path + '/core-site.xml') }
       it { should contain_file(path + '/hdfs-site.xml') }
+      it { should contain_file($keytabs['hdfs_datanode']) }
     end
   end
 end

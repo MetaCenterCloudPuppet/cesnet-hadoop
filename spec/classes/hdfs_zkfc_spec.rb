@@ -11,6 +11,8 @@ describe 'hadoop::zkfc::config', :type => 'class' do
       it { should compile.with_all_deps }
       it { should contain_file(path + '/core-site.xml') }
       it { should contain_file(path + '/hdfs-site.xml') }
+
+	  # no own keytab file
     end
   end
 end
