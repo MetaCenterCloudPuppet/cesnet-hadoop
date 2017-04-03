@@ -13,8 +13,8 @@ class hadoop::journalnode {
     warning('https is required for using journal nodes')
   }
 
-  Class['hadoop::journalnode::install'] ->
-  Class['hadoop::journalnode::config'] ~>
-  Class['hadoop::journalnode::service'] ->
-  Class['hadoop::journalnode']
+  Class['hadoop::journalnode::install']
+  -> Class['hadoop::journalnode::config']
+  ~> Class['hadoop::journalnode::service']
+  -> Class['hadoop::journalnode']
 }

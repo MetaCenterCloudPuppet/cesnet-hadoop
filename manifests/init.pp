@@ -588,9 +588,9 @@ DEFAULT
     include ::hadoop::config
     include ::hadoop::service
 
-    Class['hadoop::install'] ->
-    Class['hadoop::config'] ~>
-    Class['hadoop::service'] ->
-    Class['hadoop']
+    Class['hadoop::install']
+    -> Class['hadoop::config']
+    ~> Class['hadoop::service']
+    -> Class['hadoop']
   }
 }

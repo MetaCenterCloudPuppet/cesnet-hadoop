@@ -7,8 +7,8 @@ class hadoop::nodemanager {
   include ::hadoop::nodemanager::config
   include ::hadoop::nodemanager::service
 
-  Class['hadoop::nodemanager::install'] ->
-  Class['hadoop::nodemanager::config'] ~>
-  Class['hadoop::nodemanager::service'] ->
-  Class['hadoop::nodemanager']
+  Class['hadoop::nodemanager::install']
+  -> Class['hadoop::nodemanager::config']
+  ~> Class['hadoop::nodemanager::service']
+  -> Class['hadoop::nodemanager']
 }

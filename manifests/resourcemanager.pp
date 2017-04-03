@@ -5,8 +5,8 @@ class hadoop::resourcemanager {
   include ::hadoop::resourcemanager::config
   include ::hadoop::resourcemanager::service
 
-  Class['hadoop::resourcemanager::install'] ->
-  Class['hadoop::resourcemanager::config'] ~>
-  Class['hadoop::resourcemanager::service'] ->
-  Class['hadoop::resourcemanager']
+  Class['hadoop::resourcemanager::install']
+  -> Class['hadoop::resourcemanager::config']
+  ~> Class['hadoop::resourcemanager::service']
+  -> Class['hadoop::resourcemanager']
 }

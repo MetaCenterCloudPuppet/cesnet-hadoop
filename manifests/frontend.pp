@@ -7,8 +7,8 @@ class hadoop::frontend {
   include ::hadoop::frontend::config
   include ::hadoop::frontend::service
 
-  Class['hadoop::frontend::install'] ->
-  Class['hadoop::frontend::config'] ~>
-  Class['hadoop::frontend::service'] ->
-  Class['hadoop::frontend']
+  Class['hadoop::frontend::install']
+  -> Class['hadoop::frontend::config']
+  ~> Class['hadoop::frontend::service']
+  -> Class['hadoop::frontend']
 }
