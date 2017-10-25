@@ -70,18 +70,19 @@ There are some limitations how to use this module. You should read the documenta
  * */etc/sysconfig/hadoop\** (or */etc/default/hadoop\**)
  * */etc/cron.d/hadoop-\** (only when explicit key refresh or restarts are requested)
  * */usr/local/sbin/yellowmanager* (not needed, only when administrator manager script is requested by `features`)
+ * */usr/lib/bigtop-tomcat/lib/core-site.xml*: link to */etc/hadoop/conf/core-site.xml* file as workaround problems with HDFS configuration in HTTPFS proxy during login, for example to fix Kerberos mapping rules (created only with httpfs daemon)
 * Alternatives:
  * alternatives are used for */etc/hadoop/conf* in Cloudera
  * this module switches to the new alternative by default, so the Cloudera original configuration can be kept intact
 * Services:
  * only requested Hadoop services are setup and started
- * HDFS: namenode, journalnode, datanode, zkfc, nfs
+ * HDFS: namenode, journalnode, datanode, zkfc, nfs, httpfs
  * YARN: resourcemanager, nodemanager
  * MAPRED: historyserver
 * Data Files: Hadoop is using metadata and data in */var/lib/hadoop-\** (or */var/lib/hadoop\*/cache*), for most of it the custom location can be setup (and it is recommended to use different hard drives), see [http://wiki.apache.org/hadoop/DiskSetup](http://wiki.apache.org/hadoop/DiskSetup).
 * Helper Files:
  * */var/lib/hadoop-hdfs/.puppet-hdfs-\**
-* Secret Files (keytabs, certificates): some files are copied to home directories of service users: ~hdfs/, ~yarn/, ~mapred/
+* Secret Files (keytabs, certificates): some files are copied to home directories of service users: ~hdfs/, ~yarn/, ~mapred/, ~httpfs/
 
 It is enabled also HDFS blocks metadata, which is required for Impala addon. You can disable it by setting *dfs.datanode.hdfs-blocks-metadata.enabled* to *false* in `properties` parameter.
 
