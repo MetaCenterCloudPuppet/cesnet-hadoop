@@ -5,7 +5,7 @@ class hadoop::datanode::service {
     service { $hadoop::daemons['datanode']:
       ensure    => 'running',
       enable    => true,
-      subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
+      subscribe => [File["${hadoop::confdir}/core-site.xml"], File["${hadoop::confdir}/hdfs-site.xml"]],
     }
 
     if $hadoop::daemon_namenode {

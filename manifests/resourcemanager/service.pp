@@ -8,7 +8,7 @@ class hadoop::resourcemanager::service {
     service { $hadoop::daemons['resourcemanager']:
       ensure    => 'running',
       enable    => true,
-      subscribe => [File['core-site.xml'], File['yarn-site.xml']],
+      subscribe => [File["${hadoop::confdir}/core-site.xml"], File["${hadoop::confdir}/yarn-site.xml"]],
     }
 
     # namenode should be launched first if it is colocated with resourcemanager

@@ -13,7 +13,7 @@ class hadoop::nfs::service {
     service { $hadoop::daemons['nfs']:
       ensure    => running,
       enable    => true,
-      subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
+      subscribe => [File["${hadoop::confdir}/core-site.xml"], File["${hadoop::confdir}/hdfs-site.xml"]],
     }
 
     if $hadoop::daemons['portmap'] {

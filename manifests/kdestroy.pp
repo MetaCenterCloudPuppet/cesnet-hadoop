@@ -12,7 +12,7 @@ define hadoop::kdestroy($touchfile = $title, $touch = true) {
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
 
   if $hadoop::zookeeper_deployed {
-    if $hadoop::realm and $hadoop::realm != '' {
+    if $hadoop::realm and $hadoop::realm != '' and $hadoop::_keytab_hdfs_admin and $hadoop::_principal_hdfs_admin {
       exec { "kdestroy-${touchfile}":
         command     => 'kdestroy',
         path        => $path,

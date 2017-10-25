@@ -23,7 +23,7 @@ class hadoop::namenode::config {
       group  => 'hdfs',
       mode   => '0400',
       alias  => 'nn.service.keytab',
-      before => File['hdfs-site.xml'],
+      before => File["${hadoop::confdir}/hdfs-site.xml"],
     }
 
     file { $hadoop::https_keytab:
@@ -31,7 +31,7 @@ class hadoop::namenode::config {
       group  => 'hdfs',
       mode   => '0400',
       alias  => 'http.service.keytab',
-      before => File['hdfs-site.xml'],
+      before => File["${hadoop::confdir}/hdfs-site.xml"],
     }
   }
 

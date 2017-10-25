@@ -9,7 +9,7 @@ class hadoop::nodemanager::service {
     service { $hadoop::daemons['nodemanager']:
       ensure    => 'running',
       enable    => true,
-      subscribe => [File['core-site.xml'], File['yarn-site.xml']],
+      subscribe => [File["${hadoop::confdir}/core-site.xml"], File["${hadoop::confdir}/yarn-site.xml"]],
     }
 
     # namenode must be launched first if it is colocated with nodemanager

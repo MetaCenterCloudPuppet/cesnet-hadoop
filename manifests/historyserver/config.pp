@@ -2,7 +2,9 @@
 #
 class hadoop::historyserver::config {
   contain hadoop::common::config
-  contain hadoop::common::hdfs::config
+  if $hadoop::hdfs_hostname {
+    contain hadoop::common::hdfs::config
+  }
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
   contain hadoop::common::mapred::daemon
@@ -20,7 +22,7 @@ class hadoop::historyserver::config {
       group  => 'mapred',
       mode   => '0400',
       alias  => 'jhs.service.keytab',
-      before => File['mapred-site.xml'],
+      before => File["${hadoop::confdir}/mapred-site.xml"],
     }
 
     if $hadoop::features["krbrefresh"] {

@@ -2,7 +2,9 @@
 #
 class hadoop::nodemanager::config {
   contain hadoop::common::config
-  contain hadoop::common::hdfs::config
+  if $hadoop::hdfs_hostname {
+    contain hadoop::common::hdfs::config
+  }
   contain hadoop::common::mapred::config
   contain hadoop::common::yarn::config
   contain hadoop::common::yarn::daemon
@@ -29,7 +31,7 @@ class hadoop::nodemanager::config {
       group  => 'yarn',
       mode   => '0400',
       alias  => 'nm.service.keytab',
-      before => File['yarn-site.xml'],
+      before => File["${hadoop::confdir}/yarn-site.xml"],
     }
 
     if $hadoop::features["krbrefresh"] {

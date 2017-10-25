@@ -2,7 +2,7 @@
 #
 # Create root directory layout at Hadoop Filesystem. Take care also for Kerberos ticket inicialization and destruction, when realm is specified.
 #
-# Requirements: HDFS needs to be formatted and namenode service running.
+# Requirements: running HDFS. Either it needs to be formatted and namenode service running, or external storage needs to be used.
 #
 # This class is called from hadoop::service.
 #

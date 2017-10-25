@@ -19,12 +19,15 @@
 # * User['hdfs']
 #
 define hadoop::mkdir($touchfile, $owner = undef, $group = undef, $mode = undef, $recursive = false) {
-  include ::hadoop::common::hdfs::config
-
   $dir = $title
   $env = [ "KRB5CCNAME=FILE:/tmp/krb5cc_nn_puppet_${touchfile}" ]
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
+
+  include ::hadoop::common::config
+  if $hadoop::hdfs_hostname {
+    include ::hadoop::common::hdfs::config
+  }
 
   if ($recursive) {
     $chown_args=' -R'
@@ -41,7 +44,10 @@ define hadoop::mkdir($touchfile, $owner = undef, $group = undef, $mode = undef, 
       unless      => "hdfs dfs -test -d ${dir}",
       user        => 'hdfs',
       creates     => $puppetfile,
-      require     => File['hdfs-site.xml'],
+    }
+    File["${hadoop::confdir}/core-site.xml"] -> Exec["hadoop-dir:${dir}"]
+    if $hadoop::hdfs_hostname {
+      File["${hadoop::confdir}/hdfs-site.xml"] -> Exec["hadoop-dir:${dir}"]
     }
 
     # ownership

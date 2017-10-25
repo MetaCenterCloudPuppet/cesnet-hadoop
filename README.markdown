@@ -867,6 +867,23 @@ This will set following properties:
 
 Array of Data Node machines. Default: `slaves`.
 
+#####`defaultFS`
+
+HDFS URI parameter. Default: undef.
+
+It is not needed to set this parameter, unless there is used an external storage.
+
+By default (**undef** value), HDFS cluster setup by this module is used:
+
+* *hdfs://<cluster_name>* (for HA HDFS)
+* *hdfs://<hdfs\_hostname>:8020* (for non-HA HDFS)
+
+If the HDFS cluster (the data part) is setup at all is governed by *hdfs\_hostname* parameter. It is up to *hdfs\_hostname2* parameter, if it should be also the HA cluster .
+
+Either *hdfs\_hostname* or *defaultFS* parameter needs to be used.
+
+Other puppet modules can access the HDFS URI using *hadoop::_defaultFS* variable.
+
 #####`descriptions`
 
 Descriptions for the properties. Default: see params.pp.
@@ -957,7 +974,9 @@ Two stage setup is not required, but it is recommended to avoid errors during in
 
 #####`hdfs_hostname`
 
-Hadoop Filesystem Name Node machine. Default: $::fqdn.
+Hadoop Filesystem Name Node machine. Default: undef.
+
+Either *hdfs\_hostname* or *defaultFS* parameter needs to be used.
 
 #####`hdfs_hostname2`
 
@@ -1085,6 +1104,12 @@ Keytab file for HDFS Data Node. Default: '/etc/security/keytab/dn.service.keytab
 
 This will set also property *dfs.datanode.keytab.file*, if not specified directly. The keytab file must already exists.
 
+#####`keytab_hdfs_admin`
+
+Kerberos client keytab for file operations on HDFS. Default: $keytab\_namenode ('/etc/security/keytab/nn.service.keytab').
+
+*undef* will deactivate *kinit* and *kdestroy* calls.
+
 #####`keytab_httpfs`
 
 Keytab file for HDFS HTTP Proxy. Default: '/etc/security/keytab/httpfs-http.service.keytab'.
@@ -1203,6 +1228,20 @@ Launch all installation and setup here, from hadoop class. Default: false.
 "Raw" properties for hadoop cluster. Default: (see params.pp).
 
 "::undef" value will remove given property set automatically by this module, empty string sets the empty value.
+
+#####`principal_hdfs_admin`
+
+Kerberos client principal for file operations on HDFS and for refreshing HDFS Data Nodes. Default: nn/${::fqdn}@{realm}.
+
+There it can't be used *_HOST* as replacement for FQDN - it is not used in Hadoop properties.
+
+*undef* will deactivate *kinit* and *kdestroy* calls.
+
+#####`principal_namenode`
+
+Kerberos principal for HDFS NameNode. Default: nn/_HOST@${hadoop::realm}.
+
+It is used in *dfs.namenode.kerberos.principal*. But check the *hadoop.security.auth\_to\_local*, which is not updated.
 
 #####`realm`
 

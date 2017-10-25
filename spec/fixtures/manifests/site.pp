@@ -1,3 +1,4 @@
 class { '::hadoop':
-  realm => 'MONKEY_ISLANDS',
+  hdfs_hostname  => $::fqdn,
+  realm          => 'MONKEY_ISLANDS',
 }

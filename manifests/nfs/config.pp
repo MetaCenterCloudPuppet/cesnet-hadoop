@@ -20,7 +20,7 @@ class hadoop::nfs::config {
       group  => $hadoop::nfs_system_group,
       mode   => '0400',
       alias  => 'nfs.service.keytab',
-      before => File['hdfs-site.xml'],
+      before => File["${hadoop::confdir}/hdfs-site.xml"],
     }
   }
 }

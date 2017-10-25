@@ -11,7 +11,7 @@ class hadoop::historyserver::service {
     service { $hadoop::daemons['historyserver']:
       ensure    => 'running',
       enable    => true,
-      subscribe => [File['core-site.xml'], File['yarn-site.xml']],
+      subscribe => [File["${hadoop::confdir}/core-site.xml"], File["${hadoop::confdir}/yarn-site.xml"]],
     }
 
     # namenode should be launched first if it is colocated with historyserver

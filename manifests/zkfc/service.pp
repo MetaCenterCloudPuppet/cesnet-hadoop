@@ -9,7 +9,7 @@ class hadoop::zkfc::service {
     service { $hadoop::daemons['hdfs-zkfc']:
       ensure    => 'running',
       enable    => true,
-      subscribe => [File['core-site.xml'], File['hdfs-site.xml']],
+      subscribe => [File["${hadoop::confdir}/core-site.xml"], File["${hadoop::confdir}/hdfs-site.xml"]],
     }
 
     # launch the format only once: on the first (main) namenode
