@@ -13,6 +13,7 @@
     * [Enable Security](#security)
      * [Long running applications](#long-run)
      * [Auth to local mapping](#auth_to_local)
+     * [Cross-realm](#cross-realm)
     * [Enable HTTPS](#https)
     * [Multihome Support](#multihome)
     * [High Availability](#ha)
@@ -70,7 +71,6 @@ There are some limitations how to use this module. You should read the documenta
  * */etc/sysconfig/hadoop\** (or */etc/default/hadoop\**)
  * */etc/cron.d/hadoop-\** (only when explicit key refresh or restarts are requested)
  * */usr/local/sbin/yellowmanager* (not needed, only when administrator manager script is requested by `features`)
- * */usr/lib/bigtop-tomcat/lib/core-site.xml*: link to */etc/hadoop/conf/core-site.xml* file as workaround problems with HDFS configuration in HTTPFS proxy during login, for example to fix Kerberos mapping rules (created only with httpfs daemon)
 * Alternatives:
  * alternatives are used for */etc/hadoop/conf* in Cloudera
  * this module switches to the new alternative by default, so the Cloudera original configuration can be kept intact
@@ -256,6 +256,17 @@ In the default value in cesnet-hadoop module are also mappings for the following
  * they differ in the official documentation: *nn/\_HOST* vs *hdfs*, ...
  * they are the same in Cloudera documentation: hdfs/\_HOST vs *hdfs*, ...
 * when cross-realm authentication is needed
+
+<a name="cross-realm"></a>
+#### Cross-realm
+
+Cross-realm environment is problematic when using HDFS HttpFS. Login to HDFS ignores settings from *core-site.xml*, most notably Kerberos rules mapping.
+
+Workaround is possible:
+
+    ln -s /etc/hadoop/conf/core-site.xml /usr/lib/bigtop-tomcat/lib/
+
+This is already done by *site_hadoop* CESNET puppet module.
 
 <a name="https"></a>
 ###Enable HTTPS

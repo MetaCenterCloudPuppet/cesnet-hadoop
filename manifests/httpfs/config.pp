@@ -20,19 +20,6 @@ class hadoop::httpfs::config {
       mode  => '0400',
       alias => 'httpfs-hadoop.service.keytab',
     }
-
-    # workaround a problem with HDFS configuration in HTTPFS during login
-    # (for example Kerberos mapping rules from core-site.xml)
-    $tomcat_dir = '/usr/lib/bigtop-tomcat/lib'
-    file { $tomcat_dir:
-      ensure  => 'directory',
-      recurse => true,
-    }
-    ->
-    file { "${tomcat_dir}/core-site.xml":
-      ensure => 'link',
-      target => "${hadoop::confdir}/core-site.xml",
-    }
   }
 
   if $hadoop::https {

@@ -371,8 +371,7 @@ DEFAULT
       # _HOST not possible here, $::fqdn required
       'httpfs.authentication.kerberos.principal' => "HTTP/${::fqdn}@${hadoop::realm}",
       'httpfs.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
-      # this property is in all documentations, altough it seems it is not
-      # actually used (at least during login)... but let's keep it there
+      # this property is not used during login to HDFS and it is required hadoop.security.auth_to_local property in core-site.xml, but it is probably still needed for authorizations handled by HTTPFS itself
       'httpfs.authentication.kerberos.name.rules' => $auth_rules,
       'httpfs.hadoop.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
       # _HOST not possible here, $::fqdn required
