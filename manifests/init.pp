@@ -358,6 +358,11 @@ DEFAULT
     if !$hadoop::realm or $hadoop::realm == '' {
       err('Kerberos feature required for https support.')
     }
+    if $hadoop::https_keystore_keypassword {
+      $keypass = $hadoop::https_keystore_keypassword
+    } else {
+      $keypass = $hadoop::https_keystore_password
+    }
     $https_common_properties = {
       'hadoop.http.filter.initializers' => 'org.apache.hadoop.security.AuthenticationFilterInitializer',
       'hadoop.http.authentication.type' => 'kerberos',
@@ -383,6 +388,22 @@ DEFAULT
       'mapreduce.jobhistory.http.policy' => 'HTTPS_ONLY',
       # it listens on 19890 automatically, but it needs to be specified anyway for tracking URL working in RM
       'mapreduce.jobhistory.webapp.address' => '0.0.0.0:19890',
+      'ssl.client.truststore.location' => $hadoop::https_cacerts,
+      'ssl.client.truststore.password' => $hadoop::https_cacerts_password,
+      'ssl.client.truststore.type' => 'jks',
+      'ssl.client.truststore.reload.interval' => '300000',
+      'ssl.client.keystore.location' => '${user.home}/keystore.server',
+      'ssl.client.keystore.password' => $hadoop::https_keystore_password,
+      'ssl.client.keystore.keypassword' => $keypass,
+      'ssl.client.keystore.type' => 'jks',
+      'ssl.server.truststore.location' => $hadoop::https_cacerts,
+      'ssl.server.truststore.password' => $hadoop::https_cacerts_password,
+      'ssl.server.truststore.type' => 'jks',
+      'ssl.server.truststore.reload.interval' => '300000',
+      'ssl.server.keystore.location' => '${user.home}/keystore.server',
+      'ssl.server.keystore.password' => $hadoop::https_keystore_password,
+      'ssl.server.keystore.keypassword' => $keypass,
+      'ssl.server.keystore.type' => 'jks',
     }
     if $yarn_hostname {
       $https_yarn_properties = {

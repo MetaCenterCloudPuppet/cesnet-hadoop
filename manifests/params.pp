@@ -143,6 +143,22 @@ class hadoop::params {
     'yarn.application.classpath' => 'Classpath for typical applications.',
     'yarn.resourcemanager.nodes.include-path' => 'permitted nodes',
     'yarn.resourcemanager.nodes.exclude-path' => 'decommissioning of the nodes',
+    'ssl.client.truststore.location' => 'Truststore to be used by clients like distcp. Must be specified.',
+    'ssl.client.truststore.password' => 'Optional. Default value is "".',
+    'ssl.client.truststore.type' => 'Optional. The keystore file format, default value is "jks".',
+    'ssl.client.truststore.reload.interval' => 'Truststore reload check interval, in milliseconds. Default value is 10000 (10 seconds).',
+    'ssl.client.keystore.location' => 'Keystore to be used by clients like distcp. Must be specified.',
+    'ssl.client.keystore.password' => 'Optional. Default value is "".',
+    'ssl.client.keystore.keypassword' => 'Optional. Default value is "".',
+    'ssl.client.keystore.type' => 'Optional. The keystore file format, default value is "jks".',
+    'ssl.server.truststore.location' => 'Truststore to be used by NN and DN. Must be specified.',
+    'ssl.server.truststore.password' => 'Optional. Default value is "".',
+    'ssl.server.truststore.type' => 'Optional. The keystore file format, default value is "jks".',
+    'ssl.server.truststore.reload.interval' => 'Truststore reload check interval, in milliseconds.',
+    'ssl.server.keystore.location' => 'Keystore to be used by NN and DN. Must be specified.',
+    'ssl.server.keystore.password' => 'Must be specified.',
+    'ssl.server.keystore.keypassword' => 'Must be specified.',
+    'ssl.server.keystore.type' => 'Optional. The keystore file format, default value is "jks".',
   }
   $features = {
   }

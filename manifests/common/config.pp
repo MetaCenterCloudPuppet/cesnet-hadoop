@@ -41,7 +41,6 @@ class hadoop::common::config {
   }
 
   if $hadoop::https {
-    $keypass = $hadoop::https_keystore_keypassword
     if $hadoop::acl {
       $ssl_perms = '0640'
     } else {
