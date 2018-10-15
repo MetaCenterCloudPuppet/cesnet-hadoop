@@ -1060,11 +1060,17 @@ Features enabled:
 
 Creates and sets directory for local computational data for YARN. Default: undef.
 
-Sets also the property *yarn.nodemanager.local-dirs*, suffix */${user.name}/nm-local-dir* is always added.
+Sets also the properties:
+
+* *yarn.nodemanager.local-dirs* - suffix */${user.name}/nm-local-dir* is added
+* *yarn.nodemanager.log-dirs* - suffix */containers* is added
 
 This parameter is used on YARN slave nodes. To boost performance, it should be set to quick local disk (striped raid, SSD, ...), big enough to hold temporary computational data.
 
-If not set, it is used system default (*${hadoop.tmp.dir}/nm-local-dir*, which points to */tmp/hadoop-${user.name}*).
+If not set, there are used system defaults:
+
+* *${hadoop.tmp.dir}/nm-local-dir*, which points to */tmp/hadoop-${user.name}*
+* *${yarn.log.dir}/userlogs*, which points to */var/log/hadoop-yarn/userlogs*
 
 #####`journalnode_hostnames`
 

@@ -221,7 +221,6 @@ class hadoop (
       'yarn.resourcemanager.hostname' => $yarn_hostname,
       'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
       'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
-      'yarn.nodemanager.log-dirs' => 'file:///var/log/hadoop-yarn/containers',
       'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/${slaves_yarn}",
       'yarn.resourcemanager.nodes.exclude-path' => "${hadoop::confdir}/excludes",
     }
@@ -428,9 +427,10 @@ DEFAULT
     $impala_properties = {}
   }
 
-  if $scratch_dir {
+  if $scratch_dir and $yarn_hostname {
     $scratch_properties = {
       'yarn.nodemanager.local-dirs' => "${scratch_dir}/\${user.name}/nm-local-dir",
+      'yarn.nodemanager.log-dirs' => "${scratch_dir}/containers",
     }
   } else {
     $scratch_properties = {}
