@@ -54,6 +54,7 @@ class hadoop (
   $perform = $::hadoop::params::perform,
   $realm = '',
   $scratch_dir = undef,
+  $version = 2,
 
   $hdfs_deployed = $::hadoop::params::hdfs_deployed,
   $zookeeper_deployed = $::hadoop::params::zookeeper_deployed,
@@ -96,6 +97,19 @@ class hadoop (
   }
   if $properties {
     validate_hash($properties)
+  }
+
+  case $version {
+    /^2(\.)?/: {
+      $hdfs_port_namenode_http = '50070'
+      $hdfs_port_namenode_https = '50470'
+      $hdfs_port_namenode = '8020'
+    }
+    default: {
+      $hdfs_port_namenode_http = '9870'
+      $hdfs_port_namenode_https = '9871'
+      $hdfs_port_namenode = '9820'
+    }
   }
 
   # detailed deployment bases on convenient parameters
@@ -210,7 +224,7 @@ class hadoop (
     'dfs.datanode.hdfs-blocks-metadata.enabled' => true,
     'dfs.hosts' => "${hadoop::confdir}/${slaves_hdfs}",
     'dfs.hosts.exclude' => "${hadoop::confdir}/excludes",
-    'fs.defaultFS' => "hdfs://${hdfs_hostname}:8020",
+    'fs.defaultFS' => "hdfs://${hdfs_hostname}:${hdfs_port_namenode}",
     'httpfs.hadoop.config.dir' => $hadoop::confdir,
     'mapreduce.framework.name' => $framework,
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
@@ -303,7 +317,7 @@ DEFAULT
         $rm_ss_properties = {
           'yarn.resourcemanager.recovery.enabled' => true,
           'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
-          # no hdfs://${hdfs_hostname}:8020 prefix - in case of HA HDFS
+          # no hdfs://${hdfs_hostname}:${hdfs_port_namenode} prefix - in case of HA HDFS
           'yarn.resourcemanager.fs.state-store.uri' => '/rmstore',
         }
       } else {
@@ -447,19 +461,22 @@ DEFAULT
       notice('only QJM HA implemented, journalnodes required for HDFS HA')
     }
     if ($https) {
-      $ha_https_properties = {
-        "dfs.namenode.https-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:50470",
-        "dfs.namenode.https-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:50470",
+      $ha_http_properties = {
+        "dfs.namenode.https-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${hdfs_port_namenode_https}",
+        "dfs.namenode.https-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${hdfs_port_namenode_https}",
+      }
+    } else {
+      $ha_http_properties = {
+        "dfs.namenode.http-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${hdfs_port_namenode_http}",
+        "dfs.namenode.http-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${hdfs_port_namenode_http}",
       }
     }
     $ha_journals = join($journalnode_hostnames, ':8485;')
     $ha_base_properties = {
       'dfs.nameservices' => $hadoop::cluster_name,
       "dfs.ha.namenodes.${hadoop::cluster_name}" => 'nn1,nn2',
-      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:8020",
-      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:8020",
-      "dfs.namenode.http-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:50070",
-      "dfs.namenode.http-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:50070",
+      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${hdfs_port_namenode}",
+      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${hdfs_port_namenode}",
       'dfs.namenode.shared.edits.dir' => "qjournal://${ha_journals}:8485/${hadoop::cluster_name}",
       "dfs.client.failover.proxy.provider.${hadoop::cluster_name}" => 'org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider',
       'dfs.ha.fencing.methods' => 'shell(/bin/true)',
@@ -475,7 +492,7 @@ DEFAULT
       $ha_credentials_properties = undef
     }
 
-    $ha_hdfs_properties = merge($ha_base_properties, $ha_https_properties, $ha_credentials_properties)
+    $ha_hdfs_properties = merge($ha_base_properties, $ha_http_properties, $ha_credentials_properties)
   } else {
     $ha_hdfs_properties = undef
   }
