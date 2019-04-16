@@ -84,7 +84,7 @@ class hadoop::params {
         'hdfs-zkfc' => 'hadoop-hdfs-zkfc',
         'nfs' => 'hadoop-hdfs-nfs3',
         'portmap' => $::osfamily ? {
-          /Debian/ => undef,
+          /Debian/ => 'rpcbind',
           /RedHat/ => 'rpcbind',
         },
         'httpfs' => 'hadoop-httpfs',
