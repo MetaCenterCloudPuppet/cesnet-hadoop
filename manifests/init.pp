@@ -229,6 +229,10 @@ class hadoop (
     'mapreduce.framework.name' => $framework,
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
     'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
+    # this is required since Hadoop 3.x
+    'mapreduce.map.env' => 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
+    # this is required since Hadoop 3.x
+    'mapreduce.reduce.env' => 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
   }
   if $yarn_hostname {
     $yarn_properties = {
