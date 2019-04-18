@@ -3,6 +3,12 @@
 # HDFS specific setup. Called from namenode and datanode classes.
 #
 class hadoop::common::hdfs::daemon {
+  file { $hadoop::hdfs_socketdir:
+    ensure => directory,
+    owner  => 'hdfs',
+    group  => 'hdfs',
+    mode   => '0644',
+  }
   if $hadoop::https {
     file { "${hadoop::hdfs_homedir}/hadoop.keytab":
       owner  => 'hdfs',
