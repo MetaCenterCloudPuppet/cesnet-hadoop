@@ -494,7 +494,9 @@ DEFAULT
 
     $ha_hdfs_properties = merge($ha_base_properties, $ha_http_properties, $ha_credentials_properties)
   } else {
-    $ha_hdfs_properties = undef
+    $ha_hdfs_properties = {
+      'dfs.namenode.rpc-address' => "${hdfs_hostname}:${hdfs_port_namenode}",
+    }
   }
 
   # High Availability of YARN
