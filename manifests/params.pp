@@ -177,20 +177,20 @@ class hadoop::params {
   $hdfs_data_dirs = [ $hdfs_dir ]
   # just cosmetics, daemons will create these directories automatically anyway
   $hdfs_namenode_suffix = "${::osfamily}-${::operatingsystem}" ? {
-    /RedHat-Fedora/ => '/${user.name}/dfs/namenode',
-    /Debian|RedHat/ => '/${user.name}/dfs/name',
+    /RedHat-Fedora/ => '/hdfs/dfs/namenode',
+    /Debian|RedHat/ => '/hdfs/dfs/name',
   }
   $hdfs_secondarynamenode_suffix = "${::osfamily}-${::operatingsystem}" ? {
-    /RedHat-Fedora/ => '/${user.name}/dfs/secondarynamenode',
-    /Debian|RedHat/ => '/${user.name}/dfs/secondaryname',
+    /RedHat-Fedora/ => '/hdfs/dfs/secondarynamenode',
+    /Debian|RedHat/ => '/hdfs/dfs/secondaryname',
   }
   $hdfs_datanode_suffix = "${::osfamily}-${::operatingsystem}" ? {
-    /RedHat-Fedora/ => '/${user.name}/dfs/datanode',
-    /Debian|RedHat/ => '/${user.name}/dfs/data',
+    /RedHat-Fedora/ => '/hdfs/dfs/datanode',
+    /Debian|RedHat/ => '/hdfs/dfs/data',
   }
   $hdfs_journalnode_suffix = "${::osfamily}-${::operatingsystem}" ? {
-    /RedHat-Fedora/ => '/${user.name}/dfs/journalnode',
-    /Debian|RedHat/ => '/${user.name}/dfs/journal',
+    /RedHat-Fedora/ => '/hdfs/dfs/journalnode',
+    /Debian|RedHat/ => '/hdfs/dfs/journal',
   }
   $hdfs_homedir = "${::osfamily}-${::operatingsystem}" ? {
     /RedHat-Fedora/ => '/var/lib/hadoop-hdfs',
