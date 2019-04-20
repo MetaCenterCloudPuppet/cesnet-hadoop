@@ -13,6 +13,4 @@ env:
   - PUPPET_GEM_VERSION="~> 3.6.0" STRICT_VARIABLES=yes
   - PUPPET_GEM_VERSION="~> 3.7.0" STRICT_VARIABLES=yes
   - PUPPET_GEM_VERSION="~> 3.8.0" STRICT_VARIABLES=yes
-  # problem in tests with separated configure class
-  # (see also spec/spec_helper.rb)
-  #- PUPPET_GEM_VERSION="~> 3.7.0" STRICT_VARIABLES=yes FUTURE_PARSER=yes
+  - PUPPET_GEM_VERSION="~> 3.8.0" STRICT_VARIABLES=yes FUTURE_PARSER=yes

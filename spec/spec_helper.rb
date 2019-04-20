@@ -65,8 +65,6 @@ $httpfs_config_dir={
 # There is *realm* parameter in site.pp file, which means the following keytab
 # files must be used.
 #
-# XXX: Manifests with rspec tests problematic in Puppet >= 4.
-#
 $keytabs={
   'hdfs_namenode' => '/etc/security/keytab/nn.service.keytab',
   'hdfs_datanode' => '/etc/security/keytab/dn.service.keytab',

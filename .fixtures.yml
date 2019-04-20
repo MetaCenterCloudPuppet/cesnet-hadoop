@@ -1,7 +1,10 @@
 fixtures:
   repositories:
-    stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib"
-    alternatives: "git://github.com/puppet-community/puppet-alternatives"
+    stdlib:
+      repo: "https://github.com/puppetlabs/puppetlabs-stdlib"
+      # for future parser tests with puppet < 4
+      ref: "4.25.1"
+    alternatives: "https://github.com/puppet-community/puppet-alternatives"
     hadoop_lib: "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop_lib"
   symlinks:
     hadoop: "#{source_dir}"
