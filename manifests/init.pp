@@ -505,13 +505,26 @@ DEFAULT
 
   # High Availability of YARN
   if $yarn_hostname and $yarn_hostname2 {
-    $ha_yarn_properties = {
+    $ha_yarn_base_properties = {
       'yarn.resourcemanager.cluster-id' => $hadoop::cluster_name,
       'yarn.resourcemanager.ha.enabled' => true,
       'yarn.resourcemanager.ha.rm-ids' => 'rm1,rm2',
       'yarn.resourcemanager.hostname.rm1' => $yarn_hostname,
       'yarn.resourcemanager.hostname.rm2' => $yarn_hostname2,
     }
+    # workaround for YARN-8056 (YARN HA in Hadoop >= 3.x)
+    if $https {
+      $ha_yarn_http_properties = {
+        'yarn.resourcemanager.webapp.https.address.rm1' => "${yarn_hostname}:8090",
+        'yarn.resourcemanager.webapp.https.address.rm2' => "${yarn_hostname2}:8090",
+      }
+    } else {
+      $ha_yarn_http_properties = {
+        'yarn.resourcemanager.webapp.address.rm1' => "${yarn_hostname}:8088",
+        'yarn.resourcemanager.webapp.address.rm2' => "${yarn_hostname2}:8088",
+      }
+    }
+    $ha_yarn_properties = merge($ha_yarn_base_properties, $ha_yarn_http_properties)
   } else {
     $ha_yarn_properties = undef
   }
