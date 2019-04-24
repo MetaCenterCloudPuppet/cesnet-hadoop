@@ -541,12 +541,25 @@ DEFAULT
   }
 
   if $zookeeper_hostnames and ($yarn_hostname2 or $features['rmstore'] and $features['rmstore'] != 'hdfs') {
-    $zoo_yarn_properties = {
+    $zoo_yarn_base_properties = {
       'yarn.resourcemanager.ha.automatic-failover.enabled' => true,
-      # XXX: need limit, "host:${yarn_hostname}:rwcda" doesn't work (better proper auth anyway)
-      'yarn.resourcemanager.zk-acl' => 'world:anyone:rwcda',
-      'yarn.resourcemanager.zk-address' => $zkquorum,
     }
+    # XXX: need limit, "host:${yarn_hostname}:rwcda" doesn't work (better proper auth anyway)
+    case $version {
+      /^2(\.)?/: {
+        $zoo_yarn_versioned_properties = {
+          'yarn.resourcemanager.zk-acl' => 'world:anyone:rwcda',
+          'yarn.resourcemanager.zk-address' => $zkquorum,
+        }
+      }
+      default: {
+        $zoo_yarn_versioned_properties = {
+          'hadoop.zk.acl' => 'world:anyone:rwcda',
+          'hadoop.zk.address' => $zkquorum,
+        }
+      }
+    }
+    $zoo_yarn_properties = merge($zoo_yarn_base_properties, $zoo_yarn_versioned_properties)
   } else {
     $zoo_yarn_properties = undef
   }
