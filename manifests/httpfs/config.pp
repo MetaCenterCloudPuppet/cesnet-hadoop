@@ -30,7 +30,7 @@ class hadoop::httpfs::config {
       source => $::hadoop::https_keystore,
     }
 
-    file { "${hadoop::httpfs_homedir}/http-auth-signature-secret":
+    file { "${hadoop::httpfs_homedir}/httpfs-signature.secret":
       owner  => 'httpfs',
       group  => 'httpfs',
       mode   => '0600',
@@ -42,7 +42,8 @@ class hadoop::httpfs::config {
   if $hadoop::https {
     $environment = {
       'HTTPFS_SSL_ENABLED' => true,
-      'HTTPFS_SSL_KEYSTORE_FILE' => '${HOME}/.keystore',
+      # there is not available ${HOME} variable since Hadoop 3.x
+      'HTTPFS_SSL_KEYSTORE_FILE' => "${hadoop::httpfs_homedir}/.keystore",
       'HTTPFS_SSL_KEYSTORE_PASS' => "'${::hadoop::https_keystore_password}'",
     }
   } else {

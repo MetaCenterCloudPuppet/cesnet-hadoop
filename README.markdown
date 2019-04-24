@@ -611,7 +611,7 @@ Example of changing HADOOP default ACL to more strict settings with NFS:
 <a name="httpfs"></a>
 #### HTTPFS Proxy
 
-HTTPFS Proxy is not as good as the internal WebHDFS, because all communication must go through the proxy. But it is probably good enough as local proxy. It is required for Apache Hue, when there is used High Availability of HDFS.
+HTTPFS Proxy is something like HTTP gateway for HDFS. Unless HDFS (or WebHDFS in Namenodes), all communication must go through the proxy, so it may be not good to use one single HTTPFS globally. Instead it could be used as local proxy everywhere, where it is needed. It is required for Apache Hue in case of HDFS with High Availability.
 
 <a name="httpfs-sec"></a>
 ##### Security

@@ -4,6 +4,7 @@
 # It sets variables according to platform
 #
 class hadoop::params {
+  # only for Hadoop <= 2.x
   $alternatives_ssl = "${::osfamily}-${::operatingsystem}" ? {
     /RedHat-Fedora/ => '',
     /Debian|RedHat/ => 'hadoop-httpfs-tomcat-conf',

@@ -302,7 +302,20 @@ DEFAULT
       'yarn.nodemanager.container-executor.class' => 'org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor',
       'yarn.nodemanager.linux-container-executor.group' => 'hadoop',
     }
-    $sec_properties = merge($sec_common_properties, $sec_yarn_properties)
+    $sec_httpfs_properties = {
+      'httpfs.authentication.signature.secret.file' => "${hadoop::httpfs_homedir}/httpfs-signature.secret",
+      'httpfs.authentication.type' => 'kerberos',
+      # _HOST not possible here, $::fqdn required
+      'httpfs.authentication.kerberos.principal' => "HTTP/${::fqdn}@${hadoop::realm}",
+      'httpfs.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
+      # this property is not used during login to HDFS and it is required hadoop.security.auth_to_local property in core-site.xml, but it is probably still needed for authorizations handled by HTTPFS itself
+      'httpfs.authentication.kerberos.name.rules' => $auth_rules,
+      'httpfs.hadoop.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
+      # _HOST not possible here, $::fqdn required
+      'httpfs.hadoop.authentication.kerberos.principal' => "httpfs/${::fqdn}@${hadoop::realm}",
+      'httpfs.hadoop.authentication.type' => 'kerberos',
+    }
+    $sec_properties = merge($sec_common_properties, $sec_yarn_properties, $sec_httpfs_properties)
   } else {
     $sec_properties = undef
   }
@@ -390,16 +403,6 @@ DEFAULT
       'hadoop.http.authentication.simple.anonymous.allowed' => false,
       'hadoop.http.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
       'hadoop.http.authentication.kerberos.keytab' => '${user.home}/hadoop.keytab',
-      'httpfs.authentication.type' => 'kerberos',
-      # _HOST not possible here, $::fqdn required
-      'httpfs.authentication.kerberos.principal' => "HTTP/${::fqdn}@${hadoop::realm}",
-      'httpfs.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
-      # this property is not used during login to HDFS and it is required hadoop.security.auth_to_local property in core-site.xml, but it is probably still needed for authorizations handled by HTTPFS itself
-      'httpfs.authentication.kerberos.name.rules' => $auth_rules,
-      'httpfs.hadoop.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
-      # _HOST not possible here, $::fqdn required
-      'httpfs.hadoop.authentication.kerberos.principal' => "httpfs/${::fqdn}@${hadoop::realm}",
-      'httpfs.hadoop.authentication.type' => 'kerberos',
       'dfs.http.policy' => 'HTTPS_ONLY',
       'dfs.journalnode.kerberos.internal.spnego.principal' => "HTTP/_HOST@${hadoop::realm}",
       'dfs.web.authentication.kerberos.keytab' => "${hadoop::hdfs_homedir}/hadoop.keytab",

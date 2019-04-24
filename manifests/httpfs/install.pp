@@ -10,7 +10,7 @@ class hadoop::httpfs::install {
     alternatives => $::hadoop::alternatives_httpfs,
   }
 
-  if $::hadoop::alternatives_ssl and $::hadoop::alternatives_ssl != '' {
+  if $::hadoop::alternatives_ssl and $::hadoop::alternatives_ssl != '' and "${::hadoop::version}." =~ /^2(\.)?/ {
     if $hadoop::https {
       $conf = '/etc/hadoop-httpfs/tomcat-conf.https'
     } else {
