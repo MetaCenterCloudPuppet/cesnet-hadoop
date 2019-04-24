@@ -108,7 +108,8 @@ class hadoop (
     default: {
       $hdfs_port_namenode_http = '9870'
       $hdfs_port_namenode_https = '9871'
-      $hdfs_port_namenode = '9820'
+      # changed back from 9820 to 8020 in Hadoop 3.0.1
+      $hdfs_port_namenode = '8020'
     }
   }
 
