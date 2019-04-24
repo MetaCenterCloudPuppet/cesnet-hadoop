@@ -71,9 +71,10 @@ There are some limitations how to use this module. You should read the documenta
  * */etc/sysconfig/hadoop\** (or */etc/default/hadoop\**)
  * */etc/cron.d/hadoop-\** (only when explicit key refresh or restarts are requested)
  * */usr/local/sbin/yellowmanager* (not needed, only when administrator manager script is requested by `features`)
+ * */etc/init.d/hadoop-hdfs-nfs3* (if exists, for *version=3*)
 * Alternatives:
- * alternatives are used for */etc/hadoop/conf* in Cloudera
- * this module switches to the new alternative by default, so the Cloudera original configuration can be kept intact
+ * alternatives are used for */etc/hadoop/conf*
+ * this module switches to the new alternative by default, so the original configuration can be kept intact
 * Services:
  * only requested Hadoop services are setup and started
  * HDFS: namenode, journalnode, datanode, zkfc, nfs, httpfs
@@ -1361,6 +1362,10 @@ Settings change the HDFS ports (Hadoop 2 -&gt; Hadoop 3):
 * HDFS NameNode RPC: 8020 -&gt; 9820
 * HDFS NameNode http: 50070 -&gt; 9870
 * HDFS NameNode https: 50470 -&gt; 9871
+
+Some properties are slightly different.
+
+Also there is workaround in NFS startup script for Hadoop 3.x.
 
 <a name="limitations"></a>
 ##Limitations
