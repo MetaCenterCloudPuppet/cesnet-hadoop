@@ -1387,4 +1387,3 @@ Other limitation is poor support for synchronization across multiple machines. S
 * Tests:
  * basic: see *.travis.yml*
  * vagrant: [https://github.com/MetaCenterCloudPuppet/hadoop-tests](https://github.com/MetaCenterCloudPuppet/hadoop-tests)
-* Email: František Dvořák &lt;valtri@civ.zcu.cz&gt;
