@@ -254,15 +254,8 @@ class hadoop (
   } else {
     $slaves_yarn = 'slaves'
   }
-  if $yarn_hostname {
-    $framework = 'yarn'
-  } else {
-    $framework = '::undef'
-  }
   $dyn_properties = {
     'fs.defaultFS' => $_defaultFS,
-    'httpfs.hadoop.config.dir' => $hadoop::confdir,
-    'mapreduce.framework.name' => $framework,
     'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
     'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
     # this is required since Hadoop 3.x
@@ -281,6 +274,7 @@ class hadoop (
   }
   if $yarn_hostname {
     $yarn_properties = {
+      'mapreduce.framework.name' => 'yarn',
       'yarn.resourcemanager.hostname' => $yarn_hostname,
       'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
       'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
@@ -323,43 +317,55 @@ DEFAULT
       'mapreduce.jobhistory.keytab' => $keytab_jobhistory,
       'mapreduce.jobhistory.principal' => "jhs/_HOST@${hadoop::realm}",
     }
-    $sec_hdfs_properties = {
-      'dfs.datanode.address' => '0.0.0.0:1004',
-      'dfs.datanode.http.address' => '0.0.0.0:1006',
-      'dfs.block.access.token.enable' => true,
-      'dfs.namenode.acls.enabled' => true,
-      'dfs.namenode.kerberos.principal' => $_principal_namenode,
-      'dfs.namenode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
-      'dfs.namenode.keytab.file' => $keytab_namenode,
-      'dfs.datanode.kerberos.principal' => "dn/_HOST@${hadoop::realm}",
-      'dfs.datanode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
-      'dfs.datanode.keytab.file' => $keytab_datanode,
-      'dfs.journalnode.kerberos.principal' => "jn/_HOST@${hadoop::realm}",
-      'dfs.journalnode.keytab.file' => $keytab_journalnode,
-      'dfs.encrypt.data.transfer' => false,
-      'dfs.webhdfs.enabled' => true,
-      'dfs.web.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
+    if $hdfs_hostname {
+      $sec_hdfs_properties = {
+        'dfs.datanode.address' => '0.0.0.0:1004',
+        'dfs.datanode.http.address' => '0.0.0.0:1006',
+        'dfs.block.access.token.enable' => true,
+        'dfs.namenode.acls.enabled' => true,
+        'dfs.namenode.kerberos.principal' => $_principal_namenode,
+        'dfs.namenode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
+        'dfs.namenode.keytab.file' => $keytab_namenode,
+        'dfs.datanode.kerberos.principal' => "dn/_HOST@${hadoop::realm}",
+        'dfs.datanode.kerberos.https.principal' => "host/_HOST@${hadoop::realm}",
+        'dfs.datanode.keytab.file' => $keytab_datanode,
+        'dfs.journalnode.kerberos.principal' => "jn/_HOST@${hadoop::realm}",
+        'dfs.journalnode.keytab.file' => $keytab_journalnode,
+        'dfs.encrypt.data.transfer' => false,
+        'dfs.webhdfs.enabled' => true,
+        'dfs.web.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
+      }
+    } else {
+      $sec_hdfs_properties = undef
     }
-    $sec_yarn_properties = {
-      'yarn.resourcemanager.keytab' => $keytab_resourcemanager,
-      'yarn.nodemanager.keytab' => $keytab_nodemanager,
-      'yarn.resourcemanager.principal' => "rm/_HOST@${hadoop::realm}",
-      'yarn.nodemanager.principal' => "nm/_HOST@${hadoop::realm}",
-      'yarn.nodemanager.container-executor.class' => 'org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor',
-      'yarn.nodemanager.linux-container-executor.group' => 'hadoop',
+    if $yarn_hostname {
+      $sec_yarn_properties = {
+        'yarn.resourcemanager.keytab' => $keytab_resourcemanager,
+        'yarn.nodemanager.keytab' => $keytab_nodemanager,
+        'yarn.resourcemanager.principal' => "rm/_HOST@${hadoop::realm}",
+        'yarn.nodemanager.principal' => "nm/_HOST@${hadoop::realm}",
+        'yarn.nodemanager.container-executor.class' => 'org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor',
+        'yarn.nodemanager.linux-container-executor.group' => 'hadoop',
+      }
+    } else {
+      $sec_yarn_properties = undef
     }
-    $sec_httpfs_properties = {
-      'httpfs.authentication.signature.secret.file' => "${hadoop::httpfs_homedir}/httpfs-signature.secret",
-      'httpfs.authentication.type' => 'kerberos',
-      # _HOST not possible here, $::fqdn required
-      'httpfs.authentication.kerberos.principal' => "HTTP/${::fqdn}@${hadoop::realm}",
-      'httpfs.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
-      # this property is not used during login to HDFS and it is required hadoop.security.auth_to_local property in core-site.xml, but it is probably still needed for authorizations handled by HTTPFS itself
-      'httpfs.authentication.kerberos.name.rules' => $auth_rules,
-      'httpfs.hadoop.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
-      # _HOST not possible here, $::fqdn required
-      'httpfs.hadoop.authentication.kerberos.principal' => "httpfs/${::fqdn}@${hadoop::realm}",
-      'httpfs.hadoop.authentication.type' => 'kerberos',
+    if $httpfs_hostnames and !empty($httpfs_hostnames) {
+      $sec_httpfs_properties = {
+        'httpfs.authentication.signature.secret.file' => "${hadoop::httpfs_homedir}/httpfs-signature.secret",
+        'httpfs.authentication.type' => 'kerberos',
+        # _HOST not possible here, $::fqdn required
+        'httpfs.authentication.kerberos.principal' => "HTTP/${::fqdn}@${hadoop::realm}",
+        'httpfs.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
+        # this property is not used during login to HDFS and it is required hadoop.security.auth_to_local property in core-site.xml, but it is probably still needed for authorizations handled by HTTPFS itself
+        'httpfs.authentication.kerberos.name.rules' => $auth_rules,
+        'httpfs.hadoop.authentication.kerberos.keytab' => $hadoop::keytab_httpfs,
+        # _HOST not possible here, $::fqdn required
+        'httpfs.hadoop.authentication.kerberos.principal' => "httpfs/${::fqdn}@${hadoop::realm}",
+        'httpfs.hadoop.authentication.type' => 'kerberos',
+      }
+    } else {
+      $sec_httpfs_properties = undef
     }
     $sec_properties = merge($sec_common_properties, $sec_hdfs_properties, $sec_yarn_properties, $sec_httpfs_properties)
   } else {
@@ -686,8 +692,9 @@ DEFAULT
     $preset_authorization = {}
   }
 
-  if $httpfs_hostnames and !empty($httpfs_hostnames){
+  if $httpfs_hostnames and !empty($httpfs_hostnames) {
     $httpfs_properties = {
+      'httpfs.hadoop.config.dir' => $hadoop::confdir,
       'hadoop.proxyuser.httpfs.hosts' => join($httpfs_hostnames, ','),
       'hadoop.proxyuser.httpfs.groups' => '*',
     }
