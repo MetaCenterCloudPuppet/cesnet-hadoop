@@ -59,7 +59,8 @@ class hadoop::params {
       $packages_nn = [ 'hadoop-hdfs-namenode' ]
       $packages_rm = [ 'hadoop-yarn-resourcemanager' ]
       $packages_mr = [ 'hadoop-mapreduce-historyserver' ]
-      $packages_nm = [ 'hadoop-yarn-nodemanager' ]
+      # mapreduce shuffle class explicitly specified in the configurations
+      $packages_nm = [ 'hadoop-yarn-nodemanager', 'hadoop-mapreduce' ]
       $packages_dn = [ 'hadoop-hdfs-datanode' ]
       $packages_jn = [ 'hadoop-hdfs-journalnode' ]
       $packages_hdfs_zkfc = [ 'hadoop-hdfs-zkfc' ]
