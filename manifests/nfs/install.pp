@@ -10,6 +10,7 @@ class hadoop::nfs::install {
   Package[$hadoop::packages_nfs] -> Class['hadoop::common::postinstall']
 
   # the startup script issue hack
+  # DISTRO-907 (Cloudera)
   if "${::hadoop::version}." =~ /^3(\.)?/ {
     $daemon = $hadoop::daemons['nfs']
     $path = '/sbin:/usr/sbin:/bin:/usr/bin'
