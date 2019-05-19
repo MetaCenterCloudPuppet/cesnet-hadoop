@@ -23,6 +23,7 @@ group :test do
   gem "puppet-lint-unquoted_string-check"
   gem 'puppet-lint-resource_reference_syntax'
 
+  gem 'ffi', '<= 1.10.0' if RUBY_VERSION < '2.0.0'
   gem 'json', '< 2.0.0' if RUBY_VERSION < '2.0.0'
   gem 'json_pure', '< 2.0.0' if RUBY_VERSION < '2.0.0'
   gem 'json-schema', '< 2.5.0' if RUBY_VERSION < '2.0.0'
