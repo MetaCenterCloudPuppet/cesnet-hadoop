@@ -104,7 +104,7 @@ class hadoop (
     validate_hash($properties)
   }
 
-  case $version {
+  case String($version) {
     /^2(\.)?/: {
       $hdfs_port_namenode_http = '50070'
       $hdfs_port_namenode_https = '50470'
@@ -617,7 +617,7 @@ DEFAULT
       'yarn.resourcemanager.ha.automatic-failover.enabled' => true,
     }
     # XXX: need limit, "host:${yarn_hostname}:rwcda" doesn't work (better proper auth anyway)
-    case $version {
+    case String($version) {
       /^2(\.)?/: {
         $zoo_yarn_versioned_properties = {
           'yarn.resourcemanager.zk-acl' => 'world:anyone:rwcda',
