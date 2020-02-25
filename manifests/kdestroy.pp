@@ -14,10 +14,11 @@ define hadoop::kdestroy($touchfile = $title, $touch = true) {
   if $hadoop::zookeeper_deployed {
     if $hadoop::realm and $hadoop::realm != '' and $hadoop::_keytab_hdfs_admin and $hadoop::_principal_hdfs_admin {
       exec { "kdestroy-${touchfile}":
-        command     => 'kdestroy',
+        command     => 'kdestroy || true',
         path        => $path,
         environment => $env,
         onlyif      => "test -n \"${hadoop::realm}\"",
+        provider    => 'shell',
         user        => 'hdfs',
         creates     => $puppetfile,
       }
