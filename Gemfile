@@ -21,6 +21,8 @@ group :test do
     gem 'simplecov-html', '< 0.11'
   end
 
+  # troubles with "top-scope variable" problem in puppet-lint afte 2.3.6
+  gem "puppet-lint", '< 2.4.0'
   gem "puppet-lint-absolute_classname-check"
   gem "puppet-lint-leading_zero-check"
   gem "puppet-lint-trailing_comma-check"
