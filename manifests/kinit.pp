@@ -17,9 +17,10 @@ define hadoop::kinit($touchfile = $title) {
     # better to destroy the ticket (it may be owned by root),
     # destroy it only when needed though
     exec { "kdestroy-old-${touchfile}":
-      command     => 'kdestroy',
+      command     => 'kdestroy || true',
       path        => $path,
       environment => $env,
+      provider    => 'shell',
       creates     => $puppetfile,
     }
     ->
