@@ -7,7 +7,7 @@ fixtures:
     alternatives:
       repo: "https://github.com/puppet-community/puppet-alternatives"
       # ruby 1.9.3 compatibility
-      ref: "3.0.0"
+      ref: "v3.0.0"
     hadoop_lib: "https://github.com/MetaCenterCloudPuppet/cesnet-hadoop_lib"
   symlinks:
     hadoop: "#{source_dir}"
