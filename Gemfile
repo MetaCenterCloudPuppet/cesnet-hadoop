@@ -1,7 +1,13 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
 group :test do
-  gem "rake", '< 11'
+  if RUBY_VERSION >= '2.2'
+    gem "rake"
+  elsif RUBY_VERSION >= '2.0'
+    gem "rake", '< 13'
+  else
+    gem "rake", '< 12.3.0'
+  end
   gem "puppet", ENV['PUPPET_GEM_VERSION'] || '~> 3.8.0'
   gem "rspec"
   gem "rspec-puppet"
