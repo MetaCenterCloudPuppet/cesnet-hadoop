@@ -60,6 +60,9 @@ class hadoop (
   $hdfs_deployed = $::hadoop::params::hdfs_deployed,
   $zookeeper_deployed = $::hadoop::params::zookeeper_deployed,
 
+  $confdir = $::hadoop::params::confdir,
+  $confdir_httpfs = $::hadoop::params::confdir_httpfs,
+
   $keytab_namenode = $::hadoop::params::keytab_namenode,
   $keytab_datanode = $::hadoop::params::keytab_datanode,
   $keytab_httpfs = $::hadoop::params::keytab_httpfs,

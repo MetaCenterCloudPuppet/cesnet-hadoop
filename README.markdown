@@ -863,6 +863,14 @@ This will set following properties:
 * *mapred.compress.map.output*: true
 * *mapred.map.output.compression.codec*: "org.apache.hadoop.io.compress.SnappyCodec"
 
+#####`confdir`
+
+Hadoop config directory. Default: '/etc/hadoop/conf' or '/etc/hadoop'.
+
+#####`confdir_httpfs`
+
+Hadoop HDFS httpfs config directory. Default: '/etc/hadoop-httpfs/conf' or '/etc/hadoop-httpfs'.
+
 #####`datanode_hostnames`
 
 Array of Data Node machines. Default: `slaves`.
