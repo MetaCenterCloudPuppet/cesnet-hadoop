@@ -1392,13 +1392,13 @@ The name should be the same as used in *hadoop::kinit()* and *hadoop::kdestroy()
 
 #####`version`
 
-Hadoop version. Default: '2'.
+Hadoop version. Default: '3'.
 
 Hadoop version to distinguish differences between Hadoop 2.x.x and Hadoop 3.x.x.
 
 Settings change the HDFS ports (Hadoop 2 -&gt; Hadoop 3):
 
-* HDFS NameNode RPC: 8020 -&gt; 9820
+* (HDFS NameNode RPC not changed: 8020)
 * HDFS NameNode http: 50070 -&gt; 9870
 * HDFS NameNode https: 50470 -&gt; 9871
 

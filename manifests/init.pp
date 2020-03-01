@@ -55,7 +55,7 @@ class hadoop (
   $perform = $::hadoop::params::perform,
   $realm = '',
   $scratch_dir = undef,
-  $version = 2,
+  $version = 3,
 
   $hdfs_deployed = $::hadoop::params::hdfs_deployed,
   $zookeeper_deployed = $::hadoop::params::zookeeper_deployed,
