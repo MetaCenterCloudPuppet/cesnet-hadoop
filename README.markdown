@@ -309,7 +309,7 @@ Preparing the certificates keystore (*/etc/security/server.keystore*):
     keytool -importkeystore \
             -deststorepass ${pass} -destkeypass ${pass} -destkeystore server.keystore \
             -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass some-passphrase \
-            -alias ${alias}
+            -alias ${alias} -deststoretype pkcs12
 
     # check
     keytool -list -keystore server.keystore -storepass ${pass}
