@@ -210,7 +210,8 @@ class hadoop::params {
     /RedHat-Fedora/ => '/var/cache/hadoop-mapreduce',
     /Debian|RedHat/ => '/var/lib/hadoop-mapreduce',
   }
-  $hdfs_socketdir = '/var/run/hadoop-hdfs'
+  # better in /var/lib/hadoop-hdfs instead of /var/run/hadoop-hdfs due to ownerships and cleanups
+  $hdfs_socketdir = "${hdfs_homedir}/sockets"
   $nfs_dumpdir = '/tmp/.hdfs-nfs'
   $nfs_mount = '/hdfs'
   $nfs_system_user = 'hdfs'
