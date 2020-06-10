@@ -46,13 +46,12 @@ group :test do
   end
   if RUBY_VERSION < '2.3'
     gem 'faraday', '< 1.0.0'
-    gem 'ffi', '< 1.13.0' if RUBY_VERSION >= '2.2'
+    gem 'ffi', '< 1.13.0' if RUBY_VERSION >= '2.0.0'
     gem 'i18n', '< 1.5.2'
     gem 'public_suffix', '<= 3.0.3'
   end
   if RUBY_VERSION < '2.2'
     gem 'activesupport', '< 5.0.0'
-    gem 'ffi', '< 1.11.0' if RUBY_VERSION >= '2.0.0'
     gem 'listen', '< 3.1'
     gem 'minitest', '< 5.12.0'
     gem 'rb-inotify', '< 0.10'
