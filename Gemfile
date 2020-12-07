@@ -17,11 +17,12 @@ group :test do
   else
     gem 'metadata-json-lint'
   end
-  gem "rspec-puppet-facts"
   if RUBY_VERSION >= '2.4'
+    gem 'rspec-puppet-facts'
     gem 'simplecov', '>= 0.11.0'
     gem 'simplecov-console'
   else
+    gem 'rspec-puppet-facts', '< 2.0.0'
     gem 'simplecov', '>= 0.11.0', '< 0.18'
     gem 'simplecov-console', '< 0.18'
     gem 'simplecov-html', '< 0.11'
