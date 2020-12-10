@@ -1277,7 +1277,7 @@ Array of slave node hostnames. Default: [$::fqdn].
 
 #####`yarn_hostname`
 
-Yarn machine (with Resource Manager and Job History services). Default: $::fqdn.
+Yarn machine (with Resource Manager and Job History services). Default: undef.
 
 #####`yarn_hostname2`
 

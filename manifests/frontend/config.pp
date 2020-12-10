@@ -4,9 +4,11 @@
 #
 class hadoop::frontend::config {
   contain hadoop::common::config
-  if $hadoop::hdfs_hostname {
+  if $hadoop::hdfs_enable {
     contain hadoop::common::hdfs::config
   }
-  contain hadoop::common::yarn::config
-  contain hadoop::common::mapred::config
+  if $hadoop::yarn_enable {
+    contain hadoop::common::yarn::config
+    contain hadoop::common::mapred::config
+  }
 }

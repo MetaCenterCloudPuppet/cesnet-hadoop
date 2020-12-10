@@ -13,7 +13,7 @@ class hadoop::zkfc::service {
     }
 
     # launch the format only once: on the first (main) namenode
-    if $hadoop::zookeeper_hostnames and $hadoop::hdfs_hostname == $::fqdn {
+    if $hadoop::hdfs_enable and $hadoop::zookeeper_hostnames and $hadoop::hdfs_hostname == $::fqdn {
       hadoop::kinit {'hdfs-zkfc-kinit':
         touchfile => 'hdfs-zkfc-formatted',
       }

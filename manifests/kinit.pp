@@ -11,7 +11,7 @@ define hadoop::kinit($touchfile = $title) {
   $path = '/sbin:/usr/sbin:/bin:/usr/bin'
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
 
-  if $hadoop::hdfs_hostname {
+  if $hadoop::hdfs_enable {
     include ::hadoop::common::hdfs::config
   }
 

@@ -6,7 +6,7 @@ class hadoop (
   $defaultFS = undef,
   $hdfs_hostname = undef,
   $hdfs_hostname2 = undef,
-  $yarn_hostname = $::fqdn,
+  $yarn_hostname = undef,
   $yarn_hostname2 = undef,
   $slaves = [$::fqdn],
   $frontends = [],
@@ -121,7 +121,7 @@ class hadoop (
     }
   }
 
-  if (!$defaultFS and !$hdfs_hostname) {
+  if (!$defaultFS and (!$hdfs_hostname or $hdfs_hostname == '')) {
     err('Either hdfs_hostname or defaultFS parameter needed')
   }
   if ($defaultFS) {
@@ -132,12 +132,19 @@ class hadoop (
     $_defaultFS = "hdfs://${hdfs_hostname}:${hdfs_port_namenode}"
   }
 
+  $hdfs_enable = $hdfs_hostname and $hdfs_hostname != ''
+  $yarn_enable = $yarn_hostname and $yarn_hostname != ''
+
   # detailed deployment bases on convenient parameters
   if $historyserver_hostname { $hs_hostname = $historyserver_hostname }
   else { $hs_hostname = $yarn_hostname }
-  if $nodemanager_hostnames { $_nodemanager_hostnames = $nodemanager_hostnames }
-  else { $_nodemanager_hostnames = $slaves }
-  if $hdfs_hostname {
+  if $yarn_enable {
+    if $nodemanager_hostnames { $_nodemanager_hostnames = $nodemanager_hostnames }
+    else { $_nodemanager_hostnames = $slaves }
+  } else {
+    $_nodemanager_hostnames = []
+  }
+  if $hdfs_enable {
     if $datanode_hostnames { $_datanode_hostnames = $datanode_hostnames }
     else { $_datanode_hostnames = $slaves }
   } else {
@@ -177,7 +184,7 @@ class hadoop (
     $_principal_namenode = $principal_namenode
   }
 
-  if $::fqdn == $hdfs_hostname or $::fqdn == $hdfs_hostname2 {
+  if $hdfs_enable and ($::fqdn == $hdfs_hostname or $::fqdn == $hdfs_hostname2) {
     $daemon_namenode = true
     $mapred_user = true
   } else {
@@ -185,31 +192,31 @@ class hadoop (
     $mapred_user = false
   }
 
-  if $::fqdn == $yarn_hostname or $::fqdn == $yarn_hostname2{
+  if $yarn_enable and ($::fqdn == $yarn_hostname or $::fqdn == $yarn_hostname2) {
     $daemon_resourcemanager = true
   } else {
     $daemon_resourcemanager = false
   }
 
-  if $yarn_hostname and $::fqdn == $hs_hostname {
+  if $yarn_enable and $::fqdn == $hs_hostname {
     $daemon_historyserver = true
   } else {
     $daemon_historyserver = false
   }
 
-  if $yarn_hostname and member($_nodemanager_hostnames, $::fqdn) {
+  if $yarn_enable and member($_nodemanager_hostnames, $::fqdn) {
     $daemon_nodemanager = true
   } else {
     $daemon_nodemanager = false
   }
 
-  if $hdfs_hostname and member($_datanode_hostnames, $::fqdn) {
+  if $hdfs_enable and member($_datanode_hostnames, $::fqdn) {
     $daemon_datanode = true
   } else {
     $daemon_datanode = false
   }
 
-  if $hdfs_hostname and $journalnode_hostnames and member($journalnode_hostnames, $::fqdn) {
+  if $hdfs_enable and $journalnode_hostnames and member($journalnode_hostnames, $::fqdn) {
     $daemon_journalnode = true
   } else {
     $daemon_journalnode = false
@@ -259,14 +266,8 @@ class hadoop (
   }
   $dyn_properties = {
     'fs.defaultFS' => $_defaultFS,
-    'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
-    'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
-    # this is required since Hadoop 3.x
-    'mapreduce.map.env' => 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
-    # this is required since Hadoop 3.x
-    'mapreduce.reduce.env' => 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
   }
-  if $hdfs_hostname {
+  if $hdfs_enable {
     $hdfs_properties = {
       'dfs.datanode.hdfs-blocks-metadata.enabled' => true,
       'dfs.hosts' => "${hadoop::confdir}/${slaves_hdfs}",
@@ -275,9 +276,15 @@ class hadoop (
   } else {
     $hdfs_properties = undef
   }
-  if $yarn_hostname {
+  if $yarn_enable {
     $yarn_properties = {
       'mapreduce.framework.name' => 'yarn',
+      'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
+      'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
+      # this is required since Hadoop 3.x
+      'mapreduce.map.env' => 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
+      # this is required since Hadoop 3.x
+      'mapreduce.reduce.env' => 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
       'yarn.resourcemanager.hostname' => $yarn_hostname,
       'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
       'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
@@ -320,7 +327,7 @@ DEFAULT
       'mapreduce.jobhistory.keytab' => $keytab_jobhistory,
       'mapreduce.jobhistory.principal' => "jhs/_HOST@${hadoop::realm}",
     }
-    if $hdfs_hostname {
+    if $hdfs_enable {
       $sec_hdfs_properties = {
         'dfs.datanode.address' => '0.0.0.0:1004',
         'dfs.datanode.http.address' => '0.0.0.0:1006',
@@ -341,7 +348,7 @@ DEFAULT
     } else {
       $sec_hdfs_properties = undef
     }
-    if $yarn_hostname {
+    if $yarn_enable {
       $sec_yarn_properties = {
         'yarn.resourcemanager.keytab' => $keytab_resourcemanager,
         'yarn.nodemanager.keytab' => $keytab_nodemanager,
@@ -384,7 +391,7 @@ DEFAULT
     }
   }
 
-  if $hadoop::features['rmstore'] and $yarn_hostname {
+  if $hadoop::features['rmstore'] and $yarn_enable {
     if $hadoop::features['rmstore'] == 'hdfs' or ($hadoop::features['rmstore'] != 'zookeeper' and !$zookeeper_hostnames) {
       if $hadoop::hdfs_deployed {
         $rm_ss_properties = {
@@ -414,7 +421,7 @@ DEFAULT
       'hadoop.security.token.service.use_ip' => false,
       'yarn.resourcemanager.bind-host' => '0.0.0.0',
     }
-    if $hdfs_hostname {
+    if $hdfs_enable {
       $mh_properties_hdfs = {
         'dfs.namenode.https-bind-host' => '0.0.0.0',
         'dfs.namenode.http-bind-host' => '0.0.0.0',
@@ -429,7 +436,7 @@ DEFAULT
     $mh_properties = undef
   }
 
-  if $hadoop::features['aggregation'] and $yarn_hostname {
+  if $hadoop::features['aggregation'] and $yarn_enable {
     $agg_properties = {
       'yarn.log-aggregation-enable' => true,
       'yarn.nodemanager.remote-app-log-dir' => '/var/log/hadoop-yarn/apps',
@@ -485,7 +492,7 @@ DEFAULT
       'ssl.server.keystore.keypassword' => $keypass,
       'ssl.server.keystore.type' => 'jks',
     }
-    if $hdfs_hostname {
+    if $hdfs_enable {
       $https_hdfs_properties = {
         'dfs.http.policy' => 'HTTPS_ONLY',
         'dfs.journalnode.kerberos.internal.spnego.principal' => "HTTP/_HOST@${hadoop::realm}",
@@ -494,7 +501,7 @@ DEFAULT
     } else {
       $https_hdfs_properties = undef
     }
-    if $yarn_hostname {
+    if $yarn_enable {
       $https_yarn_properties = {
         'yarn.http.policy' => 'HTTPS_ONLY',
       }
@@ -506,7 +513,7 @@ DEFAULT
     $https_properties = {}
   }
 
-  if $impala_enable and $hdfs_hostname {
+  if $impala_enable and $hdfs_enable {
     $impala_properties = {
       'dfs.datanode.hdfs-blocks-metadata.enabled' => true,
       'dfs.client.file-block-storage-locations.timeout.millis' => 10000,
@@ -517,7 +524,7 @@ DEFAULT
     $impala_properties = {}
   }
 
-  if $scratch_dir and $yarn_hostname {
+  if $scratch_dir and $yarn_enable {
     $scratch_properties = {
       'yarn.nodemanager.local-dirs' => "${scratch_dir}/\${user.name}/nm-local-dir",
       'yarn.nodemanager.log-dirs' => "${scratch_dir}/containers",
@@ -569,7 +576,7 @@ DEFAULT
 
     $ha_hdfs_properties = merge($ha_base_properties, $ha_http_properties, $ha_credentials_properties)
   } else {
-    if $hdfs_hostname {
+    if $hdfs_enable {
       $ha_hdfs_properties = {
         'dfs.namenode.rpc-address' => "${hdfs_hostname}:${hdfs_port_namenode}",
       }
@@ -579,7 +586,7 @@ DEFAULT
   }
 
   # High Availability of YARN
-  if $yarn_hostname and $yarn_hostname2 {
+  if $yarn_enable and $yarn_hostname and $yarn_hostname2 {
     $ha_yarn_base_properties = {
       'yarn.resourcemanager.cluster-id' => $hadoop::cluster_name,
       'yarn.resourcemanager.ha.enabled' => true,

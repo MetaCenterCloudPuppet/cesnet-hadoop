@@ -25,7 +25,7 @@ define hadoop::mkdir($touchfile, $owner = undef, $group = undef, $mode = undef, 
   $puppetfile = "/var/lib/hadoop-hdfs/.puppet-${touchfile}"
 
   include ::hadoop::common::config
-  if $hadoop::hdfs_hostname {
+  if $hadoop::hdfs_enable {
     include ::hadoop::common::hdfs::config
   }
 
@@ -46,7 +46,7 @@ define hadoop::mkdir($touchfile, $owner = undef, $group = undef, $mode = undef, 
       creates     => $puppetfile,
     }
     File["${hadoop::confdir}/core-site.xml"] -> Exec["hadoop-dir:${dir}"]
-    if $hadoop::hdfs_hostname {
+    if $hadoop::hdfs_enable {
       File["${hadoop::confdir}/hdfs-site.xml"] -> Exec["hadoop-dir:${dir}"]
     }
 
