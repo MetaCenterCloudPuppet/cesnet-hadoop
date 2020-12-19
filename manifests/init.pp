@@ -78,35 +78,6 @@ class hadoop (
 ) inherits hadoop::params {
   include ::stdlib
 
-  validate_array($frontends)
-  validate_array($slaves)
-  validate_array($nfs_hostnames)
-  validate_array($hue_hostnames)
-  validate_array($oozie_hostnames)
-  validate_array($httpfs_hostnames)
-  if $datanode_hostnames {
-    validate_array($datanode_hostnames)
-  }
-  if $journalnode_hostnames {
-    validate_array($journalnode_hostnames)
-  }
-  if $nodemanager_hostnames {
-    validate_array($nodemanager_hostnames)
-  }
-  if $zookeeper_hostnames {
-    validate_array($zookeeper_hostnames)
-  }
-  validate_hash($features)
-  if $descriptions {
-    validate_hash($descriptions)
-  }
-  if $environment {
-    validate_hash($environment)
-  }
-  if $properties {
-    validate_hash($properties)
-  }
-
   case "${::hadoop::version}." {
     /^2(\.)?/: {
       $hdfs_port_namenode_http = '50070'
