@@ -27,7 +27,7 @@ class hadoop::common::hdfs::config {
     mode    => '0644',
     alias   => 'hdfs-site.xml',
     content => template('hadoop/hadoop/hdfs-site.xml.erb'),
-    require => [ Exec['touch-excludes'], File[$file_slaves] ],
+    require => [ Exec['touch-excludes'], File["${hadoop::confdir}/${file_slaves}"] ],
   }
 
   if $hadoop::ha_credentials {

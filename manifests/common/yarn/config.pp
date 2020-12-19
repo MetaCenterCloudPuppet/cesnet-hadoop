@@ -29,7 +29,7 @@ class hadoop::common::yarn::config {
     mode    => '0644',
     alias   => 'yarn-site.xml',
     content => template('hadoop/hadoop/yarn-site.xml.erb'),
-    require => [ Exec['touch-excludes'], File[$file_slaves] ],
+    require => [ Exec['touch-excludes'], File["${hadoop::confdir}/${file_slaves}"] ],
   }
 
   # slaves needs Hadoop configuration directory
