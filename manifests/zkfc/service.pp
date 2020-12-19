@@ -27,7 +27,7 @@ class hadoop::zkfc::service {
         # This should never happen, but just in case it does,
         # We don't want this eternally unanswered prompt to fill up
         # puppet logs and disks.
-        command => 'echo N | hdfs zkfc -formatZK',
+        command => 'echo N | hdfs zkfc -formatZK >> /var/lib/hadoop-hdfs/puppet-hdfs-zkfc-format.log 2>&1',
         path    => '/sbin:/usr/sbin:/bin:/usr/bin',
         user    => 'hdfs',
         creates => '/var/lib/hadoop-hdfs/.puppet-hdfs-zkfc-formatted',

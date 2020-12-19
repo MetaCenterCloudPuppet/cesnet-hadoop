@@ -13,7 +13,7 @@ class hadoop::namenode::bootstrap {
   # Also wait for the primary name node.
   #
   exec { 'hdfs-bootstrap':
-    command   => 'hdfs namenode -bootstrapStandby -nonInteractive && touch /var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped',
+    command   => 'hdfs namenode -bootstrapStandby -nonInteractive > /var/lib/hadoop-hdfs/puppet-hdfs-bootstrap.log 2>&1 && touch /var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped',
     creates   => '/var/lib/hadoop-hdfs/.puppet-hdfs-bootstrapped',
     path      => '/bin:/usr/bin',
     user      => 'hdfs',
