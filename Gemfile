@@ -68,9 +68,3 @@ group :test do
     gem 'parallel_tests', '<= 2.9.0'
   end
 end
-
-group :development do
-  gem "travis"              if RUBY_VERSION >= '2.1.0'
-  gem "travis-lint"         if RUBY_VERSION >= '2.1.0'
-  gem "guard-rake"          if RUBY_VERSION >= '2.2.5' # per dependency https://rubygems.org/gems/ruby_dep
-end
