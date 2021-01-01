@@ -57,6 +57,8 @@ group :test do
     gem 'listen', '< 3.1'
     gem 'minitest', '< 5.12.0'
     gem 'rb-inotify', '< 0.10'
+    gem 'json', '< 2.5.0' if RUBY_VERSION >= '2.0.0'
+    gem 'json_pure', '< 2.5.0' if RUBY_VERSION >= '2.0.0'
   end
   if RUBY_VERSION < '2.0.0'
     gem 'ffi', '< 1.11.0'
