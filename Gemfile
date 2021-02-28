@@ -8,7 +8,6 @@ group :test do
   end
   gem "puppet", ENV['PUPPET_GEM_VERSION'] || '~> 3.8.0'
   gem "rspec"
-  gem "puppetlabs_spec_helper", '< 3.0.0' # incompatible with ruby 2.1, unknown minimal version
   gem 'metadata-json-lint'
   gem 'rspec-puppet'
   if RUBY_VERSION >= '2.4'
@@ -52,8 +51,11 @@ group :test do
     gem 'activesupport', '< 5.0.0'
     gem 'listen', '< 3.1'
     gem 'minitest', '< 5.12.0'
+    gem 'puppetlabs_spec_helper', '< 2.16.0' # 3.0.0 incompatible with ruby 2.1, 2.16.0 Lua compatibility bug
     gem 'rb-inotify', '< 0.10'
     gem 'json', '< 2.5.0' if RUBY_VERSION >= '2.0.0'
     gem 'json_pure', '< 2.5.0' if RUBY_VERSION >= '2.0.0'
+  else
+    gem 'puppetlabs_spec_helper'
   end
 end
