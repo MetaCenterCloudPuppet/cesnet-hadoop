@@ -3,20 +3,14 @@ source ENV['GEM_SOURCE'] || "https://rubygems.org"
 group :test do
   if RUBY_VERSION >= '2.2'
     gem "rake"
-  elsif RUBY_VERSION >= '2.0'
-    gem "rake", '< 13'
   else
-    gem "rake", '< 12.3.0'
+    gem "rake", '< 13'
   end
   gem "puppet", ENV['PUPPET_GEM_VERSION'] || '~> 3.8.0'
   gem "rspec"
-  if RUBY_VERSION < '2.0.0'
-    gem 'metadata-json-lint', '< 1.2.0'
-    gem 'rspec-puppet', '< 2.8.0'
-  else
-    gem 'metadata-json-lint'
-    gem 'rspec-puppet'
-  end
+  gem "puppetlabs_spec_helper", '< 3.0.0' # incompatible with ruby 2.1, unknown minimal version
+  gem 'metadata-json-lint'
+  gem 'rspec-puppet'
   if RUBY_VERSION >= '2.4'
     gem 'rspec-puppet-facts'
     gem 'simplecov', '>= 0.11.0'
@@ -58,18 +52,8 @@ group :test do
     gem 'activesupport', '< 5.0.0'
     gem 'listen', '< 3.1'
     gem 'minitest', '< 5.12.0'
-    gem 'puppetlabs_spec_helper', '< 3.0.0'
     gem 'rb-inotify', '< 0.10'
     gem 'json', '< 2.5.0' if RUBY_VERSION >= '2.0.0'
     gem 'json_pure', '< 2.5.0' if RUBY_VERSION >= '2.0.0'
-  else
-    gem 'puppetlabs_spec_helper'
-  end
-  if RUBY_VERSION < '2.0.0'
-    gem 'ffi', '< 1.11.0'
-    gem 'json', '< 2.0.0'
-    gem 'json_pure', '< 2.0.0'
-    gem 'json-schema', '< 2.5.0'
-    gem 'parallel_tests', '<= 2.9.0'
   end
 end
