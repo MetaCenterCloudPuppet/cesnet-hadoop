@@ -37,13 +37,7 @@
   </property>
 
 <% props = scope.lookupvar('hadoop::props') -%>
-<%# sort the properties list for ruby <= 1.8 #-%>
-<% rv=RUBY_VERSION.split('.') -%>
-<% if rv[0] <= '1' and rv[1] <= '8' -%>
-<% props_keys = props.keys.sort -%>
-<% else -%>
 <% props_keys = props.keys -%>
-<% end -%>
 <% props_keys.each do |p| -%>
 <% value = scope.lookupvar('hadoop::props')[p] -%>
 <% if p =~ /^hadoop\.hdfs\.|^dfs\.|^nfs\./ and value != '::undef' -%>

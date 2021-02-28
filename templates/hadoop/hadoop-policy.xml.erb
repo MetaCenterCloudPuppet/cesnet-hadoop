@@ -25,13 +25,7 @@
 <configuration>
 
 <% acls = scope.lookupvar('hadoop::_authorization') -%>
-<%# sort the properties list for ruby <= 1.8 #-%>
-<% rv=RUBY_VERSION.split('.') -%>
-<% if rv[0] <= '1' and rv[1] <= '8' -%>
-<% acls_keys = acls.keys.sort -%>
-<% else -%>
 <% acls_keys = acls.keys -%>
-<% end -%>
 <% acls_keys.each do |p| -%>
   <property>
     <name><%= p -%></name>

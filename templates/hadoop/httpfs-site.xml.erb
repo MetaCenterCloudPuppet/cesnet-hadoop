@@ -17,7 +17,7 @@
 <configuration>
 
 <% props = scope.lookupvar('hadoop::props') -%>
-<% props.keys.sort.each do |p| -%>
+<% props.keys.each do |p| -%>
 <% value = props[p] -%>
 <% if p =~ /^httpfs\./ and value != '::undef' -%>
 <% if scope.lookupvar('hadoop::descs')[p] -%>
