@@ -3,7 +3,7 @@
 # Mapreduce specific setup. Called from historyserver classes.
 #
 class hadoop::common::mapred::daemon {
-  if $hadoop::https {
+  if $hadoop::realm and $hadoop::realm != '' {
     file { "${hadoop::mapred_homedir}/hadoop.keytab":
       owner  => 'mapred',
       group  => 'mapred',
@@ -16,6 +16,8 @@ class hadoop::common::mapred::daemon {
       mode   => '0640',
       source => '/etc/security/http-auth-signature-secret',
     }
+  }
+  if $hadoop::https {
     file { "${hadoop::mapred_homedir}/keystore.server":
       owner  => 'mapred',
       group  => 'mapred',

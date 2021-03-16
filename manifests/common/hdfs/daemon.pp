@@ -9,7 +9,7 @@ class hadoop::common::hdfs::daemon {
     group  => 'hdfs',
     mode   => '0644',
   }
-  if $hadoop::https {
+  if $hadoop::realm and $hadoop::realm != '' {
     file { "${hadoop::hdfs_homedir}/hadoop.keytab":
       owner  => 'hdfs',
       group  => 'hdfs',
@@ -22,6 +22,8 @@ class hadoop::common::hdfs::daemon {
       mode   => '0640',
       source => '/etc/security/http-auth-signature-secret',
     }
+  }
+  if $hadoop::https {
     file { "${hadoop::hdfs_homedir}/keystore.server":
       owner  => 'hdfs',
       group  => 'hdfs',

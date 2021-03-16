@@ -292,6 +292,14 @@ DEFAULT
   }
   if $hadoop::realm and $hadoop::realm != '' {
     $sec_common_properties = {
+      'hadoop.http.filter.initializers' => 'org.apache.hadoop.security.AuthenticationFilterInitializer',
+      'hadoop.http.authentication.type' => 'kerberos',
+      'hadoop.http.authentication.token.validity' => '36000',
+      'hadoop.http.authentication.signature.secret.file' => '${user.home}/http-auth-signature-secret',
+      'hadoop.http.authentication.cookie.domain' => downcase($hadoop::realm),
+      'hadoop.http.authentication.simple.anonymous.allowed' => false,
+      'hadoop.http.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
+      'hadoop.http.authentication.kerberos.keytab' => '${user.home}/hadoop.keytab',
       'hadoop.security.authentication' => 'kerberos',
       'hadoop.rcp.protection' => 'integrity',
       'hadoop.security.auth_to_local' => $auth_rules_default,
@@ -314,6 +322,7 @@ DEFAULT
         'dfs.journalnode.keytab.file' => $keytab_journalnode,
         'dfs.encrypt.data.transfer' => false,
         'dfs.webhdfs.enabled' => true,
+        'dfs.web.authentication.kerberos.keytab' => "${hadoop::hdfs_homedir}/hadoop.keytab",
         'dfs.web.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
       }
     } else {
@@ -435,14 +444,6 @@ DEFAULT
       $keypass = $hadoop::https_keystore_password
     }
     $https_common_properties = {
-      'hadoop.http.filter.initializers' => 'org.apache.hadoop.security.AuthenticationFilterInitializer',
-      'hadoop.http.authentication.type' => 'kerberos',
-      'hadoop.http.authentication.token.validity' => '36000',
-      'hadoop.http.authentication.signature.secret.file' => '${user.home}/http-auth-signature-secret',
-      'hadoop.http.authentication.cookie.domain' => downcase($hadoop::realm),
-      'hadoop.http.authentication.simple.anonymous.allowed' => false,
-      'hadoop.http.authentication.kerberos.principal' => "HTTP/_HOST@${hadoop::realm}",
-      'hadoop.http.authentication.kerberos.keytab' => '${user.home}/hadoop.keytab',
       'mapreduce.jobhistory.http.policy' => 'HTTPS_ONLY',
       # it listens on 19890 automatically, but it needs to be specified anyway for tracking URL working in RM
       'mapreduce.jobhistory.webapp.address' => '0.0.0.0:19890',
@@ -467,7 +468,6 @@ DEFAULT
       $https_hdfs_properties = {
         'dfs.http.policy' => 'HTTPS_ONLY',
         'dfs.journalnode.kerberos.internal.spnego.principal' => "HTTP/_HOST@${hadoop::realm}",
-        'dfs.web.authentication.kerberos.keytab' => "${hadoop::hdfs_homedir}/hadoop.keytab",
       }
     } else {
       $https_hdfs_properties = undef

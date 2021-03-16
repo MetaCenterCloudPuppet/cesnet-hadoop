@@ -3,7 +3,7 @@
 # YARN specific setup. Called from resourcemanager and nodemanager classes.
 #
 class hadoop::common::yarn::daemon {
-  if $hadoop::https {
+  if $hadoop::realm and $hadoop::realm != '' {
     file { "${hadoop::yarn_homedir}/hadoop.keytab":
       owner  => 'yarn',
       group  => 'yarn',
@@ -16,6 +16,8 @@ class hadoop::common::yarn::daemon {
       mode   => '0640',
       source => '/etc/security/http-auth-signature-secret',
     }
+  }
+  if $hadoop::https {
     file { "${hadoop::yarn_homedir}/keystore.server":
       owner  => 'yarn',
       group  => 'yarn',
