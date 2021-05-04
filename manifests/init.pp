@@ -28,6 +28,9 @@ class hadoop (
   $hdfs_data_dirs = $::hadoop::params::hdfs_data_dirs,
   $hdfs_secondary_dirs = undef,
   $hdfs_journal_dirs = undef,
+  $hdfs_port_namenode = undef,
+  $hdfs_port_namenode_http = undef,
+  $hdfs_port_namenode_https = undef,
   $properties = undef,
   $descriptions = undef,
   $environment = undef,
@@ -80,17 +83,20 @@ class hadoop (
 
   case "${::hadoop::version}." {
     /^2(\.)?/: {
-      $hdfs_port_namenode_http = '50070'
-      $hdfs_port_namenode_https = '50470'
-      $hdfs_port_namenode = '8020'
+      $default_hdfs_port_namenode = '8020'
+      $default_hdfs_port_namenode_http = '50070'
+      $default_hdfs_port_namenode_https = '50470'
     }
     default: {
-      $hdfs_port_namenode_http = '9870'
-      $hdfs_port_namenode_https = '9871'
       # changed back from 9820 to 8020 in Hadoop 3.0.1
-      $hdfs_port_namenode = '8020'
+      $default_hdfs_port_namenode = '8020'
+      $default_hdfs_port_namenode_http = '9870'
+      $default_hdfs_port_namenode_https = '9871'
     }
   }
+  $_hdfs_port_namenode = pick($hdfs_port_namenode, $default_hdfs_port_namenode)
+  $_hdfs_port_namenode_http = pick($hdfs_port_namenode_http, $default_hdfs_port_namenode_http)
+  $_hdfs_port_namenode_https = pick($hdfs_port_namenode_https, $default_hdfs_port_namenode_https)
 
   if (!$defaultFS and (!$hdfs_hostname or $hdfs_hostname == '')) {
     err('Either hdfs_hostname or defaultFS parameter needed')
@@ -100,7 +106,7 @@ class hadoop (
   } elsif ($hdfs_hostname2) {
     $_defaultFS = "hdfs://${hadoop::cluster_name}"
   } else {
-    $_defaultFS = "hdfs://${hdfs_hostname}:${hdfs_port_namenode}"
+    $_defaultFS = "hdfs://${hdfs_hostname}:${_hdfs_port_namenode}"
   }
 
   $hdfs_enable = $hdfs_hostname and $hdfs_hostname != ''
@@ -377,7 +383,7 @@ DEFAULT
         $rm_ss_properties = {
           'yarn.resourcemanager.recovery.enabled' => true,
           'yarn.resourcemanager.store.class' => 'org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore',
-          # no hdfs://${hdfs_hostname}:${hdfs_port_namenode} prefix - in case of HA HDFS
+          # no hdfs://${hdfs_hostname}:${_hdfs_port_namenode} prefix - in case of HA HDFS
           'yarn.resourcemanager.fs.state-store.uri' => '/rmstore',
         }
       } else {
@@ -516,21 +522,21 @@ DEFAULT
     }
     if ($https) {
       $ha_http_properties = {
-        "dfs.namenode.https-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${hdfs_port_namenode_https}",
-        "dfs.namenode.https-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${hdfs_port_namenode_https}",
+        "dfs.namenode.https-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${_hdfs_port_namenode_https}",
+        "dfs.namenode.https-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${_hdfs_port_namenode_https}",
       }
     } else {
       $ha_http_properties = {
-        "dfs.namenode.http-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${hdfs_port_namenode_http}",
-        "dfs.namenode.http-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${hdfs_port_namenode_http}",
+        "dfs.namenode.http-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${_hdfs_port_namenode_http}",
+        "dfs.namenode.http-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${_hdfs_port_namenode_http}",
       }
     }
     $ha_journals = join($journalnode_hostnames, ':8485;')
     $ha_base_properties = {
       'dfs.nameservices' => $hadoop::cluster_name,
       "dfs.ha.namenodes.${hadoop::cluster_name}" => 'nn1,nn2',
-      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${hdfs_port_namenode}",
-      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${hdfs_port_namenode}",
+      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn1" => "${hdfs_hostname}:${_hdfs_port_namenode}",
+      "dfs.namenode.rpc-address.${hadoop::cluster_name}.nn2" => "${hdfs_hostname2}:${_hdfs_port_namenode}",
       'dfs.namenode.shared.edits.dir' => "qjournal://${ha_journals}:8485/${hadoop::cluster_name}",
       "dfs.client.failover.proxy.provider.${hadoop::cluster_name}" => 'org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider',
       'dfs.ha.fencing.methods' => 'shell(/bin/true)',
@@ -549,7 +555,7 @@ DEFAULT
   } else {
     if $hdfs_enable {
       $ha_hdfs_properties = {
-        'dfs.namenode.rpc-address' => "${hdfs_hostname}:${hdfs_port_namenode}",
+        'dfs.namenode.rpc-address' => "${hdfs_hostname}:${_hdfs_port_namenode}",
       }
     } else {
       $ha_hdfs_properties = undef

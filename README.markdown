@@ -1004,6 +1004,18 @@ If Hadoop cluster is secured, it is recommended also secure Zookeeper. See `ha_c
 
 Directory prefixes to store journal logs by journal name nodes, if different from `hdfs_name_dirs`. Default: undef.
 
+#####`hdfs_port_namenode`
+
+HDFS namenode port. Default: undef (default according to *hadoop::version*).
+
+#####`hdfs_port_namenode_http`
+
+HDFS namenode HTTP port. Default: undef (default according to *hadoop::version*).
+
+#####`hdfs_port_namenode_https`
+
+HDFS namenode HTTPS port. Default: undef (default according to *hadoop::version*).
+
 #####`hdfs_name_dirs`
 
 Directory prefixes to store the metadata on the namenode. Default: ["/var/lib/hadoop-hdfs"] or ["/var/lib/hadoop-hdfs/cache"].
