@@ -71,6 +71,7 @@ There are some limitations how to use this module. You should read the documenta
  * */etc/sysconfig/hadoop\** (or */etc/default/hadoop\**)
  * */etc/cron.d/hadoop-\** (only when explicit key refresh or restarts are requested)
  * */usr/local/sbin/yellowmanager* (not needed, only when administrator manager script is requested by `features`)
+ * */etc/init.d/hadoop-hdfs-datanode* (if exists, for *version=3* and Debian)
  * */etc/init.d/hadoop-hdfs-nfs3* (if exists, for *version=3*)
 * Alternatives:
  * alternatives are used for */etc/hadoop/conf*
