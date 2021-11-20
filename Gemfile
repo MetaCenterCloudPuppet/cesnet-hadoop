@@ -9,12 +9,13 @@ group :test do
   gem "puppet", ENV['PUPPET_GEM_VERSION'] || '~> 3.8.0'
   gem "rspec"
   gem 'metadata-json-lint'
-  gem 'rspec-puppet'
   if RUBY_VERSION >= '2.4'
+    gem 'rspec-puppet'
     gem 'rspec-puppet-facts'
     gem 'simplecov', '>= 0.11.0'
     gem 'simplecov-console'
   else
+    gem 'rspec-puppet', '<= 2.10.0'
     gem 'rspec-puppet-facts', '< 2.0.0'
     gem 'simplecov', '>= 0.11.0', '< 0.18'
     gem 'simplecov-console', '< 0.18'
@@ -40,6 +41,7 @@ group :test do
   end
   if RUBY_VERSION < '2.5'
     gem 'activesupport', '< 6.0.0' if RUBY_VERSION >= '2.2'
+    gem 'docile', '< 1.4.0'
   end
   if RUBY_VERSION < '2.3'
     gem 'faraday', '< 1.0.0'
