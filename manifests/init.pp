@@ -254,20 +254,37 @@ class hadoop (
     $hdfs_properties = undef
   }
   if $yarn_enable {
-    $yarn_properties = {
+    $yarn_base_properties = {
       'mapreduce.framework.name' => 'yarn',
       'mapreduce.jobhistory.address' => "${hs_hostname}:10020",
       'mapreduce.task.tmp.dir' => '/var/cache/hadoop-mapreduce/${user.name}/tasks',
-      # this is required since Hadoop 3.x
-      'mapreduce.map.env' => 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
-      # this is required since Hadoop 3.x
-      'mapreduce.reduce.env' => 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
       'yarn.resourcemanager.hostname' => $yarn_hostname,
       'yarn.nodemanager.aux-services' => 'mapreduce_shuffle',
       'yarn.nodemanager.aux-services.mapreduce_shuffle.class' => 'org.apache.hadoop.mapred.ShuffleHandler',
       'yarn.resourcemanager.nodes.include-path' => "${hadoop::confdir}/${slaves_yarn}",
       'yarn.resourcemanager.nodes.exclude-path' => "${hadoop::confdir}/excludes",
     }
+    if "${::hadoop::version}." =~ /^2(\.)?/ {
+      $yarn_compat_properties = {
+        'yarn.app.mapreduce.am.env' => 'LD_LIBRARY_PATH=/usr/lib/hadoop/lib/native:$LD_LIBRARY_PATH',
+      }
+    } else {
+      $yarn_compat_properties = {
+        # this is required since Hadoop 3.x and BigTop 3.0.0
+        'mapreduce.map.env.HADOOP_MAPRED_HOME' => '/usr/lib/hadoop-mapreduce',
+        # this is required since Hadoop 3.x
+        'mapreduce.map.env.LD_LIBRARY_PATH' => '$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
+        # this is required since Hadoop 3.x and BigTop 3.0.0
+        'mapreduce.reduce.env.HADOOP_MAPRED_HOME' => '/usr/lib/hadoop-mapreduce',
+        # this is required since Hadoop 3.x
+        'mapreduce.reduce.env.LD_LIBRARY_PATH' => '$LD_LIBRARY_PATH:/usr/lib/hadoop/lib/native',
+        # this is required since Hadoop 3.x and BigTop 3.0.0
+        'yarn.app.mapreduce.am.env.HADOOP_MAPRED_HOME' => '/usr/lib/hadoop-mapreduce',
+        # always needed, moved into separated property since Hadoop 3.x
+        'yarn.app.mapreduce.am.env.LD_LIBRARY_PATH' => '/usr/lib/hadoop/lib/native:$LD_LIBRARY_PATH',
+      }
+    }
+    $yarn_properties = merge($yarn_base_properties, $yarn_compat_properties)
   } else {
     $yarn_properties = undef
   }
